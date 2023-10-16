@@ -34,6 +34,7 @@ module.exports = () => {
     transpilePackages: [
       '@composable/cms-generic',
       '@composable/commerce-generic',
+      '@composable/voucherify',
       '@composable/stripe',
       '@composable/types',
       '@composable/ui',

@@ -1,2 +1,4 @@
 import { commerceGenericDataSource } from '@composable/commerce-generic'
-export default commerceGenericDataSource
+import { commerceWithDiscount } from '@composable/voucherify'
+
+export default commerceWithDiscount(commerceGenericDataSource)

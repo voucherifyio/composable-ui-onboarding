@@ -38,6 +38,7 @@ The following table lists the packages exported by the mono-repository:
 | - | - |
 | `@composable/cms-generic` | `packages/cms-generic` |
 | `@composable/commerce-generic`|  `packages/commerce-generic` |
+| `@composable/voucherify`|  `packages/voucherify` |
 | `@composable/eslint-config-custom` | `packages/eslint-config-custom` |
 | `@composable/stripe` | `packages/stripe` |
 | `@composable/tsconfig` | `packages/tsconfig` |

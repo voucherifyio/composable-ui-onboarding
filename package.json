@@ -30,5 +30,8 @@
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
+  },
+  "dependencies": {
+    "@voucherify/sdk": "^2.5.0"
   }
 }
