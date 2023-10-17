@@ -1,31 +1,196 @@
-import { CommerceService } from '@composable/types'
+import {
+  Cart,
+  CartItemWithDiscounts,
+  CartWithDiscounts,
+  CommerceService,
+  CommerceServiceWithDiscounts,
+  Redeemable,
+} from '@composable/types'
+import {
+  OrdersCreate,
+  ValidationValidateStackableResponse,
+  VoucherifyServerSide,
+} from '@voucherify/sdk'
 
-const hasKey = <T extends object>(obj: T, k: keyof any): k is keyof T =>
-  k in obj
-
-export const commerceWithDiscount = (commerceService: CommerceService) => {
-  return commerceService
+if (
+  !process.env.VOUCHERIFY_APPLICATION_ID ||
+  !process.env.VOUCHERIFY_SECRET_KEY ||
+  !process.env.VOUCHERIFY_API_URL
+) {
+  throw new Error('[voucherify] Missing configuration')
 }
-// export const commerceWithDiscount = (commerceService: CommerceService) => {
 
-//     return new Proxy(commerceService, {
-//         get: function (target, prop) {
+const voucherify = VoucherifyServerSide({
+  applicationId: process.env.VOUCHERIFY_APPLICATION_ID,
+  secretKey: process.env.VOUCHERIFY_SECRET_KEY,
+  exposeErrorCause: true,
+  apiUrl: process.env.VOUCHERIFY_API_URL,
+  channel: 'ComposableUI',
+})
 
-//             if(prop === 'getCart'){
-//                 return async (...props: Parameters<CommerceService["getCart"]>) => {
-//                     console.log('get cart items params', props)
+const toCent = (amount: string | undefined | null): number => {
+  if (!amount) {
+    return 0
+  }
 
-//                     const cart = await target.getCart(...props)
+  return Math.round(parseFloat(amount) * 100)
+}
 
-//                     console.log('result', cart)
+const centToString = (amount: number | null | undefined) => {
+  if (!amount) {
+    return ''
+  }
+  return Number(amount / 100).toString()
+}
 
-//                     return new Promise(resolve => cart)
-//                 }
-//             }
+const cartWithDiscount = (
+  cart: Cart,
+  validationResponse: ValidationValidateStackableResponse | false
+): CartWithDiscounts => {
+  console.log(validationResponse)
+  const redeemables: Redeemable[] = validationResponse
+    ? validationResponse.redeemables || []
+    : [] // todo filter onlyr equired attributes
+  const items: CartItemWithDiscounts[] = cart.items.map((item) => ({
+    ...item,
+    cartItemType: 'CartItemWithDiscounts',
+    discounts: {
+      subtotalAmount: '', // todo item level discounts
+    },
+  }))
 
-//             return hasKey(target, prop) ? target[prop] : () => {
-//                 throw new Error('Function deos not exists')
-//             };
-//           }
-//     });
-// }
+  const discountAmount = centToString(
+    validationResponse ? validationResponse.order?.discount_amount : 0
+  )
+  const grandPrice = centToString(
+    validationResponse
+      ? validationResponse.order?.total_amount
+      : toCent(cart.summary.totalPrice)
+  )
+  const totalDiscountAmount = centToString(
+    validationResponse
+      ? validationResponse.order?.total_applied_discount_amount
+      : 0
+  )
+
+  return {
+    ...cart,
+    cartType: 'CartWithDiscounts',
+    summary: {
+      ...cart.summary,
+      discountAmount,
+      totalDiscountAmount,
+      grandPrice,
+    },
+    redeemables,
+    items,
+  }
+}
+
+const cartToVoucherifyOrder = (cart: Cart): OrdersCreate => {
+  return {
+    amount: toCent(cart.summary.totalPrice),
+    items: cart.items.map((item) => ({
+      quantity: item.quantity,
+      product_id: item.id,
+      sku_id: item.sku,
+      price: item.price,
+    })),
+  }
+}
+
+export const commerceWithDiscount = (
+  commerceService: CommerceService
+): CommerceServiceWithDiscounts => {
+  console.log('[voucherify] wrapping commerce service')
+
+  const getCart = async (
+    ...props: Parameters<CommerceService['getCart']>
+  ): Promise<CartWithDiscounts | null> => {
+    const cart = await commerceService.getCart(...props)
+
+    if (!cart) {
+      return cart
+    }
+
+    const validationResponse = await voucherify.validations.validateStackable({
+      redeemables: [{ object: 'voucher', id: '10%OFF' }],
+      order: cartToVoucherifyOrder(cart),
+    })
+
+    return cartWithDiscount(cart, validationResponse)
+  }
+
+  const addCartItem = async (
+    ...props: Parameters<CommerceService['addCartItem']>
+  ): Promise<CartWithDiscounts> => {
+    const cart = await commerceService.addCartItem(...props)
+    if (!cart) {
+      return cart
+    }
+
+    const validationResponse = await voucherify.validations.validateStackable({
+      redeemables: [{ object: 'voucher', id: '10%OFF' }],
+      order: cartToVoucherifyOrder(cart),
+    })
+
+    return cartWithDiscount(cart, validationResponse)
+  }
+
+  const createCart = async (
+    ...props: Parameters<CommerceService['createCart']>
+  ): Promise<CartWithDiscounts> => {
+    const cart = await commerceService.createCart(...props)
+    if (!cart) {
+      return cart
+    }
+
+    const validationResponse = await voucherify.validations.validateStackable({
+      redeemables: [{ object: 'voucher', id: '10%OFF' }],
+      order: cartToVoucherifyOrder(cart),
+    })
+
+    return cartWithDiscount(cart, validationResponse)
+  }
+
+  const deleteCartItem = async (
+    ...props: Parameters<CommerceService['deleteCartItem']>
+  ): Promise<CartWithDiscounts> => {
+    const cart = await commerceService.deleteCartItem(...props)
+    if (!cart) {
+      return cart
+    }
+
+    const validationResponse = await voucherify.validations.validateStackable({
+      redeemables: [{ object: 'voucher', id: '10%OFF' }],
+      order: cartToVoucherifyOrder(cart),
+    })
+
+    return cartWithDiscount(cart, validationResponse)
+  }
+
+  const updateCartItem = async (
+    ...props: Parameters<CommerceService['updateCartItem']>
+  ): Promise<CartWithDiscounts> => {
+    const cart = await commerceService.updateCartItem(...props)
+    if (!cart) {
+      return cart
+    }
+
+    const validationResponse = await voucherify.validations.validateStackable({
+      redeemables: [{ object: 'voucher', id: '10%OFF' }],
+      order: cartToVoucherifyOrder(cart),
+    })
+
+    return cartWithDiscount(cart, validationResponse)
+  }
+
+  return {
+    ...commerceService,
+    getCart,
+    addCartItem,
+    createCart,
+    deleteCartItem,
+    updateCartItem,
+  }
+}

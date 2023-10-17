@@ -90,6 +90,36 @@ export const CartSummary = ({
               </Flex>
             </>
           )}
+
+          {_cartData.summary?.totalDiscountAmount && (
+            <CartSummaryItem
+              label={intl.formatMessage({
+                id: 'cart.summary.totalDiscountAmount',
+              })}
+            >
+              <Price
+                rootProps={{ textStyle: 'Body-S', color: 'green' }}
+                price={`-${_cartData.summary.totalDiscountAmount}`}
+              />
+            </CartSummaryItem>
+          )}
+
+          {_cartData.summary?.grandPrice && (
+            <>
+              <Divider />
+              <Flex
+                justify="space-between"
+                textStyle={{ base: 'Mobile/S', md: 'Desktop/S' }}
+              >
+                <Text>
+                  {intl.formatMessage({ id: 'cart.summary.grandPrice' })}
+                </Text>
+                <Box>
+                  <Price price={_cartData.summary.grandPrice} />
+                </Box>
+              </Flex>
+            </>
+          )}
         </Stack>
       </Stack>
 
