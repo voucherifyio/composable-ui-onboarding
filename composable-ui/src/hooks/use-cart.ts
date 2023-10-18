@@ -35,7 +35,7 @@ const setCartId = (id: string) => {
 
 interface UseCartOptions {
   onCartItemAddError?: () => void
-  onCartCouponAddError?: () => void
+  onCartCouponAddError?: (errorMessage: string) => void
   onCartCouponDeleteError?: () => void
   onCartItemUpdateError?: () => void
   onCartItemDeleteError?: () => void
@@ -244,13 +244,18 @@ export const useCart = (options?: UseCartOptions) => {
 
       const response = await client.commerce.addCoupon.mutate(params)
       const updatedAt = Date.now()
-      console.log('asdasd', { response })
       queryClient.setQueryData(
         [USE_CART_KEY, variables.cartId, updatedAt],
         response.cart
       )
 
       setCartUpdatedAt(updatedAt)
+
+      if (!response.result && optionsRef.current?.onCartCouponAddError) {
+        optionsRef.current?.onCartCouponAddError(
+          response.errorMsg || `Could not add ${variables.coupon} coupon`
+        )
+      }
 
       return response
     },

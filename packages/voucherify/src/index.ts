@@ -5,6 +5,8 @@ import {
   CommerceServiceWithDiscounts,
 } from '@composable/types'
 import {
+  ApplicableToResultList,
+  StackableRedeemableResponse,
   ValidationValidateStackableResponse,
   VoucherifyServerSide,
 } from '@voucherify/sdk'
@@ -27,32 +29,27 @@ const voucherify = VoucherifyServerSide({
   channel: 'ComposableUI',
 })
 
-type Redeemable = {
-  object: 'voucher'
-  id: string
-  status: 'INAPPLICABLE' | 'APPLICABLE' | 'SKIPPED' | 'NEW'
-  result?: {
-    error?: { key: string; message: string; details: string }
-  }
-}
-
 type CartDiscountsStorage = {
-  [cartId: string]: Redeemable[]
+  [cartId: string]: string[]
 }
 
 /**
  * In memory storage that presist coupons for specific cart
  */
 const cartDiscountsStorage: CartDiscountsStorage = {
-  '7a6dd462-24dc-11ed-861d-0242ac120002': [
-    { object: 'voucher', id: '10%OFF', status: 'NEW' },
-  ], // example cart discount
+  '7a6dd462-24dc-11ed-861d-0242ac120002': ['10%OFF'], // example cart discount
 }
 
 const hasAtLeastOneRedeemable = (cartId: string) => {
   console.log({ cartId, cartDiscountsStorage })
   return cartDiscountsStorage[cartId] && cartDiscountsStorage[cartId].length
 }
+
+const getRedeemmablesForValidation = (couponCodes: string[]) =>
+  couponCodes.map((couponCode) => ({
+    id: couponCode,
+    object: 'voucher' as const,
+  }))
 
 export const commerceWithDiscount = (
   commerceService: CommerceService
@@ -70,7 +67,9 @@ export const commerceWithDiscount = (
 
     const validationResponse = hasAtLeastOneRedeemable(props[0].cartId)
       ? await voucherify.validations.validateStackable({
-          redeemables: cartDiscountsStorage[props[0].cartId] || [],
+          redeemables: getRedeemmablesForValidation(
+            cartDiscountsStorage[props[0].cartId]
+          ),
           order: cartToVoucherifyOrder(cart),
         })
       : false
@@ -88,7 +87,9 @@ export const commerceWithDiscount = (
 
     const validationResponse = hasAtLeastOneRedeemable(props[0].cartId)
       ? await voucherify.validations.validateStackable({
-          redeemables: cartDiscountsStorage[props[0].cartId] || [],
+          redeemables: getRedeemmablesForValidation(
+            cartDiscountsStorage[props[0].cartId]
+          ),
           order: cartToVoucherifyOrder(cart),
         })
       : false
@@ -114,7 +115,9 @@ export const commerceWithDiscount = (
 
     const validationResponse = hasAtLeastOneRedeemable(props[0].cartId)
       ? await voucherify.validations.validateStackable({
-          redeemables: cartDiscountsStorage[props[0].cartId] || [],
+          redeemables: getRedeemmablesForValidation(
+            cartDiscountsStorage[props[0].cartId]
+          ),
           order: cartToVoucherifyOrder(cart),
         })
       : false
@@ -132,7 +135,9 @@ export const commerceWithDiscount = (
 
     const validationResponse = hasAtLeastOneRedeemable(props[0].cartId)
       ? await voucherify.validations.validateStackable({
-          redeemables: cartDiscountsStorage[props[0].cartId] || [],
+          redeemables: getRedeemmablesForValidation(
+            cartDiscountsStorage[props[0].cartId]
+          ),
           order: cartToVoucherifyOrder(cart),
         })
       : false
@@ -150,15 +155,7 @@ export const commerceWithDiscount = (
     let errorMsg: string | undefined
 
     if (!cartDiscountsStorage[cartId]) {
-      cartDiscountsStorage[cartId] = [
-        { object: 'voucher', id: coupon, status: 'NEW' },
-      ]
-    } else {
-      cartDiscountsStorage[cartId].push({
-        object: 'voucher',
-        id: coupon,
-        status: 'NEW',
-      })
+      cartDiscountsStorage[cartId] = []
     }
 
     const cart = await commerceService.getCart({ cartId })
@@ -171,30 +168,38 @@ export const commerceWithDiscount = (
       `[voucherify][addCoupon] Add coupon ${coupon} to cart ${cartId}`
     )
 
-    const validationResponse = hasAtLeastOneRedeemable(cartId)
+    const validationResponse:
+      | false
+      | (ValidationValidateStackableResponse & {
+          inapplicable_redeemables?: StackableRedeemableResponse[]
+        }) = hasAtLeastOneRedeemable(cartId)
       ? await voucherify.validations.validateStackable({
-          redeemables: cartDiscountsStorage[cartId],
+          redeemables: getRedeemmablesForValidation([
+            ...cartDiscountsStorage[cartId],
+            coupon,
+          ]),
           order: cartToVoucherifyOrder(cart),
         })
       : false
 
     console.log(`[voucherify][addCoupon] valiadtion result`, validationResponse)
 
-    //@ts-ignore
     const addedRedeembale =
-      validationResponse &&
-      validationResponse.redeemables &&
-      validationResponse.inapplicable_redeemables
+      validationResponse && validationResponse.redeemables
         ? [
             ...validationResponse.redeemables,
-            ...validationResponse?.inapplicable_redeemables,
+            ...(validationResponse?.inapplicable_redeemables || []),
           ]?.find((redeemable) => redeemable.id === coupon)
         : false
+
     const result = addedRedeembale
       ? addedRedeembale.status === 'APPLICABLE'
       : false
 
-    if (!result) {
+    console.log({ result })
+    if (result) {
+      cartDiscountsStorage[cartId].push(coupon)
+    } else {
       errorMsg = addedRedeembale
         ? addedRedeembale.result?.error?.message
         : 'Redeemable not found in response from Voucherify'
@@ -214,11 +219,9 @@ export const commerceWithDiscount = (
     cartId: string
     coupon: string
   }) => {
-    let errorMsg: string | undefined
-
     if (cartDiscountsStorage[cartId]) {
       cartDiscountsStorage[cartId] = cartDiscountsStorage[cartId].filter(
-        (redeemable) => redeemable.id !== coupon
+        (redeemable) => redeemable !== coupon
       )
     }
     const cart = await commerceService.getCart({ cartId })
@@ -233,7 +236,9 @@ export const commerceWithDiscount = (
 
     const validationResponse = hasAtLeastOneRedeemable(cartId)
       ? await voucherify.validations.validateStackable({
-          redeemables: cartDiscountsStorage[cartId],
+          redeemables: getRedeemmablesForValidation(
+            cartDiscountsStorage[cartId]
+          ),
           order: cartToVoucherifyOrder(cart),
         })
       : false

@@ -23,37 +23,25 @@ export const CouponForm = ({
   type = AccountPage.PAGE,
   setAccountFormToShow,
 }: LoginFormProps) => {
-  const { cart, addCartCoupon, deleteCartCoupon } = useCart()
   const intl = useIntl()
-  const { data, status } = useSession()
-  const [simulatingLoading, setSimulatingLoading] = useState(false)
   const [isError, setIsError] = useState(false)
   const {
     register,
     handleSubmit,
+    setError,
+    setValue,
     formState: { errors },
-  } = useForm<{ email: string; password: string }>({
-    resolver: yupResolver(loginFormSchema({ intl })),
+  } = useForm<{ coupon: string }>({
+    resolver: yupResolver(couponFormSchema()),
     mode: 'all',
+  })
+  const { cart, addCartCoupon, deleteCartCoupon } = useCart({
+    onCartCouponAddError: (msg) => {
+      setError('coupon', { message: msg || 'Could not add coupon' })
+    },
   })
 
   const content = {
-    ariaLabel: {
-      signIn: intl.formatMessage({ id: 'account.login.title' }),
-    },
-    title: intl.formatMessage({ id: 'account.login.title' }),
-    description: intl.formatMessage({ id: 'account.login.description' }),
-    loginWithFacebook: intl.formatMessage({
-      id: 'account.login.loginWithFacebook',
-    }),
-    loginWithGoogle: intl.formatMessage({
-      id: 'account.login.loginWithGoogle',
-    }),
-    notAMemberYet: intl.formatMessage({ id: 'account.login.notAMemberYet' }),
-    createAnAccount: intl.formatMessage({
-      id: 'account.login.createAnAccount',
-    }),
-    or: intl.formatMessage({ id: 'text.or' }),
     input: {
       coupon: {
         label: intl.formatMessage({ id: 'cart.summary.label.coupon' }),
@@ -63,11 +51,6 @@ export const CouponForm = ({
     button: {
       login: intl.formatMessage({ id: 'action.addCoupon' }),
     },
-    error: {
-      incorrectSignIn: intl.formatMessage({
-        id: 'account.login.error.incorrectSignIn',
-      }),
-    },
   }
 
   return (
@@ -75,17 +58,19 @@ export const CouponForm = ({
       {isError && (
         <Alert mt="30px" status="error" borderRadius={'6px'}>
           <AlertIcon alignSelf={'flex-start'} />
-          {content.error.incorrectSignIn}
+          asdasdasd
         </Alert>
       )}
       <form
         role={'form'}
-        aria-label={content.ariaLabel.signIn}
         onSubmit={handleSubmit(async (data) => {
           setIsError(false)
-          setSimulatingLoading(true)
-
-          addCartCoupon.mutate({ cartId: cart.id || '', coupon: data.email })
+          setValue('coupon', '')
+          // setError('coupon', {message: 'Could not add coupon' })
+          await addCartCoupon.mutate({
+            cartId: cart.id || '',
+            coupon: data.coupon,
+          })
         })}
       >
         <Box
@@ -97,9 +82,9 @@ export const CouponForm = ({
           <InputField
             inputProps={{
               placeholder: content.input.coupon.placeholder,
-              ...register('email'),
+              ...register('coupon'),
             }}
-            error={errors.email}
+            error={errors.coupon}
             label={''}
           />
 
@@ -134,16 +119,12 @@ export const CouponForm = ({
           </Tag>
         ))}
       </HStack>
-      {/* <pre>{JSON.stringify(cart, null,2)}</pre> */}
     </Box>
   )
 }
 
-const loginFormSchema = (deps: { intl: IntlShape }) => {
-  const { intl } = deps
+const couponFormSchema = () => {
   return yup.object().shape({
-    email: yup
-      .string()
-      .required(intl.formatMessage({ id: 'validation.emailRequired' })),
+    coupon: yup.string().required(),
   })
 }
