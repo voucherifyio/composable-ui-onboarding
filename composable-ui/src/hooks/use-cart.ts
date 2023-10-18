@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import {
   deleteFromStorage,
@@ -10,12 +10,12 @@ import {
   LOCAL_STORAGE_CART_ID,
   LOCAL_STORAGE_CART_UPDATED_AT,
 } from 'utils/constants'
-import { CartWithDiscounts as Cart } from '@composable/types'
+import { CartWithDiscounts } from '@composable/types'
 import { useSession } from 'next-auth/react'
 
 const USE_CART_KEY = 'useCartKey'
 
-export type CartData = Partial<Cart> & {
+export type CartData = Partial<CartWithDiscounts> & {
   isLoading: boolean
   isEmpty: boolean
   quantity: number
@@ -35,9 +35,13 @@ const setCartId = (id: string) => {
 
 interface UseCartOptions {
   onCartItemAddError?: () => void
+  onCartCouponAddError?: () => void
+  onCartCouponDeleteError?: () => void
   onCartItemUpdateError?: () => void
   onCartItemDeleteError?: () => void
-  onCartItemAddSuccess?: (cart: Cart) => void
+  onCartCouponAddSuccess?: (response: { cart: CartWithDiscounts }) => void
+  onCartCouponDeleteSuccess?: (cart: CartWithDiscounts) => void
+  onCartItemAddSuccess?: (cart: CartWithDiscounts) => void
 }
 
 export const useCart = (options?: UseCartOptions) => {
@@ -228,11 +232,121 @@ export const useCart = (options?: UseCartOptions) => {
   )
 
   /**
+   * Cart Coupon Add
+   */
+  const cartCouponAdd = useMutation(
+    ['cartCouponAdd'],
+    async (variables: { cartId: string; coupon: string }) => {
+      const params = {
+        cartId: variables.cartId,
+        coupon: variables.coupon,
+      }
+
+      const response = await client.commerce.addCoupon.mutate(params)
+      const updatedAt = Date.now()
+      console.log('asdasd', { response })
+      queryClient.setQueryData(
+        [USE_CART_KEY, variables.cartId, updatedAt],
+        response.cart
+      )
+
+      setCartUpdatedAt(updatedAt)
+
+      return response
+    },
+    {
+      onError: optionsRef.current?.onCartCouponAddError,
+    }
+  )
+
+  /**
+   * Cart Coupon Add Mutation
+   */
+  const cartCouponAddMutation = useCallback(
+    async (params: { cartId: string; coupon: string }) => {
+      const id = cartId ? cartId : await cartCreate.mutateAsync()
+      await cartCouponAdd.mutate(
+        {
+          cartId: id,
+          coupon: params.coupon,
+        },
+        {
+          onSuccess: optionsRef.current?.onCartCouponAddSuccess,
+        }
+      )
+    },
+    [cartId, cartCreate, cartCouponAdd]
+  )
+
+  /**
+   * Cart Coupon Delete
+   */
+  const cartCouponDelete = useMutation(
+    ['cartCouponAdd'],
+    async (variables: { cartId: string; coupon: string }) => {
+      const params = {
+        cartId: variables.cartId,
+        coupon: variables.coupon,
+      }
+
+      const response = await client.commerce.deleteCoupon.mutate(params)
+      const updatedAt = Date.now()
+
+      queryClient.setQueryData(
+        [USE_CART_KEY, variables.cartId, updatedAt],
+        response
+      )
+
+      setCartUpdatedAt(updatedAt)
+
+      return response
+    },
+    {
+      onError: optionsRef.current?.onCartCouponDeleteError,
+    }
+  )
+
+  /**
+   * Cart Coupon Delete Mutation
+   */
+  const cartCouponDeleteMutation = useCallback(
+    async (params: { cartId: string; coupon: string }) => {
+      const id = cartId ? cartId : await cartCreate.mutateAsync()
+      await cartCouponDelete.mutate(
+        {
+          cartId: id,
+          coupon: params.coupon,
+        },
+        {
+          onSuccess: optionsRef.current?.onCartCouponDeleteSuccess,
+        }
+      )
+    },
+    [cartId, cartCreate, cartCouponDelete]
+  )
+
+  /**
    * Cart Item Add Facade
    */
   const addCartItem = {
     mutate: cartItemAddMutation,
     isLoading: cartItemAdd.isLoading || cartCreate.isLoading,
+  }
+
+  /**
+   * Cart Coupon Add Facade
+   */
+  const addCartCoupon = {
+    mutate: cartCouponAddMutation,
+    isLoading: cartCouponAdd.isLoading || cartCreate.isLoading,
+  }
+
+  /**
+   * Cart Coupon Delete Facade
+   */
+  const deleteCartCoupon = {
+    mutate: cartCouponDeleteMutation,
+    isLoading: cartCouponDelete.isLoading || cartCreate.isLoading,
   }
 
   /**
@@ -278,6 +392,8 @@ export const useCart = (options?: UseCartOptions) => {
    */
   return {
     addCartItem,
+    addCartCoupon,
+    deleteCartCoupon,
     updateCartItem,
     deleteCartItem,
     cart: cartData,

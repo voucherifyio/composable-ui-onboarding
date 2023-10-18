@@ -85,6 +85,7 @@
   "action.selectCountry": "Select Country",
   "action.send": "Send",
   "action.signIn": "Sign In",
+  "action.addCoupon": "Add Coupon",
   "action.signOut": "Log Out",
   "action.signup": "Sign Up",
   "action.startShopping": "Start Shopping",
@@ -127,6 +128,7 @@
   "cart.summary.taxes": "Taxes",
   "cart.summary.title": "Order Summary",
   "cart.summary.total": "Total",
+  "cart.summary.label.coupon": "Coupon code",
 
   "checkout.title": "Checkout",
 

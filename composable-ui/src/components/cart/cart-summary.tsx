@@ -2,6 +2,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { CartData, useCart } from 'hooks'
 import { Price } from 'components/price'
+import { CouponForm } from 'components/forms/coupon-form'
 import {
   Box,
   Button,
@@ -90,7 +91,7 @@ export const CartSummary = ({
               </Flex>
             </>
           )}
-
+          <CouponForm />
           {_cartData.summary?.totalDiscountAmount && (
             <CartSummaryItem
               label={intl.formatMessage({
