@@ -168,21 +168,22 @@ export const commerceWithDiscount = (
       `[voucherify][addCoupon] Add coupon ${coupon} to cart ${cartId}`
     )
 
-    const validationResponse:
-      | false
+    console.log(
+      'xxxxxx',
+      getRedeemmablesForValidation([...cartDiscountsStorage[cartId], coupon])
+    )
+
+    const validationResponse: // it's calculated incorrectly
+    | false
       | (ValidationValidateStackableResponse & {
           inapplicable_redeemables?: StackableRedeemableResponse[]
-        }) = hasAtLeastOneRedeemable(cartId)
-      ? await voucherify.validations.validateStackable({
-          redeemables: getRedeemmablesForValidation([
-            ...cartDiscountsStorage[cartId],
-            coupon,
-          ]),
-          order: cartToVoucherifyOrder(cart),
-        })
-      : false
-
-    console.log(`[voucherify][addCoupon] valiadtion result`, validationResponse)
+        }) = await voucherify.validations.validateStackable({
+      redeemables: getRedeemmablesForValidation([
+        ...cartDiscountsStorage[cartId],
+        coupon,
+      ]),
+      order: cartToVoucherifyOrder(cart),
+    })
 
     const addedRedeembale =
       validationResponse && validationResponse.redeemables
@@ -196,7 +197,6 @@ export const commerceWithDiscount = (
       ? addedRedeembale.status === 'APPLICABLE'
       : false
 
-    console.log({ result })
     if (result) {
       cartDiscountsStorage[cartId].push(coupon)
     } else {

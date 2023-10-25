@@ -65,12 +65,13 @@ export const CouponForm = ({
         role={'form'}
         onSubmit={handleSubmit(async (data) => {
           setIsError(false)
-          setValue('coupon', '')
+
           // setError('coupon', {message: 'Could not add coupon' })
           await addCartCoupon.mutate({
             cartId: cart.id || '',
             coupon: data.coupon,
           })
+          setValue('coupon', '')
         })}
       >
         <Box
