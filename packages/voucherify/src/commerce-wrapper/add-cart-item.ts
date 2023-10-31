@@ -1,10 +1,8 @@
 import { CommerceService, CartWithDiscounts } from '@composable/types'
-import { cartToVoucherifyOrder } from '../cart-to-voucherify-order'
 import { cartWithDiscount } from '../../data/cart-with-discount'
-import { hasAtLeastOneRedeemable } from '../../data/has-at-least-one-redeemable'
 import { VoucherifyServerSide } from '@voucherify/sdk'
-import { getRedeemmablesForValidation } from '../../data/get-redeemmables-for-validation'
 import { getCartDiscounts } from '../../data/persit'
+import { validateDiscounts } from '../validate-discounts'
 
 export const addCartItemFunction =
   (
@@ -15,18 +13,14 @@ export const addCartItemFunction =
     ...props: Parameters<CommerceService['addCartItem']>
   ): Promise<CartWithDiscounts> => {
     const cart = await commerceService.addCartItem(...props)
-    if (!cart) {
-      return cart
-    }
 
-    const validationResponse = (await hasAtLeastOneRedeemable(props[0].cartId))
-      ? await voucherify.validations.validateStackable({
-          redeemables: getRedeemmablesForValidation(
-            await getCartDiscounts(props[0].cartId)
-          ),
-          order: cartToVoucherifyOrder(cart),
-        })
-      : false
+    const codes = await getCartDiscounts(props[0].cartId)
 
-    return cartWithDiscount(cart, validationResponse)
+    const validationResult = await validateDiscounts({
+      voucherify,
+      cart,
+      codes,
+    })
+
+    return cartWithDiscount(cart, validationResult)
   }

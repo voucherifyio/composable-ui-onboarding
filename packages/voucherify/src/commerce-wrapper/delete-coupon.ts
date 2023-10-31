@@ -1,10 +1,8 @@
-import { CommerceService, CartWithDiscounts } from '@composable/types'
-import { cartToVoucherifyOrder } from '../cart-to-voucherify-order'
+import { CommerceService } from '@composable/types'
 import { cartWithDiscount } from '../../data/cart-with-discount'
-import { hasAtLeastOneRedeemable } from '../../data/has-at-least-one-redeemable'
 import { VoucherifyServerSide } from '@voucherify/sdk'
-import { getRedeemmablesForValidation } from '../../data/get-redeemmables-for-validation'
-import { getCartDiscounts } from '../../data/persit'
+import { getCartDiscounts, saveCartDiscounts } from '../../data/persit'
+import { validateDiscounts } from '../validate-discounts'
 
 export const deleteCouponFunction =
   (
@@ -12,26 +10,23 @@ export const deleteCouponFunction =
     voucherify: ReturnType<typeof VoucherifyServerSide>
   ) =>
   async ({ cartId, coupon }: { cartId: string; coupon: string }) => {
-    const cartDiscounts = (await getCartDiscounts(cartId)).filter(
-      (redeemable) => redeemable !== coupon
-    )
-
     const cart = await commerceService.getCart({ cartId })
 
     if (!cart) {
       throw new Error('[voucherify][deleteCoupon] cart not found')
     }
 
-    console.log(
-      `[voucherify][deleteCoupon] Delete coupon ${coupon} from cart ${cartId}`
+    const codes = (await getCartDiscounts(cartId)).filter(
+      (redeemable) => redeemable !== coupon
     )
 
-    const validationResponse = (await hasAtLeastOneRedeemable(cartId))
-      ? await voucherify.validations.validateStackable({
-          redeemables: getRedeemmablesForValidation(cartDiscounts),
-          order: cartToVoucherifyOrder(cart),
-        })
-      : false
+    await saveCartDiscounts(cartId, codes)
 
-    return cartWithDiscount(cart, validationResponse)
+    const validationResult = await validateDiscounts({
+      voucherify,
+      cart,
+      codes,
+    })
+
+    return cartWithDiscount(cart, validationResult)
   }
