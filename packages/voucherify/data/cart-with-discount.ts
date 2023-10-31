@@ -5,7 +5,7 @@ import {
   Redeemable,
 } from '@composable/types'
 import { ValidationValidateStackableResponse } from '@voucherify/sdk'
-import { centToString, toCent } from './to-cent'
+import { centToString, toCent } from '../src/to-cent'
 
 export const cartWithDiscount = (
   cart: Cart,
