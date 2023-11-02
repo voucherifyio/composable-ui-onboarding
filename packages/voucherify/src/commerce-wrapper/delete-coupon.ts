@@ -2,7 +2,7 @@ import { CommerceService } from '@composable/types'
 import { cartWithDiscount } from '../../data/cart-with-discount'
 import { VoucherifyServerSide } from '@voucherify/sdk'
 import { getCartDiscounts, saveCartDiscounts } from '../../data/persit'
-import { validateDiscounts } from '../validate-discounts'
+import { validateCouponsAndPromotions } from '../validate-discounts'
 
 export const deleteCouponFunction =
   (
@@ -22,11 +22,12 @@ export const deleteCouponFunction =
 
     await saveCartDiscounts(cartId, codes)
 
-    const validationResult = await validateDiscounts({
-      voucherify,
-      cart,
-      codes,
-    })
+    const { validationResult, promotionsResult } =
+      await validateCouponsAndPromotions({
+        voucherify,
+        cart,
+        codes,
+      })
 
-    return cartWithDiscount(cart, validationResult)
+    return cartWithDiscount(cart, validationResult, promotionsResult)
   }

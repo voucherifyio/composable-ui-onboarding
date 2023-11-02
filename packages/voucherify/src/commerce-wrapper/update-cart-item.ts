@@ -2,7 +2,7 @@ import { CommerceService, CartWithDiscounts } from '@composable/types'
 import { cartWithDiscount } from '../../data/cart-with-discount'
 import { VoucherifyServerSide } from '@voucherify/sdk'
 import { getCartDiscounts } from '../../data/persit'
-import { validateDiscounts } from '../validate-discounts'
+import { validateCouponsAndPromotions } from '../validate-discounts'
 
 export const updateCartItemFunction =
   (
@@ -16,11 +16,12 @@ export const updateCartItemFunction =
 
     const codes = await getCartDiscounts(props[0].cartId)
 
-    const validationResult = await validateDiscounts({
-      voucherify,
-      cart,
-      codes,
-    })
+    const { validationResult, promotionsResult } =
+      await validateCouponsAndPromotions({
+        voucherify,
+        cart,
+        codes,
+      })
 
-    return cartWithDiscount(cart, validationResult)
+    return cartWithDiscount(cart, validationResult, promotionsResult)
   }

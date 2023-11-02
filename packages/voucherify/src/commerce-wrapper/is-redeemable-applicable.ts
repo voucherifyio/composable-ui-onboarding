@@ -1,8 +1,8 @@
-import { ValidationResponse } from '../validate-discounts'
+import { ValidateStackableResult } from '../validate-discounts'
 
 export const isRedeemableApplicable = (
   coupon: string,
-  validationResult: ValidationResponse
+  validationResult: ValidateStackableResult
 ): { isApplicable: boolean; error: undefined | string } => {
   let error
   const addedRedeembale =

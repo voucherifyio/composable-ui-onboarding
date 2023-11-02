@@ -108,15 +108,17 @@ export const CouponForm = ({
             borderRadius="md"
             variant="outline"
           >
-            <TagLabel>{redeemable.id}</TagLabel>
-            <TagCloseButton
-              onClick={() =>
-                deleteCartCoupon.mutate({
-                  cartId: cart.id || '',
-                  coupon: redeemable.id,
-                })
-              }
-            />
+            <TagLabel>{redeemable.label}</TagLabel>
+            {redeemable.object === 'voucher' && (
+              <TagCloseButton
+                onClick={() =>
+                  deleteCartCoupon.mutate({
+                    cartId: cart.id || '',
+                    coupon: redeemable.id,
+                  })
+                }
+              />
+            )}
           </Tag>
         ))}
       </HStack>

@@ -4,16 +4,32 @@ import {
   CartWithDiscounts,
   Redeemable,
 } from '@composable/types'
-import { ValidationValidateStackableResponse } from '@voucherify/sdk'
+import {
+  PromotionsValidateResponse,
+  ValidationValidateStackableResponse,
+} from '@voucherify/sdk'
 import { centToString, toCent } from '../src/to-cent'
 
 export const cartWithDiscount = (
   cart: Cart,
-  validationResponse: ValidationValidateStackableResponse | false
+  validationResponse: ValidationValidateStackableResponse | false,
+  promotionsResult: PromotionsValidateResponse | false
 ): CartWithDiscounts => {
   const redeemables: Redeemable[] = validationResponse
-    ? validationResponse.redeemables || []
-    : [] // todo filter onlyr equired attributes
+    ? validationResponse.redeemables?.map((redeemable) => ({
+        id: redeemable.id,
+        status: redeemable.status,
+        object: redeemable.object,
+        label:
+          redeemable.object === 'promotion_tier'
+            ? promotionsResult
+              ? promotionsResult.promotions?.find(
+                  (promotion) => promotion.id === redeemable.id
+                )?.banner
+              : redeemable.id
+            : redeemable.id,
+      })) || []
+    : []
   const items: CartItemWithDiscounts[] = cart.items.map((item) => ({
     ...item,
     cartItemType: 'CartItemWithDiscounts',

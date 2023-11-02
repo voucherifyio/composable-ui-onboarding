@@ -12,5 +12,5 @@ export const createCartFunction =
   ): Promise<CartWithDiscounts> => {
     const cart = await commerceService.createCart(...props)
 
-    return cartWithDiscount(cart, false)
+    return cartWithDiscount(cart, false, false)
   }

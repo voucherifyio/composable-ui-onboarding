@@ -34,4 +34,5 @@ export type Redeemable = {
   id: string
   status: string
   object: string
+  label?: string
 }

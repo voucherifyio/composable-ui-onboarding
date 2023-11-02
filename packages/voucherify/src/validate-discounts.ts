@@ -1,10 +1,14 @@
 import { Cart } from '@composable/types'
 import {
+  PromotionsValidateResponse,
   StackableRedeemableResponse,
   ValidationValidateStackableResponse,
   VoucherifyServerSide,
 } from '@voucherify/sdk'
-import { getRedeemmablesForValidation } from '../data/get-redeemmables-for-validation'
+import {
+  getRedeemmablesForValidation,
+  getRedeemmablesForValidationFromPromotions,
+} from '../data/get-redeemmables-for-validation'
 import { cartToVoucherifyOrder } from './cart-to-voucherify-order'
 
 type ValidateDiscountsParam = {
@@ -13,21 +17,37 @@ type ValidateDiscountsParam = {
   voucherify: ReturnType<typeof VoucherifyServerSide>
 }
 
-export type ValidationResponse =
+export type validateCouponsAndPromotionsResponse = {
+  promotionsResult: PromotionsValidateResponse
+  validationResult: ValidateStackableResult
+}
+
+export type ValidateStackableResult =
   | false
   | (ValidationValidateStackableResponse & {
       inapplicable_redeemables?: StackableRedeemableResponse[]
     })
 
-export const validateDiscounts = async (
+export const validateCouponsAndPromotions = async (
   params: ValidateDiscountsParam
-): Promise<ValidationResponse> => {
+): Promise<validateCouponsAndPromotionsResponse> => {
   const { cart, codes, voucherify } = params
-  if (!codes.length) {
-    return false
+
+  const order = cartToVoucherifyOrder(cart)
+
+  const promotionsResult = await voucherify.promotions.validate({ order })
+
+  if (!codes.length && !promotionsResult.promotions?.length) {
+    return { promotionsResult, validationResult: false }
   }
-  return voucherify.validations.validateStackable({
-    redeemables: getRedeemmablesForValidation(codes),
-    order: cartToVoucherifyOrder(cart),
+
+  const validationResult = await voucherify.validations.validateStackable({
+    redeemables: [
+      ...getRedeemmablesForValidation(codes),
+      ...getRedeemmablesForValidationFromPromotions(promotionsResult),
+    ],
+    order,
   })
+
+  return { promotionsResult, validationResult }
 }

@@ -9,7 +9,7 @@ export const cartToVoucherifyOrder = (cart: Cart): OrdersCreate => {
       quantity: item.quantity,
       product_id: item.id,
       sku_id: item.sku,
-      price: item.price,
+      price: item.price * 100,
     })),
   }
 }
