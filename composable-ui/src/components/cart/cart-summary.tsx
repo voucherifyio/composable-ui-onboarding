@@ -13,6 +13,7 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { CartSummaryItem } from '.'
+import { CartPromotions } from './cart-promotions'
 
 interface CartSummaryProps {
   rootProps?: StackProps
@@ -29,6 +30,15 @@ export const CartSummary = ({
   const { cart } = useCart()
   const intl = useIntl()
   const _cartData = cartData ?? cart
+
+  const vouchers =
+    _cartData.redeemables?.filter(
+      (redeemable) => redeemable.object === 'voucher'
+    ) || []
+  const promotions =
+    _cartData.redeemables?.filter(
+      (redeemable) => redeemable.object === 'promotion_tier'
+    ) || []
 
   return (
     <Stack spacing={{ base: '4', md: '6' }} width="full" {...rootProps}>
@@ -91,6 +101,7 @@ export const CartSummary = ({
               </Flex>
             </>
           )}
+          <CartPromotions promotions={promotions} />
           <CouponForm />
           {_cartData.summary?.totalDiscountAmount && (
             <CartSummaryItem

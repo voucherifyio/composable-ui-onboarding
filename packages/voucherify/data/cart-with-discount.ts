@@ -20,6 +20,12 @@ export const cartWithDiscount = (
         id: redeemable.id,
         status: redeemable.status,
         object: redeemable.object,
+        discount: centToString(
+          redeemable.order?.total_applied_discount_amount ||
+            redeemable.result?.discount?.amount_off ||
+            redeemable.result?.discount?.percent_off ||
+            0
+        ),
         label:
           redeemable.object === 'promotion_tier'
             ? promotionsResult

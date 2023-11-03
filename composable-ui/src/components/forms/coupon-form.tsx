@@ -1,30 +1,31 @@
 import * as yup from 'yup'
-import { useIntl, IntlShape } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { useForm } from 'react-hook-form'
-import { Alert, AlertIcon, Box, HStack } from '@chakra-ui/react'
+import {
+  Alert,
+  AlertIcon,
+  Box,
+  Flex,
+  TagLeftIcon,
+  Wrap,
+  WrapItem,
+} from '@chakra-ui/react'
 import { yupResolver } from '@hookform/resolvers/yup'
-import { useSession, signIn } from 'next-auth/react'
 import { useState } from 'react'
-import { signOut } from 'next-auth/react'
-import { IconButton } from '@chakra-ui/react'
+import { IconButton, Text } from '@chakra-ui/react'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
-import { AccountForm, AccountPage } from '../account/account-drawer'
 import { InputField } from '@composable/ui'
 import { Tag, TagLabel, TagCloseButton } from '@chakra-ui/react'
 import { useCart } from 'hooks'
-export interface LoginFormProps {
-  setAccountFormToShow?: React.Dispatch<React.SetStateAction<AccountForm>>
-  signIn?: typeof signIn
-  type?: AccountPage
-}
+import { Price } from 'components/price'
+import { CartSummaryItem } from 'components/cart'
+import { Icon } from '@chakra-ui/react'
+import { MdDiscount } from 'react-icons/md'
+import { displayValue } from '@tanstack/react-query-devtools/build/lib/utils'
 
-export const CouponForm = ({
-  signIn,
-  type = AccountPage.PAGE,
-  setAccountFormToShow,
-}: LoginFormProps) => {
+export const CouponForm = () => {
   const intl = useIntl()
-  const [isError, setIsError] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<false | string>(false)
   const {
     register,
     handleSubmit,
@@ -37,7 +38,7 @@ export const CouponForm = ({
   })
   const { cart, addCartCoupon, deleteCartCoupon } = useCart({
     onCartCouponAddError: (msg) => {
-      setError('coupon', { message: msg || 'Could not add coupon' })
+      setErrorMessage(msg || 'Could not add coupon')
     },
   })
 
@@ -53,18 +54,21 @@ export const CouponForm = ({
     },
   }
 
+  const vouchers =
+    cart.redeemables?.filter((redeemable) => redeemable.object === 'voucher') ||
+    []
+
   return (
-    <Box>
-      {isError && (
-        <Alert mt="30px" status="error" borderRadius={'6px'}>
-          <AlertIcon alignSelf={'flex-start'} />
-          asdasdasd
-        </Alert>
-      )}
+    <>
+      <CartSummaryItem
+        label={intl.formatMessage({
+          id: 'cart.summary.couponCodes',
+        })}
+      ></CartSummaryItem>
       <form
         role={'form'}
         onSubmit={handleSubmit(async (data) => {
-          setIsError(false)
+          setErrorMessage(false)
 
           // setError('coupon', {message: 'Could not add coupon' })
           await addCartCoupon.mutate({
@@ -77,19 +81,23 @@ export const CouponForm = ({
         <Box
           display={'flex'}
           flexDirection={'row'}
-          alignItems={'center'}
+          alignItems={'flex-start'}
+          justifyContent={'center'}
+          height={'60px'}
           gap={3}
         >
           <InputField
             inputProps={{
+              size: 'sm',
+              fontSize: 'sm',
               placeholder: content.input.coupon.placeholder,
               ...register('coupon'),
             }}
             error={errors.coupon}
             label={''}
           />
-
           <IconButton
+            mt={2}
             aria-label="Search database"
             icon={<ArrowForwardIcon />}
             type="submit"
@@ -97,32 +105,47 @@ export const CouponForm = ({
             variant={'outline'}
           />
         </Box>
+        {errorMessage && (
+          <Alert mt={2} status="warning" borderRadius={'6px'}>
+            <AlertIcon alignSelf={'flex-start'} />
+            {errorMessage}
+          </Alert>
+        )}
       </form>
-      <HStack spacing={4} marginTop={2}>
-        {cart.redeemables?.map((redeemable) => (
+      {vouchers.map((redeemable) => (
+        <Flex
+          key={redeemable.id}
+          justify="space-between"
+          textStyle={{ base: 'Mobile/S', md: 'Desktop/S' }}
+        >
           <Tag
-            size="sm"
-            paddingLeft={2}
+            size="md"
             paddingRight={2}
-            key={redeemable.id}
-            borderRadius="md"
+            paddingLeft={2}
+            borderRadius="sm"
             variant="outline"
+            colorScheme="whiteAlpha"
           >
+            <TagLeftIcon boxSize="12px" as={MdDiscount} />
             <TagLabel>{redeemable.label}</TagLabel>
-            {redeemable.object === 'voucher' && (
-              <TagCloseButton
-                onClick={() =>
-                  deleteCartCoupon.mutate({
-                    cartId: cart.id || '',
-                    coupon: redeemable.id,
-                  })
-                }
-              />
-            )}
+            <TagCloseButton
+              onClick={() =>
+                deleteCartCoupon.mutate({
+                  cartId: cart.id || '',
+                  coupon: redeemable.id,
+                })
+              }
+            />
           </Tag>
-        ))}
-      </HStack>
-    </Box>
+          <Box>
+            <Price
+              rootProps={{ textStyle: 'Body-S', color: 'green' }}
+              price={`-${redeemable.discount}`}
+            />
+          </Box>
+        </Flex>
+      ))}
+    </>
   )
 }
 

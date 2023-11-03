@@ -26,6 +26,8 @@ export const getCartFunction =
         cart,
         codes,
       })
-
+    console.log(
+      JSON.stringify({ cart, validationResult, promotionsResult }, null, 2)
+    )
     return cartWithDiscount(cart, validationResult, promotionsResult)
   }

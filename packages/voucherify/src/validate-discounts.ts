@@ -47,6 +47,7 @@ export const validateCouponsAndPromotions = async (
       ...getRedeemmablesForValidationFromPromotions(promotionsResult),
     ],
     order,
+    options: { expand: ['order'] },
   })
 
   return { promotionsResult, validationResult }
