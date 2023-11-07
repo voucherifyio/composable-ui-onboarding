@@ -54,7 +54,8 @@ sequenceDiagram
 ## Integrating Voucherify with Composable UI
 
 1. [Create a Voucherify account](https://app.voucherify.io/#/signup).
-2. Retrieve your API keys from your Voucherify dashboard and set the following environment variables:
+2. In Voucherify Dashbioard, [set Discount Application Rule to "Partial"](https://support.voucherify.io/article/604-stacking-rules#application-rules)
+3. Retrieve your API keys from your Voucherify dashboard and set the following environment variables:
 
 :::caution
 
