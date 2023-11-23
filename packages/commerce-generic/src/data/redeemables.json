@@ -1,0 +1,25 @@
+{
+  "redeemables": [
+    {
+      "id": "COMPOSABLE_VOUCHER1",
+      "status": "APPLICABLE",
+      "label": "5$ OFF",
+      "discount": "5",
+      "object": "voucher"
+    },
+    {
+      "id": "COMPOSABLE_PROMO",
+      "status": "APPLICABLE",
+      "label": "10$ OFF",
+      "discount": "10",
+      "object": "promotion_tier"
+    },
+    {
+      "id": "NOT_APPLICABLE_VOUCHER",
+      "status": "NOT_APPLICABLE",
+      "label": "15$ OFF",
+      "discount": "15",
+      "object": "voucher"
+    }
+  ]
+}

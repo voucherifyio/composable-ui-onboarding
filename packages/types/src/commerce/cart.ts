@@ -1,20 +1,47 @@
 export interface Cart {
   id: string
   items: CartItem[]
-  couponApplied?: Coupon
+  // couponApplied?: Coupon
   summary: {
     subtotalPrice?: string
     taxes?: string
     totalPrice?: string
     shipping?: string
   }
+  redeemables?: Discount
 }
 
-interface Coupon {
-  id: string
-  code: string
-  discount: string
+export type Discount = {
+  promotions?: Promotion[]
+  vouchers?: Voucher[]
 }
+
+export interface Promotion {
+  id: string
+  status: string
+  label?: string
+  discount: string
+  object: 'promotion_tier'
+}
+
+export interface Voucher {
+  id: string
+  status: string
+  label?: string
+  discount: string
+  object: 'voucher'
+}
+
+export interface AddCouponResponse {
+  cart: Cart
+  errorMsg: string
+}
+
+// interface Coupon {
+//   id: string
+//   code: string
+//   discount: string
+// }
 
 export interface CartItem {
   id: string

@@ -7,6 +7,7 @@ import {
   User,
   Product,
   SitemapField,
+  AddCouponResponse,
 } from './index'
 
 export interface CommerceService {
@@ -32,6 +33,11 @@ export interface CommerceService {
     productId: string
     quantity: number
   }): Promise<Cart>
+
+  addCoupon(params: {
+    cartId: string
+    coupon: string
+  }): Promise<AddCouponResponse>
 
   /**
    * Catalog methods

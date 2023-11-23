@@ -9,7 +9,7 @@
 import storage from 'node-persist'
 import path from 'path'
 import os from 'os'
-import { Order, Cart } from '@composable/types'
+import { Order, Cart, Discount, Promotion, Voucher } from '@composable/types'
 
 const storageFolderPath = path.join(os.tmpdir(), 'composable-ui-storage')
 
@@ -37,5 +37,22 @@ export const saveCart = async (cart: Cart) => {
 
 export const deleteCart = async (cartId: string) => {
   const result = await storage.del(`cart-${cartId}`)
+  return result.removed
+}
+
+export const getCartDiscounts = async (cartId: string): Promise<Discount[]> => {
+  return (await storage.getItem(`cart-discounts-${cartId}`)) || []
+}
+
+export const saveCartDiscounts = async (
+  cartId: string,
+  discounts: Promotion[] | Voucher[]
+) => {
+  await storage.setItem(`cart-discounts-${cartId}`, discounts)
+  return discounts
+}
+
+export const deleteCartDiscounts = async (cartId: string) => {
+  const result = await storage.del(`cart-discounts-${cartId}`)
   return result.removed
 }
