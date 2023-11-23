@@ -1,7 +1,8 @@
 import { CommerceService } from '@composable/types'
 import { getCart, saveCart } from '../../data/mock-storage'
 
-import { calculateCartSummary } from '../../data/generate-cart-data'
+import { calculateCartSummaryBeforeDiscount } from '../../data/generate-cart-data'
+import { updateCartDiscount } from './discount'
 
 export const updateCartItem: CommerceService['updateCartItem'] = async ({
   cartId,
@@ -26,7 +27,9 @@ export const updateCartItem: CommerceService['updateCartItem'] = async ({
 
   cartItem.quantity = quantity
 
-  cart.summary = calculateCartSummary(cart.items)
+  cart.summary = calculateCartSummaryBeforeDiscount(cart.items)
 
-  return saveCart(cart)
+  const cartWithDiscount = await updateCartDiscount(cart)
+
+  return saveCart(cartWithDiscount)
 }

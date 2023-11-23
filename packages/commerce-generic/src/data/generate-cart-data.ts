@@ -9,6 +9,8 @@ const findProductById = (id: string) => {
 export const generateEmptyCart = (cartId?: string): Cart => ({
   id: cartId || randomUUID(),
   items: [],
+  promotionsApplied: [],
+  vouchersApplied: [],
   summary: {},
 })
 
@@ -28,7 +30,9 @@ export const generateCartItem = (productId: string, quantity: number) => {
   }
 }
 
-export const calculateCartSummary = (cartItems: CartItem[]) => {
+export const calculateCartSummaryBeforeDiscount = (
+  cartItems: CartItem[]
+): Cart['summary'] => {
   const subtotal = cartItems.reduce((_subtotal, item) => {
     return _subtotal + item.price * (item.quantity ?? 1)
   }, 0)
@@ -38,6 +42,8 @@ export const calculateCartSummary = (cartItems: CartItem[]) => {
   return {
     subtotalPrice: subtotal.toFixed(2),
     taxes: taxes.toFixed(2),
+    priceBeforeDiscount: total.toFixed(2),
+    totalDiscountAmount: '0',
     totalPrice: total.toFixed(2),
     shipping: 'Free',
   }
