@@ -37,7 +37,6 @@ const validateVouchers = async (cart: Cart, vouchers: Discount[]) => {
       redeemable.object === 'voucher' &&
       redeemable.status === 'APPLICABLE'
   )
-  console.log('applicableVouchers', applicableVouchers)
   return applicableVouchers
 }
 
@@ -48,6 +47,5 @@ const validatePromotions = async (cart: Cart, promotions: Discount[]) => {
       redeemable.object === 'promotion_tier' &&
       redeemable.status === 'APPLICABLE'
   )
-  console.log('applicablePromotions', applicablePromotions)
   return applicablePromotions
 }

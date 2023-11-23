@@ -46,8 +46,6 @@ export const addCartItem: CommerceService['addCartItem'] = async ({
 
   const discounts = await getCartDiscounts(cartId)
 
-  console.log('discounts', discounts)
-
   cart.redeemables = await validateDiscounts({ cart, discounts })
 
   return saveCart(cart)
