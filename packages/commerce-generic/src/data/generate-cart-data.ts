@@ -30,7 +30,7 @@ export const generateCartItem = (productId: string, quantity: number) => {
   }
 }
 
-export const calculateCartSummaryBeforeDiscount = (
+export const calculateCartSummary = (
   cartItems: CartItem[]
 ): Cart['summary'] => {
   const subtotal = cartItems.reduce((_subtotal, item) => {
@@ -42,8 +42,6 @@ export const calculateCartSummaryBeforeDiscount = (
   return {
     subtotalPrice: subtotal.toFixed(2),
     taxes: taxes.toFixed(2),
-    priceBeforeDiscount: total.toFixed(2),
-    totalDiscountAmount: '0',
     totalPrice: total.toFixed(2),
     shipping: 'Free',
   }
