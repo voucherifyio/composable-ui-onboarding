@@ -118,6 +118,7 @@
   "cart.summary.estimatedTotal": "Estimated Total",
   "cart.summary.priceBeforeDiscount": "Order Total",
   "cart.summary.promotions": "Promotions",
+  "cart.summary.vouchers": "Vouchers",
   "cart.summary.totalDiscountAmount": "All discounts",
   "cart.summary.orderTotal": "Grand Total",
   "cart.summary.shipping.complimentaryDelivery": "Complimentary Delivery",
@@ -128,6 +129,7 @@
   "cart.summary.taxes": "Taxes",
   "cart.summary.title": "Order Summary",
   "cart.summary.total": "Total",
+  "cart.summary.label.voucher": "Voucher code",
 
   "checkout.title": "Checkout",
 

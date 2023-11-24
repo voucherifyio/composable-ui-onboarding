@@ -22,6 +22,7 @@ import { CartDrawerFooter } from './cart-drawer-footer'
 import { CartDrawerSummary } from './cart-drawer-summary'
 import { CartDrawerEmptyState } from './cart-drawer-empty-state'
 import { HorizontalProductCard } from '@composable/ui'
+import { CartVouchers } from '../cart-vouchers'
 
 export const CartDrawer = () => {
   const intl = useIntl()
@@ -147,6 +148,9 @@ export const CartDrawer = () => {
                     </Box>
                   )
                 })}
+              </Stack>
+              <Stack bg="shading.100" p={'0.7rem 1.5rem'} mb={'-5'}>
+                <CartVouchers />
               </Stack>
               <CartDrawerSummary />
             </Stack>
