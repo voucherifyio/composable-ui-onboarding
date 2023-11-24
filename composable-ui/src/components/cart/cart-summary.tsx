@@ -12,6 +12,8 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { CartSummaryItem } from '.'
+import { CartPromotions } from './cart-promotions'
+import { VoucherForm } from '../forms/voucher-form'
 
 interface CartSummaryProps {
   rootProps?: StackProps
@@ -28,6 +30,7 @@ export const CartSummary = ({
   const { cart } = useCart()
   const intl = useIntl()
   const _cartData = cartData ?? cart
+  const promotions = _cartData.promotionsApplied || []
 
   return (
     <Stack spacing={{ base: '4', md: '6' }} width="full" {...rootProps}>
@@ -70,6 +73,39 @@ export const CartSummary = ({
               <Price
                 rootProps={{ textStyle: 'Body-S' }}
                 price={_cartData.summary.taxes}
+              />
+            </CartSummaryItem>
+          )}
+
+          {_cartData.summary?.priceBeforeDiscount && (
+            <>
+              <Divider />
+              <Flex
+                justify="space-between"
+                textStyle={{ base: 'Mobile/S', md: 'Desktop/S' }}
+              >
+                <Text>
+                  {intl.formatMessage({
+                    id: 'cart.summary.priceBeforeDiscount',
+                  })}
+                </Text>
+                <Box>
+                  <Price price={_cartData.summary.priceBeforeDiscount} />
+                </Box>
+              </Flex>
+            </>
+          )}
+          <CartPromotions promotions={promotions} />
+          <VoucherForm />
+          {_cartData.summary?.totalDiscountAmount && (
+            <CartSummaryItem
+              label={intl.formatMessage({
+                id: 'cart.summary.totalDiscountAmount',
+              })}
+            >
+              <Price
+                rootProps={{ textStyle: 'Body-S', color: 'green' }}
+                price={`-${_cartData.summary.totalDiscountAmount}`}
               />
             </CartSummaryItem>
           )}
