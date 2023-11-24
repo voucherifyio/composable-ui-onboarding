@@ -11,9 +11,7 @@ import {
   StackProps,
   Text,
 } from '@chakra-ui/react'
-import { CartSummaryItem } from '.'
-import { CartPromotions } from './cart-promotions'
-import { VoucherForm } from '../forms/voucher-form'
+import { CartSummaryItem, CartPromotions, CartVouchers } from '.'
 
 interface CartSummaryProps {
   rootProps?: StackProps
@@ -96,7 +94,7 @@ export const CartSummary = ({
             </>
           )}
           <CartPromotions promotions={promotions} />
-          <VoucherForm />
+          <CartVouchers />
           {_cartData.summary?.totalDiscountAmount && (
             <CartSummaryItem
               label={intl.formatMessage({

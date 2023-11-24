@@ -8,7 +8,7 @@ interface OrderTotalsProps {
   tax: string
   discount?: string
   priceBeforeDiscountTitle?: string
-  priceBeforeDiscount?: string
+  priceBeforeDiscount: string
   totalDiscountAmountTitle?: string
   totalDiscountAmount?: string
   totalTitle?: string

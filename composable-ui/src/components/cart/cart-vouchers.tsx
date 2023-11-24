@@ -1,6 +1,6 @@
 import { CartSummaryItem } from '../cart'
 import { useIntl } from 'react-intl'
-import { VoucherForm } from '../forms/voucher-form'
+import { VoucherForm } from '../forms'
 import {
   Box,
   Flex,
@@ -12,7 +12,6 @@ import {
 import { Price } from '../price'
 import { MdDiscount } from 'react-icons/md'
 import { useCart } from '../../hooks'
-import { useState } from 'react'
 
 export const CartVouchers = () => {
   const intl = useIntl()

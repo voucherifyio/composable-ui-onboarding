@@ -22,8 +22,8 @@ import { CartDrawerFooter } from './cart-drawer-footer'
 import { CartDrawerSummary } from './cart-drawer-summary'
 import { CartDrawerEmptyState } from './cart-drawer-empty-state'
 import { HorizontalProductCard } from '@composable/ui'
-import { CartVouchers } from '../cart-vouchers'
-import { CartPromotions } from '../cart-promotions'
+import { CartVouchers } from '../.'
+import { CartPromotions } from '../.'
 
 export const CartDrawer = () => {
   const intl = useIntl()
