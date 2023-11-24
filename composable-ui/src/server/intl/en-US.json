@@ -94,6 +94,7 @@
   "action.updatePassword": "Update Password",
   "action.updateSubscription": "Update Subscription",
   "action.viewCart": "View Cart",
+  "action.addVoucher": "Add Voucher",
 
   "app.failure": "Whoops, something went wrong! If the problem persists, please contact us.",
   "app.loading": "Loading...",

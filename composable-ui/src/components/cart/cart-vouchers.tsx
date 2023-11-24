@@ -17,15 +17,11 @@ import { useState } from 'react'
 export const CartVouchers = () => {
   const intl = useIntl()
 
-  const [errorMessage, setErrorMessage] = useState<string>('')
-
-  const { cart, deleteCartVoucher } = useCart({
-    onCartVoucherAddError: (message) => {
-      setErrorMessage(message || 'Could not add voucher')
-    },
-  })
+  const { cart, deleteCartVoucher } = useCart()
 
   const vouchers = cart.vouchersApplied
+
+  console.log('vouchers', vouchers)
 
   return (
     <>

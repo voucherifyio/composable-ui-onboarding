@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useCart } from '../../hooks'
+import { useState } from 'react'
 
 export const VoucherForm = () => {
   const intl = useIntl()
@@ -13,13 +14,20 @@ export const VoucherForm = () => {
     register,
     handleSubmit,
     setValue,
+    setError,
     formState: { errors },
   } = useForm<{ voucher: string }>({
     resolver: yupResolver(voucherFormSchema()),
     mode: 'all',
   })
 
-  const { cart, addCartVoucher } = useCart()
+  const [errorMessage, setErrorMessage] = useState<string>('')
+
+  const { cart, addCartVoucher } = useCart({
+    onCartVoucherAddError: (message) => {
+      setErrorMessage(message || 'Could not add voucher')
+    },
+  })
 
   const content = {
     title: intl.formatMessage({ id: 'cart.summary.vouchers' }),
@@ -30,7 +38,7 @@ export const VoucherForm = () => {
       },
     },
     button: {
-      login: intl.formatMessage({ id: 'action.addCoupon' }),
+      login: intl.formatMessage({ id: 'action.addVoucher' }),
     },
   }
   return (
@@ -38,8 +46,11 @@ export const VoucherForm = () => {
       role={'form'}
       aria-label={content.title}
       onSubmit={handleSubmit(async (data) => {
-        // setErrorMessage('')
-        // setError('coupon', {message: 'Could not add coupon' })
+        setErrorMessage('')
+        if (!data.voucher) {
+          setError('voucher', { message: 'This field cannot be empty.' })
+          return
+        }
         await addCartVoucher.mutate({
           cartId: cart.id || '',
           code: data.voucher,
@@ -52,7 +63,7 @@ export const VoucherForm = () => {
         flexDirection={'row'}
         alignItems={'flex-start'}
         justifyContent={'center'}
-        height={'3em'}
+        height={'3.7em'}
         gap={3}
       >
         <InputField
@@ -74,18 +85,19 @@ export const VoucherForm = () => {
           variant={'outline'}
         />
       </Box>
-      {/*{errorMessage && (*/}
-      {/*  <Alert*/}
-      {/*    mt={1}*/}
-      {/*    status="warning"*/}
-      {/*    borderRadius={'6px'}*/}
-      {/*    p={'0.4rem'}*/}
-      {/*    fontSize={'15px'}*/}
-      {/*  >*/}
-      {/*    <AlertIcon alignSelf={'flex-start'} />*/}
-      {/*    {errorMessage}*/}
-      {/*  </Alert>*/}
-      {/*)}*/}
+      {errorMessage && (
+        <Alert
+          mt={1}
+          status="warning"
+          borderRadius={'6px'}
+          p={'0.4rem'}
+          m={'0'}
+          fontSize={'14px'}
+        >
+          <AlertIcon alignSelf={'flex-start'} />
+          {errorMessage}
+        </Alert>
+      )}
     </form>
   )
 }
