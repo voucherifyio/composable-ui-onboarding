@@ -101,8 +101,22 @@ export const OrderSummary = ({
             parseFloat(_cart?.summary?.taxes ?? '0'),
             currencyFormatConfig
           )}
+          priceBeforeDiscountTitle={intl.formatMessage({
+            id: 'cart.summary.priceBeforeDiscount',
+          })}
+          priceBeforeDiscount={intl.formatNumber(
+            parseFloat(_cart?.summary?.priceBeforeDiscount ?? '0'),
+            currencyFormatConfig
+          )}
+          totalDiscountAmountTitle={intl.formatMessage({
+            id: 'cart.summary.totalDiscountAmount',
+          })}
+          totalDiscountAmount={intl.formatNumber(
+            parseFloat(_cart?.summary?.totalDiscountAmount ?? '0'),
+            currencyFormatConfig
+          )}
           totalTitle={intl.formatMessage({
-            id: 'checkout.orderSummary.orderTotal',
+            id: 'cart.summary.orderTotal',
           })}
           total={intl.formatNumber(
             parseFloat(_cart?.summary?.totalPrice ?? '0'),
