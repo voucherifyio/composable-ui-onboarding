@@ -116,7 +116,10 @@
   "cart.item.totalPrice": "Total Price",
 
   "cart.summary.estimatedTotal": "Estimated Total",
-  "cart.summary.orderTotal": "Order Total",
+  "cart.summary.priceBeforeDiscount": "Order Total",
+  "cart.summary.promotions": "Promotions",
+  "cart.summary.totalDiscountAmount": "All discounts",
+  "cart.summary.orderTotal": "Grand Total",
   "cart.summary.shipping.complimentaryDelivery": "Complimentary Delivery",
   "cart.summary.shipping.free": "Free",
   "cart.summary.shipping": "Complimentary Delivery",
