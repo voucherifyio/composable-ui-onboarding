@@ -104,6 +104,6 @@ export const VoucherForm = () => {
 
 const voucherFormSchema = () => {
   return yup.object().shape({
-    coupon: yup.string(),
+    voucher: yup.string(),
   })
 }
