@@ -23,6 +23,7 @@ import { CartDrawerSummary } from './cart-drawer-summary'
 import { CartDrawerEmptyState } from './cart-drawer-empty-state'
 import { HorizontalProductCard } from '@composable/ui'
 import { CartVouchers } from '../cart-vouchers'
+import { CartPromotions } from '../cart-promotions'
 
 export const CartDrawer = () => {
   const intl = useIntl()
@@ -38,6 +39,8 @@ export const CartDrawer = () => {
       })
     },
   })
+
+  const promotions = cart.promotionsApplied || []
 
   const title = intl.formatMessage(
     { id: 'cart.drawer.titleCount' },
@@ -149,6 +152,11 @@ export const CartDrawer = () => {
                   )
                 })}
               </Stack>
+              {promotions.length > 0 && (
+                <Stack bg="shading.100" p={'0.7rem 1.5rem'} mb={'-5'}>
+                  <CartPromotions promotions={promotions} />
+                </Stack>
+              )}
               <Stack bg="shading.100" p={'0.7rem 1.5rem'} mb={'-5'}>
                 <CartVouchers />
               </Stack>

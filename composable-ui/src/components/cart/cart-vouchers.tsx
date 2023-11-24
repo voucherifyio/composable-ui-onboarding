@@ -21,8 +21,6 @@ export const CartVouchers = () => {
 
   const vouchers = cart.vouchersApplied
 
-  console.log('vouchers', vouchers)
-
   return (
     <>
       <CartSummaryItem
