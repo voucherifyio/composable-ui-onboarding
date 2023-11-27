@@ -42,7 +42,7 @@ export const calculateCartSummary = (
   return {
     subtotalPrice: subtotal.toFixed(2),
     taxes: taxes.toFixed(2),
-    totalPrice: total.toFixed(2),
+    priceBeforeDiscount: total.toFixed(2),
     shipping: 'Free',
   }
 }
