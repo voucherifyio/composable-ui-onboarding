@@ -37,6 +37,13 @@ export const addVoucher = async (
   cart: Cart,
   code: string
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
+  if (cart.vouchersApplied?.some((voucher) => voucher.code === code)) {
+    return {
+      cart,
+      success: false,
+      errorMessage: 'Voucher already applied',
+    }
+  }
   const voucher = vouchersAvailable.find((voucher) => voucher.code === code)
   if (!voucher) {
     return {
