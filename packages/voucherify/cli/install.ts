@@ -49,11 +49,34 @@ const filePaths = [
   '../../commerce-generic/src/services/cart/update-cart-item.ts',
   '../../commerce-generic/src/services/cart/add-voucher.ts',
 ]
+const filePathAddVoucher = [
+  '../../commerce-generic/src/services/cart/add-voucher.ts',
+]
+const filePathDeleteVoucher = [
+  '../../commerce-generic/src/services/cart/delete-voucher.ts',
+]
 const searchPhrase = "import { updateCartDiscount } from './discount'"
 const replacePhrase =
   "import { updateCartDiscount } from '@composable/voucherify'"
+const searchPhraseDeleteVoucher =
+  "import { deleteVoucherFromCart } from './discount'"
+const replacePhraseDeleteVoucher =
+  "import { deleteVoucherFromCart } from '@composable/voucherify'"
+const searchPhraseAddVoucher = "import { addVoucherToCart } from './discount'"
+const replacePhraseAddVoucher =
+  "import { deleteVoucherFromCart } from '@composable/voucherify'"
 
 processFiles(filePaths, searchPhrase, replacePhrase)
+processFiles(
+  filePathDeleteVoucher,
+  searchPhraseDeleteVoucher,
+  replacePhraseDeleteVoucher
+)
+processFiles(
+  filePathAddVoucher,
+  searchPhraseAddVoucher,
+  replacePhraseAddVoucher
+)
 
 async function updatePackageJson(
   packageJsonPath: string,

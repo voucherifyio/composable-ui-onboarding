@@ -1,6 +1,6 @@
 import { CommerceService } from '@composable/types'
 import { getCart as getCartFromStorage } from '../../data/mock-storage'
-import { addVoucher as addVoucherToCart } from './discount'
+import { addVoucherToCart } from './discount'
 
 export const addVoucher: CommerceService['addVoucher'] = async ({
   cartId,
