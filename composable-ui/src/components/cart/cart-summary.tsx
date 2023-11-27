@@ -75,25 +75,6 @@ export const CartSummary = ({
               />
             </CartSummaryItem>
           )}
-
-          {_cartData.summary?.priceBeforeDiscount && (
-            <>
-              <Divider />
-              <Flex
-                justify="space-between"
-                textStyle={{ base: 'Mobile/S', md: 'Desktop/S' }}
-              >
-                <Text>
-                  {intl.formatMessage({
-                    id: 'cart.summary.priceBeforeDiscount',
-                  })}
-                </Text>
-                <Box>
-                  <Price price={_cartData.summary.priceBeforeDiscount} />
-                </Box>
-              </Flex>
-            </>
-          )}
           <Divider m={'2px 0'} />
           <CartPromotions promotions={promotions} />
           <Divider m={'2px 0'} />
@@ -106,7 +87,7 @@ export const CartSummary = ({
               })}
             >
               <Price
-                rootProps={{ textStyle: 'Body-S', color: 'green' }}
+                rootProps={{ textStyle: 'Body-S' }}
                 price={`${_cartData.summary.priceBeforeDiscount}`}
               />
             </CartSummaryItem>

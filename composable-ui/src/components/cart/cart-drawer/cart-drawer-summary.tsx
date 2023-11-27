@@ -15,7 +15,6 @@ export const CartDrawerSummary = () => {
   return (
     <Box>
       <Divider m={'10px 0'} />
-
       {cart.summary?.subtotalPrice && (
         <CartDrawerSummaryItem
           label={intl.formatMessage({ id: 'cart.summary.subtotal' })}
@@ -67,7 +66,7 @@ export const CartDrawerSummary = () => {
         >
           <Box>
             <Price
-              rootProps={{ textStyle: 'Desktop/XS' }}
+              rootProps={{ textStyle: 'Body-XS' }}
               price={cart.summary.priceBeforeDiscount}
             />
           </Box>

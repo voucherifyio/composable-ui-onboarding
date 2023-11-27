@@ -37,6 +37,10 @@ export const OrderTotals = ({
           value={subtotal}
         />
         <CartSummaryItem
+          label={intl.formatMessage({ id: 'cart.summary.tax' })}
+          value={tax}
+        />
+        <CartSummaryItem
           label={
             deliveryTitle ||
             intl.formatMessage({
@@ -44,10 +48,6 @@ export const OrderTotals = ({
             })
           }
           value={delivery}
-        />
-        <CartSummaryItem
-          label={intl.formatMessage({ id: 'cart.summary.tax' })}
-          value={tax}
         />
         <Divider />
         <CartSummaryItem
