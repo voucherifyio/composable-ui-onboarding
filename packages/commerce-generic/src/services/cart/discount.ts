@@ -2,7 +2,7 @@ import { Cart, Voucher, Promotion } from '@composable/types'
 import { saveCart } from '../../data/mock-storage'
 
 const examplePromotion: Promotion = {
-  id: 'porm_1',
+  id: 'prom_1',
   label: 'Black Friday 2024 - 10$',
   discountAmount: '10',
 }

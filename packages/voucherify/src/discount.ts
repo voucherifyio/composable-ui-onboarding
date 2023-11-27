@@ -1,4 +1,4 @@
-import { Cart, Promotion } from '@composable/types'
+import { Cart } from '@composable/types'
 import { validateCouponsAndPromotions } from './validate-discounts'
 import { VoucherifyServerSide } from '@voucherify/sdk'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
@@ -99,18 +99,22 @@ export const updateCartDiscount = async (cart: Cart): Promise<Cart> => {
   await saveCart(updatedCart)
 
   const voucherDiscountsInCents =
-    cart.vouchersApplied?.reduce((sum, voucher) => {
+    updatedCart.vouchersApplied?.reduce((sum, voucher) => {
       return sum + toCent(voucher.discountAmount)
     }, 0) || 0
+
   const promotionDiscountsInCents =
-    cart.promotionsApplied?.reduce((sum, voucher) => {
+    updatedCart.promotionsApplied?.reduce((sum, voucher) => {
       return sum + toCent(voucher.discountAmount)
     }, 0) || 0
+
   const totalDiscountAmountInCents =
     promotionDiscountsInCents + voucherDiscountsInCents
+
   const totalPrice = centToString(
     toCent(cart.summary.priceBeforeDiscount) - totalDiscountAmountInCents
   )
+
   return {
     ...updatedCart,
     summary: {
