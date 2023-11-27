@@ -1,5 +1,6 @@
 import { CommerceService } from '@composable/types'
 import { getCart as getCartFromStorage } from '../../data/mock-storage'
+import { updateCartDiscount } from './discount'
 
 export const getCart: CommerceService['getCart'] = async ({ cartId }) => {
   if (!cartId) {
@@ -8,5 +9,11 @@ export const getCart: CommerceService['getCart'] = async ({ cartId }) => {
 
   const cart = await getCartFromStorage(cartId)
 
-  return cart || null
+  if (!cart) {
+    return null
+  }
+
+  const cartWithDiscount = await updateCartDiscount(cart)
+
+  return cartWithDiscount || null
 }

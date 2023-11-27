@@ -44,10 +44,9 @@ async function processFiles(
 const filePaths = [
   '../../commerce-generic/src/services/cart/add-cart-item.ts',
   '../../commerce-generic/src/services/cart/delete-cart-item.ts',
-  '../../commerce-generic/src/services/cart/delete-voucher.ts',
   '../../commerce-generic/src/services/cart/discount.ts',
   '../../commerce-generic/src/services/cart/update-cart-item.ts',
-  '../../commerce-generic/src/services/cart/add-voucher.ts',
+  '../../commerce-generic/src/services/cart/get-cart.ts',
 ]
 const filePathAddVoucher = [
   '../../commerce-generic/src/services/cart/add-voucher.ts',
