@@ -1,15 +1,26 @@
-import { Cart, Voucher, Promotion } from '@composable/types'
+import { Cart, Promotion } from '@composable/types'
+import { validateCouponsAndPromotions } from './validate-discounts'
+import { VoucherifyServerSide } from '@voucherify/sdk'
+import { isRedeemableApplicable } from './is-redeemable-applicable'
+import { saveCart } from '../../commerce-generic/src/data/mock-storage'
+import { cartWithDiscount } from '../data/cart-with-discount'
+import { centToString, toCent } from './to-cent'
 
-const examplePromotion: Promotion = {
-  id: 'porm_11',
-  label: 'Black Friday 2024 - 10$',
-  discountAmount: '10',
+if (
+  !process.env.VOUCHERIFY_APPLICATION_ID ||
+  !process.env.VOUCHERIFY_SECRET_KEY ||
+  !process.env.VOUCHERIFY_API_URL
+) {
+  throw new Error('[voucherify] Missing configuration')
 }
 
-const vouchersAvailable: Voucher[] = [
-  { code: '5$OFF1', label: 'Five bucks off in winter', discountAmount: '5' },
-  { code: '15$OFF1', label: '15 bucks off in winter', discountAmount: '15' },
-]
+const voucherify = VoucherifyServerSide({
+  applicationId: process.env.VOUCHERIFY_APPLICATION_ID,
+  secretKey: process.env.VOUCHERIFY_SECRET_KEY,
+  exposeErrorCause: true,
+  apiUrl: process.env.VOUCHERIFY_API_URL,
+  channel: 'ComposableUI',
+})
 
 export const deleteVoucherFromCart = async (
   cart: Cart,
@@ -17,13 +28,26 @@ export const deleteVoucherFromCart = async (
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
   const success = true
   const errorMessage = undefined
-  const updatedCart = await updateCartDiscount({
+  const cartAfterDeletion: Cart = {
     ...cart,
-    vouchersApplied: [
-      ...(cart.vouchersApplied?.filter((voucher) => voucher.code !== code) ||
-        []),
-    ],
-  })
+    vouchersApplied: cart.vouchersApplied?.filter(
+      (voucher) => voucher.code !== code
+    ),
+  }
+  const { validationResult, promotionsResult } =
+    await validateCouponsAndPromotions({
+      cart: cartAfterDeletion,
+      voucherify,
+    })
+
+  const updatedCart = cartWithDiscount(
+    cartAfterDeletion,
+    validationResult,
+    promotionsResult
+  )
+
+  await updateCartDiscount(updatedCart)
+
   return {
     cart: updatedCart,
     success,
@@ -35,60 +59,64 @@ export const addVoucherToCart = async (
   cart: Cart,
   code: string
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
-  const voucher = vouchersAvailable.find((voucher) => voucher.code === code)
-  if (!voucher) {
-    return {
+  const { validationResult, promotionsResult } =
+    await validateCouponsAndPromotions({
       cart,
-      success: false,
-      errorMessage: 'Voucher not found',
+      code,
+      voucherify,
+    })
+
+  const { isApplicable, error } = isRedeemableApplicable(code, validationResult)
+
+  if (isApplicable) {
+    const updatedCart = cartWithDiscount(
+      cart,
+      validationResult,
+      promotionsResult
+    )
+    await saveCart(updatedCart)
+    return {
+      cart: updatedCart,
+      success: isApplicable,
+      errorMessage: error,
     }
   }
-  const success = true
-  const errorMessage = undefined
-  const updatedCart = await updateCartDiscount({
-    ...cart,
-    vouchersApplied: [...(cart.vouchersApplied || []), voucher],
-  })
+
   return {
-    cart: updatedCart,
-    success,
-    errorMessage,
+    cart,
+    success: false,
+    errorMessage: 'Voucher not applicable',
   }
 }
 
 export const updateCartDiscount = async (cart: Cart): Promise<Cart> => {
+  const { validationResult, promotionsResult } =
+    await validateCouponsAndPromotions({
+      cart,
+      voucherify,
+    })
+  const updatedCart = cartWithDiscount(cart, validationResult, promotionsResult)
+  await saveCart(updatedCart)
+
   const voucherDiscountsInCents =
     cart.vouchersApplied?.reduce((sum, voucher) => {
       return sum + toCent(voucher.discountAmount)
     }, 0) || 0
+  const promotionDiscountsInCents =
+    cart.promotionsApplied?.reduce((sum, voucher) => {
+      return sum + toCent(voucher.discountAmount)
+    }, 0) || 0
   const totalDiscountAmountInCents =
-    toCent(examplePromotion.discountAmount) + voucherDiscountsInCents
+    promotionDiscountsInCents + voucherDiscountsInCents
   const totalPrice = centToString(
     toCent(cart.summary.priceBeforeDiscount) - totalDiscountAmountInCents
   )
   return {
-    ...cart,
-    promotionsApplied: [{ ...examplePromotion }],
-    vouchersApplied: cart.vouchersApplied,
+    ...updatedCart,
     summary: {
       ...cart.summary,
       totalDiscountAmount: centToString(totalDiscountAmountInCents),
       totalPrice,
     },
   }
-}
-
-export const toCent = (amount: string | undefined | null): number => {
-  if (!amount) {
-    return 0
-  }
-
-  return Math.round(parseFloat(amount) * 100)
-}
-
-export const centToString = (amount: number | null | undefined) => {
-  if (!amount) {
-    return ''
-  }
-  return Number(amount / 100).toString()
 }
