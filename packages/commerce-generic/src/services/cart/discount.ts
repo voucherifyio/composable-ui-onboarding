@@ -1,4 +1,5 @@
 import { Cart, Voucher, Promotion } from '@composable/types'
+import { saveCart } from '../../data/mock-storage'
 
 const examplePromotion: Promotion = {
   id: 'porm_1',
@@ -24,6 +25,7 @@ export const deleteVoucher = async (
         []),
     ],
   })
+  await saveCart(updatedCart)
   return {
     cart: updatedCart,
     success,
@@ -49,6 +51,7 @@ export const addVoucher = async (
     ...cart,
     vouchersApplied: [...(cart.vouchersApplied || []), voucher],
   })
+  await saveCart(updatedCart)
   return {
     cart: updatedCart,
     success,
