@@ -48,7 +48,7 @@ export const CartDrawerSummary = () => {
 
       {cart.summary?.priceBeforeDiscount && (
         <CartDrawerSummaryItem
-          label={intl.formatMessage({ id: 'cart.summary.orderTotal' })}
+          label={intl.formatMessage({ id: 'cart.summary.priceBeforeDiscount' })}
         >
           <Box>
             <Price
@@ -85,9 +85,7 @@ export const CartDrawerSummary = () => {
             justify="space-between"
             textStyle={{ base: 'Mobile/S', md: 'Desktop/S' }}
           >
-            <Text>
-              {intl.formatMessage({ id: 'cart.summary.priceBeforeDiscount' })}
-            </Text>
+            <Text>{intl.formatMessage({ id: 'cart.summary.orderTotal' })}</Text>
             <Box>
               <Price
                 rootProps={{ textStyle: 'Desktop/S' }}

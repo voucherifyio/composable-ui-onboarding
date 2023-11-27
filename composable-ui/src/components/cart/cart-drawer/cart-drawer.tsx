@@ -17,12 +17,11 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { APP_CONFIG } from '../../../utils/constants'
-import { CartLoadingState } from '../.'
+import { CartLoadingState, CartVouchers } from '../.'
 import { CartDrawerFooter } from './cart-drawer-footer'
 import { CartDrawerSummary } from './cart-drawer-summary'
 import { CartDrawerEmptyState } from './cart-drawer-empty-state'
 import { HorizontalProductCard } from '@composable/ui'
-import { CartVouchers } from '../.'
 import { CartPromotions } from '../.'
 
 export const CartDrawer = () => {

@@ -95,6 +95,18 @@ export const CartSummary = ({
           )}
           <CartPromotions promotions={promotions} />
           <CartVouchers />
+          {_cartData.summary?.priceBeforeDiscount && (
+            <CartSummaryItem
+              label={intl.formatMessage({
+                id: 'cart.summary.priceBeforeDiscount',
+              })}
+            >
+              <Price
+                rootProps={{ textStyle: 'Body-S', color: 'green' }}
+                price={`${_cartData.summary.priceBeforeDiscount}`}
+              />
+            </CartSummaryItem>
+          )}
           {_cartData.summary?.totalDiscountAmount && (
             <CartSummaryItem
               label={intl.formatMessage({
