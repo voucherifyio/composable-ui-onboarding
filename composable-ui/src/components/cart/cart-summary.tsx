@@ -53,16 +53,6 @@ export const CartSummary = ({
               />
             </CartSummaryItem>
           )}
-          {_cartData.summary?.shipping && (
-            <CartSummaryItem
-              label={intl.formatMessage({ id: 'cart.summary.shipping' })}
-            >
-              <Price
-                rootProps={{ textStyle: 'Body-S' }}
-                price={_cartData.summary.shipping}
-              />
-            </CartSummaryItem>
-          )}
 
           {_cartData.summary?.taxes && (
             <CartSummaryItem
@@ -71,6 +61,17 @@ export const CartSummary = ({
               <Price
                 rootProps={{ textStyle: 'Body-S' }}
                 price={_cartData.summary.taxes}
+              />
+            </CartSummaryItem>
+          )}
+
+          {_cartData.summary?.shipping && (
+            <CartSummaryItem
+              label={intl.formatMessage({ id: 'cart.summary.shipping' })}
+            >
+              <Price
+                rootProps={{ textStyle: 'Body-S' }}
+                price={_cartData.summary.shipping}
               />
             </CartSummaryItem>
           )}
