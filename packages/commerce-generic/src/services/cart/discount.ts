@@ -12,7 +12,7 @@ const vouchersAvailable: Voucher[] = [
   { code: '15$OFF', label: '15 bucks off in winter', discountAmount: '15' },
 ]
 
-export const deleteVoucher = async (
+export const deleteVoucherFromCart = async (
   cart: Cart,
   code: string
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
@@ -33,7 +33,7 @@ export const deleteVoucher = async (
   }
 }
 
-export const addVoucher = async (
+export const addVoucherToCart = async (
   cart: Cart,
   code: string
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
