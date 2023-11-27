@@ -1,12 +1,16 @@
-import { Divider, Box, Flex, Text } from '@chakra-ui/react'
+import { Divider, Box, Flex, Text, Stack } from '@chakra-ui/react'
 import { useIntl } from 'react-intl'
 import { useCart } from 'hooks'
 import { CartDrawerSummaryItem } from './cart-drawer-summary-item'
 import { Price } from '../../price'
+import { CartPromotions } from '../cart-promotions'
+import { CartVouchers } from '../cart-vouchers'
 
 export const CartDrawerSummary = () => {
   const { cart } = useCart()
   const intl = useIntl()
+
+  const promotions = cart.promotionsApplied || []
 
   return (
     <Box>
@@ -46,6 +50,17 @@ export const CartDrawerSummary = () => {
       )}
       <Divider m={'10px 0'} />
 
+      <Stack spacing="8">
+        {promotions.length > 0 && (
+          <Stack bg="shading.100" p={'0.7rem 1.5rem'} mb={'-5'}>
+            <CartPromotions promotions={promotions} />
+          </Stack>
+        )}
+        <Stack bg="shading.100" p={'0.7rem 1.5rem'} mb={'0'}>
+          <CartVouchers />
+        </Stack>
+      </Stack>
+      <Divider m={'10px 0'} />
       {cart.summary?.priceBeforeDiscount && (
         <CartDrawerSummaryItem
           label={intl.formatMessage({ id: 'cart.summary.priceBeforeDiscount' })}

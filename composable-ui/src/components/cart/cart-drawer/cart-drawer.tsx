@@ -17,12 +17,11 @@ import {
   Text,
 } from '@chakra-ui/react'
 import { APP_CONFIG } from '../../../utils/constants'
-import { CartLoadingState, CartVouchers } from '../.'
+import { CartLoadingState } from '../.'
 import { CartDrawerFooter } from './cart-drawer-footer'
 import { CartDrawerSummary } from './cart-drawer-summary'
 import { CartDrawerEmptyState } from './cart-drawer-empty-state'
 import { HorizontalProductCard } from '@composable/ui'
-import { CartPromotions } from '../.'
 
 export const CartDrawer = () => {
   const intl = useIntl()
@@ -38,8 +37,6 @@ export const CartDrawer = () => {
       })
     },
   })
-
-  const promotions = cart.promotionsApplied || []
 
   const title = intl.formatMessage(
     { id: 'cart.drawer.titleCount' },
@@ -150,14 +147,6 @@ export const CartDrawer = () => {
                     </Box>
                   )
                 })}
-              </Stack>
-              {promotions.length > 0 && (
-                <Stack bg="shading.100" p={'0.7rem 1.5rem'} mb={'-5'}>
-                  <CartPromotions promotions={promotions} />
-                </Stack>
-              )}
-              <Stack bg="shading.100" p={'0.7rem 1.5rem'} mb={'-5'}>
-                <CartVouchers />
               </Stack>
               <CartDrawerSummary />
             </Stack>
