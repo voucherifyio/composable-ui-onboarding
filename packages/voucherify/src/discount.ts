@@ -111,15 +111,15 @@ export const updateCartDiscount = async (cart: Cart): Promise<Cart> => {
   const totalDiscountAmountInCents =
     promotionDiscountsInCents + voucherDiscountsInCents
 
-  const totalPrice = centToString(
-    toCent(cart.summary.priceBeforeDiscount) - totalDiscountAmountInCents
-  )
+  const totalPrice = centToString(toCent(updatedCart.summary.totalPrice))
 
   return {
     ...updatedCart,
     summary: {
       ...cart.summary,
-      totalDiscountAmount: centToString(totalDiscountAmountInCents),
+      totalDiscountAmount: centToString(
+        toCent(updatedCart.summary.totalDiscountAmount)
+      ),
       totalPrice,
     },
   }
