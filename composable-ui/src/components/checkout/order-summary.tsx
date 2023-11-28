@@ -39,7 +39,7 @@ export const OrderSummary = ({
 
   return (
     <Box>
-      <Stack spacing={{ base: 0, md: 8 }}>
+      <Stack spacing={{ base: 0, md: 3 }}>
         {showTitle && (
           <Text textStyle={'Desktop/M'} mb={2}>
             {intl.formatMessage({ id: 'cart.summary.title' })}
