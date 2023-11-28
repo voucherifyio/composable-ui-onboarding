@@ -48,8 +48,7 @@ export const updateCartDiscount = async (cart: Cart): Promise<Cart> => {
       cart,
       voucherify,
     })
-  const updatedCart = cartWithDiscount(cart, validationResult, promotionsResult)
-  return updatedCart
+  return cartWithDiscount(cart, validationResult, promotionsResult)
 }
 
 export const addVoucherToCart = async (
