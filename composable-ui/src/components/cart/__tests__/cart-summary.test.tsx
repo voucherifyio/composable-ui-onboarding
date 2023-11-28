@@ -18,7 +18,14 @@ jest.mock('hooks', () => ({
           subtotalPrice: 70,
           shipping: 10,
           taxes: 15,
-          totalPrice: 95,
+          priceBeforeDiscount: 95,
+          totalDiscountAmount: 10,
+          totalPrice: 85,
+        },
+        vouchersApplied: {
+          code: 'CODE',
+          label: 'VOUCHER',
+          discount: '10',
         },
       },
     }
@@ -33,6 +40,8 @@ const translations = {
   'cart.summary.taxes': 'Taxes Label',
   'cart.summary.title': 'Cart Title',
   'cart.summary.label.voucher': 'Voucher code',
+  'cart.summary.priceBeforeDiscount': 'Order Total',
+  'cart.summary.totalDiscountAmount': 'All discounts',
   'action.addVoucher': 'Add Voucher',
   'cart.summary.vouchers': 'Vouchers',
 }
@@ -57,8 +66,18 @@ describe('CartSummary', () => {
     // taxes
     const taxesPrice = screen.getByText('$15.00')
     const taxesLabel = screen.getByText(translations['cart.summary.taxes'])
+    // priceBeforeDiscount
+    const priceBeforeDiscount = screen.getByText('$95.00')
+    const priceBeforeDiscountLabel = screen.getByText(
+      translations['cart.summary.priceBeforeDiscount']
+    )
+    // totalDiscountAmount
+    const totalDiscountAmount = screen.getByText('$10.00')
+    const totalDiscountAmountLabel = screen.getByText(
+      translations['cart.summary.totalDiscountAmount']
+    )
     // totalPrice
-    const totalPrice = screen.getByText('$95.00')
+    const totalPrice = screen.getByText('$85.00')
     const totalPriceLabel = screen.getByText(
       translations['cart.summary.orderTotal']
     )
@@ -74,6 +93,10 @@ describe('CartSummary', () => {
     expect(shippingLabel).toBeInTheDocument()
     expect(taxesPrice).toBeInTheDocument()
     expect(taxesLabel).toBeInTheDocument()
+    expect(priceBeforeDiscount).toBeInTheDocument()
+    expect(priceBeforeDiscountLabel).toBeInTheDocument()
+    expect(totalDiscountAmount).toBeInTheDocument()
+    expect(totalDiscountAmountLabel).toBeInTheDocument()
     expect(totalPrice).toBeInTheDocument()
     expect(totalPriceLabel).toBeInTheDocument()
     expect(proceedToCheckout).toBeInTheDocument()
