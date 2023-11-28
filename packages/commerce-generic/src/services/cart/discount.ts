@@ -41,7 +41,7 @@ export const addVoucherToCart = async (
     return {
       cart,
       success: false,
-      errorMessage: 'Voucher already applied',
+      errorMessage: 'Voucher is already applied',
     }
   }
   const voucher = vouchersAvailable.find((voucher) => voucher.code === code)

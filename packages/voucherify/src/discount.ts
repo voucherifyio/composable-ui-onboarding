@@ -56,6 +56,13 @@ export const addVoucherToCart = async (
   cart: Cart,
   code: string
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
+  if (cart.vouchersApplied?.some((voucher) => voucher.code === code)) {
+    return {
+      cart,
+      success: false,
+      errorMessage: 'Voucher is already applied',
+    }
+  }
   const { validationResult, promotionsResult } =
     await validateCouponsAndPromotions({
       cart,
@@ -81,6 +88,6 @@ export const addVoucherToCart = async (
   return {
     cart,
     success: isApplicable,
-    errorMessage: 'Voucher not applicable',
+    errorMessage: 'This voucher is not applicable',
   }
 }
