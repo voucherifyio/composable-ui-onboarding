@@ -98,19 +98,6 @@ export const updateCartDiscount = async (cart: Cart): Promise<Cart> => {
   const updatedCart = cartWithDiscount(cart, validationResult, promotionsResult)
   await saveCart(updatedCart)
 
-  const voucherDiscountsInCents =
-    updatedCart.vouchersApplied?.reduce((sum, voucher) => {
-      return sum + toCent(voucher.discountAmount)
-    }, 0) || 0
-
-  const promotionDiscountsInCents =
-    updatedCart.promotionsApplied?.reduce((sum, voucher) => {
-      return sum + toCent(voucher.discountAmount)
-    }, 0) || 0
-
-  const totalDiscountAmountInCents =
-    promotionDiscountsInCents + voucherDiscountsInCents
-
   const totalPrice = centToString(toCent(updatedCart.summary.totalPrice))
 
   return {
