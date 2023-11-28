@@ -87,6 +87,6 @@ export const addVoucherToCart = async (
   return {
     cart,
     success: isApplicable,
-    errorMessage: 'This voucher is not applicable',
+    errorMessage: error || 'This voucher is not applicable',
   }
 }
