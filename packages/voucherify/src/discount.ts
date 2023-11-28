@@ -2,7 +2,6 @@ import { Cart } from '@composable/types'
 import { validateCouponsAndPromotions } from './validate-discounts'
 import { VoucherifyServerSide } from '@voucherify/sdk'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
-import { saveCart } from '../../commerce-generic/src/data/mock-storage'
 import { cartWithDiscount } from '../data/cart-with-discount'
 
 if (
@@ -32,7 +31,6 @@ export const deleteVoucherFromCart = async (
     ),
   }
   const updatedCart = await updateCartDiscount(cartAfterDeletion)
-  await saveCart(updatedCart)
   return {
     cart: updatedCart,
     success: true,
@@ -74,7 +72,6 @@ export const addVoucherToCart = async (
       validationResult,
       promotionsResult
     )
-    await saveCart(updatedCart)
     return {
       cart: updatedCart,
       success: isApplicable,

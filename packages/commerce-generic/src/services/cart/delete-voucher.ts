@@ -1,7 +1,9 @@
 import { CommerceService } from '@composable/types'
-import { getCart as getCartFromStorage } from '../../data/mock-storage'
+import {
+  getCart as getCartFromStorage,
+  saveCart,
+} from '../../data/mock-storage'
 import { deleteVoucherFromCart } from './discount'
-
 export const deleteVoucher: CommerceService['deleteVoucher'] = async ({
   cartId,
   code,
@@ -14,7 +16,14 @@ export const deleteVoucher: CommerceService['deleteVoucher'] = async ({
     )
   }
 
-  const { cart: cartWithDiscount } = await deleteVoucherFromCart(cart, code)
+  const { cart: cartWithDiscount, success } = await deleteVoucherFromCart(
+    cart,
+    code
+  )
+
+  if (success) {
+    await saveCart(cartWithDiscount)
+  }
 
   return cartWithDiscount
 }
