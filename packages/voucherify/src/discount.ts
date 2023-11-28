@@ -25,8 +25,6 @@ export const deleteVoucherFromCart = async (
   cart: Cart,
   code: string
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
-  const success = true
-  const errorMessage = undefined
   const cartAfterDeletion: Cart = {
     ...cart,
     vouchersApplied: cart.vouchersApplied?.filter(
@@ -37,8 +35,7 @@ export const deleteVoucherFromCart = async (
   await saveCart(updatedCart)
   return {
     cart: updatedCart,
-    success,
-    errorMessage,
+    success: true,
   }
 }
 
