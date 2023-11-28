@@ -32,6 +32,9 @@ const translations = {
   'cart.summary.subtotal': 'Subtotal',
   'cart.summary.taxes': 'Taxes Label',
   'cart.summary.title': 'Cart Title',
+  'cart.summary.label.voucher': 'Voucher code',
+  'action.addVoucher': 'Add Voucher',
+  'cart.summary.vouchers': 'Vouchers',
 }
 
 describe('CartSummary', () => {
