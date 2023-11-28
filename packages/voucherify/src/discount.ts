@@ -4,7 +4,6 @@ import { VoucherifyServerSide } from '@voucherify/sdk'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
 import { saveCart } from '../../commerce-generic/src/data/mock-storage'
 import { cartWithDiscount } from '../data/cart-with-discount'
-import { centToString, toCent } from './to-cent'
 
 if (
   !process.env.VOUCHERIFY_APPLICATION_ID ||
@@ -34,25 +33,23 @@ export const deleteVoucherFromCart = async (
       (voucher) => voucher.code !== code
     ),
   }
-  const { validationResult, promotionsResult } =
-    await validateCouponsAndPromotions({
-      cart: cartAfterDeletion,
-      voucherify,
-    })
-
-  const updatedCart = cartWithDiscount(
-    cartAfterDeletion,
-    validationResult,
-    promotionsResult
-  )
-
-  await updateCartDiscount(updatedCart)
-
+  const updatedCart = await updateCartDiscount(cartAfterDeletion)
+  await saveCart(updatedCart)
   return {
     cart: updatedCart,
     success,
     errorMessage,
   }
+}
+
+export const updateCartDiscount = async (cart: Cart): Promise<Cart> => {
+  const { validationResult, promotionsResult } =
+    await validateCouponsAndPromotions({
+      cart,
+      voucherify,
+    })
+  const updatedCart = cartWithDiscount(cart, validationResult, promotionsResult)
+  return updatedCart
 }
 
 export const addVoucherToCart = async (
@@ -78,36 +75,12 @@ export const addVoucherToCart = async (
     return {
       cart: updatedCart,
       success: isApplicable,
-      errorMessage: error,
     }
   }
 
   return {
     cart,
-    success: false,
+    success: isApplicable,
     errorMessage: 'Voucher not applicable',
-  }
-}
-
-export const updateCartDiscount = async (cart: Cart): Promise<Cart> => {
-  const { validationResult, promotionsResult } =
-    await validateCouponsAndPromotions({
-      cart,
-      voucherify,
-    })
-  const updatedCart = cartWithDiscount(cart, validationResult, promotionsResult)
-  await saveCart(updatedCart)
-
-  const totalPrice = centToString(toCent(updatedCart.summary.totalPrice))
-
-  return {
-    ...updatedCart,
-    summary: {
-      ...cart.summary,
-      totalDiscountAmount: centToString(
-        toCent(updatedCart.summary.totalDiscountAmount)
-      ),
-      totalPrice,
-    },
   }
 }
