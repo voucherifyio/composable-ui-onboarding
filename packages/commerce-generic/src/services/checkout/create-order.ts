@@ -3,7 +3,6 @@ import { getCart } from '../../data/mock-storage'
 import { saveOrder } from '../../data/mock-storage'
 import shippingMethods from '../../data/shipping-methods.json'
 import { randomUUID } from 'crypto'
-import { addDiscountsToOrder } from './discount'
 
 const generateOrderFromCart = (
   cart: Cart,
@@ -11,8 +10,8 @@ const generateOrderFromCart = (
 ): Order => {
   return {
     id: randomUUID(),
-    status: 'complete',
-    payment: 'unpaid',
+    payment: '',
+    status: '',
     shipping: 'unfulfilled',
     customer: {
       email: checkoutInput.customer.email,
@@ -48,12 +47,6 @@ export const createOrder: CommerceService['createOrder'] = async ({
   }
 
   const updatedOrder = generateOrderFromCart(cart, checkout)
-  if (
-    updatedOrder.status === 'complete' &&
-    (cart.vouchersApplied || cart.promotionsApplied)
-  ) {
-    const orderWithDiscounts = await addDiscountsToOrder(cart, updatedOrder)
-    return await saveOrder(orderWithDiscounts)
-  }
+
   return await saveOrder(updatedOrder)
 }

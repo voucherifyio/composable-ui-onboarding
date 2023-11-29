@@ -70,9 +70,30 @@ export const useCheckout = () => {
             redirectUrl = stripePaymentIntent?.next_action?.redirect_to_url.url
               ? stripePaymentIntent?.next_action?.redirect_to_url.url
               : `/checkout/success?order=${__checkoutResponse?.id}&payment_intent=${stripePaymentIntent.id}`
+
+            // Update the order information if the Stripe payment is succeeded
+            if (
+              stripePaymentIntent.status === 'succeeded' &&
+              __checkoutResponse?.id &&
+              cart?.id
+            ) {
+              await client.commerce.updateOrder.mutate({
+                id: __checkoutResponse.id,
+                status: 'complete',
+                cartId: cart.id,
+              })
+            }
           } else {
             // Cash
             redirectUrl = `/checkout/success?order=${__checkoutResponse?.id}`
+
+            // Update the order information if the payment is succeeded (pay on delivery)
+            if (__checkoutResponse?.id && cart?.id)
+              await client.commerce.updateOrder.mutate({
+                id: __checkoutResponse.id,
+                status: 'complete',
+                cartId: cart.id,
+              })
           }
         } catch (e: any) {
           throw new Error(
