@@ -1,11 +1,5 @@
 import React, { useState } from 'react'
-import {
-  Alert,
-  AlertIcon,
-  Box,
-  CloseButton,
-  IconButton,
-} from '@chakra-ui/react'
+import { Alert, AlertIcon, Box, Button, CloseButton } from '@chakra-ui/react'
 import { useIntl } from 'react-intl'
 import { InputField } from '@composable/ui'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
@@ -86,14 +80,9 @@ export const VoucherForm = () => {
           error={errors.voucher}
           label={''}
         />
-        <IconButton
-          mt={2}
-          aria-label="Search database"
-          icon={<ArrowForwardIcon />}
-          type="submit"
-          size="sm"
-          variant={'outline'}
-        />
+        <Button mt={2} type="submit" size="sm" variant={'outline'}>
+          Apply
+        </Button>
       </Box>
       {showAlert && errorMessage && (
         <Alert
