@@ -7,9 +7,7 @@
   "scripts": {
     "build": "echo \"Build script for @composable/voucherify ...\"",
     "lint": "eslint \"**/*.{js,ts,tsx}\" --max-warnings 0",
-    "ts": "tsc --noEmit --incremental",
-    "voucherify-install": "ts-node cli/install.ts",
-    "voucherify-uninstall": "ts-node cli/uninstall.ts"
+    "ts": "tsc --noEmit --incremental"
   },
   "dependencies": {
     "@composable/types": "workspace:*",

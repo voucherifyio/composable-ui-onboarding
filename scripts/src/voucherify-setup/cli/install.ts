@@ -42,13 +42,13 @@ async function processFiles(
 
 // Example usage
 const filePaths = [
-  '../../commerce-generic/src/services/cart/add-cart-item.ts',
-  '../../commerce-generic/src/services/cart/delete-cart-item.ts',
-  '../../commerce-generic/src/services/cart/discount.ts',
-  '../../commerce-generic/src/services/cart/update-cart-item.ts',
-  '../../commerce-generic/src/services/cart/get-cart.ts',
-  '../../commerce-generic/src/services/cart/delete-voucher.ts',
-  '../../commerce-generic/src/services/cart/add-voucher.ts',
+  '../../../../packages/commerce-generic/src/services/cart/add-cart-item.ts',
+  '../../../../packages/commerce-generic/src/services/cart/delete-cart-item.ts',
+  '../../../../packages/commerce-generic/src/services/cart/discount.ts',
+  '../../../../packages/commerce-generic/src/services/cart/update-cart-item.ts',
+  '../../../../packages/commerce-generic/src/services/cart/get-cart.ts',
+  '../../../../packages/commerce-generic/src/services/cart/delete-voucher.ts',
+  '../../../../packages/commerce-generic/src/services/cart/add-voucher.ts',
 ]
 
 const searchPhrase = "from './discount'"
@@ -83,7 +83,7 @@ async function updatePackageJson(
 }
 
 // Example usage
-const packageJsonPath = '../../commerce-generic/package.json' // Replace with the actual path
+const packageJsonPath = '../../../../packages/commerce-generic/package.json' // Replace with the actual path
 const newDependencyName = '@composable/voucherify' // Replace with the actual package and version
 const newDependencyVersion = 'workspace:*' // Replace with the actual package and version
 updatePackageJson(packageJsonPath, newDependencyName, newDependencyVersion)
