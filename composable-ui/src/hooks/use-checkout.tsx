@@ -46,13 +46,6 @@ export const useCheckout = () => {
             }
           }
 
-          const response =
-            (await client.commerce.createOrder.mutate({ checkout: params })) ??
-            undefined
-
-          __checkoutResponse = response
-          __setCheckoutResponse(response)
-
           if (
             publicContext.paymentHandler.selected?.key === PAYMENT_METHOD.STRIPE
           ) {
@@ -64,36 +57,41 @@ export const useCheckout = () => {
                 cartId: cart.id!,
                 redirectUrl:
                   window.location.origin +
-                  `/checkout/success?order=${__checkoutResponse?.id}`,
+                  // `/checkout/success?order=${__checkoutResponse?.id}`,
+                  `/checkout/success?order=`,
               })
 
-            redirectUrl = stripePaymentIntent?.next_action?.redirect_to_url.url
-              ? stripePaymentIntent?.next_action?.redirect_to_url.url
-              : `/checkout/success?order=${__checkoutResponse?.id}&payment_intent=${stripePaymentIntent.id}`
+            if (stripePaymentIntent.status === 'succeeded') {
+              const response =
+                (await client.commerce.createOrder.mutate({
+                  checkout: params,
+                  status: 'complete',
+                  payment: 'paid',
+                })) ?? undefined
 
-            // Update the order information if the Stripe payment is succeeded
-            if (
-              stripePaymentIntent.status === 'succeeded' &&
-              __checkoutResponse?.id &&
-              cart?.id
-            ) {
-              await client.commerce.updateOrder.mutate({
-                id: __checkoutResponse.id,
-                status: 'complete',
-                cartId: cart.id,
-              })
+              __checkoutResponse = response
+              __setCheckoutResponse(response)
+
+              redirectUrl = stripePaymentIntent?.next_action?.redirect_to_url
+                .url
+                ? stripePaymentIntent?.next_action?.redirect_to_url.url
+                : `/checkout/success?order=${__checkoutResponse?.id}&payment_intent=${stripePaymentIntent.id}`
             }
           } else {
             // Cash
-            redirectUrl = `/checkout/success?order=${__checkoutResponse?.id}`
+            if (cart?.id) {
+              const response =
+                (await client.commerce.createOrder.mutate({
+                  checkout: params,
+                  status: 'complete',
+                  payment: 'pay-on-delivery',
+                })) ?? undefined
 
-            // Update the order information if the payment is succeeded (pay on delivery)
-            if (__checkoutResponse?.id && cart?.id)
-              await client.commerce.updateOrder.mutate({
-                id: __checkoutResponse.id,
-                status: 'complete',
-                cartId: cart.id,
-              })
+              __checkoutResponse = response
+              __setCheckoutResponse(response)
+
+              redirectUrl = `/checkout/success?order=${__checkoutResponse?.id}`
+            }
           }
         } catch (e: any) {
           throw new Error(

@@ -49,7 +49,7 @@ const filePaths = [
   '../../../../packages/commerce-generic/src/services/cart/get-cart.ts',
   '../../../../packages/commerce-generic/src/services/cart/delete-voucher.ts',
   '../../../../packages/commerce-generic/src/services/cart/add-voucher.ts',
-  '../../../../packages/commerce-generic/src/services/checkout/update-order.ts',
+  '../../../../packages/commerce-generic/src/services/checkout/create-order.ts',
 ]
 
 const replacePhrase = "from './discount'"
