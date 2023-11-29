@@ -3,6 +3,7 @@ import { getCart } from '../../data/mock-storage'
 import { saveOrder } from '../../data/mock-storage'
 import shippingMethods from '../../data/shipping-methods.json'
 import { randomUUID } from 'crypto'
+import { addDiscountsToOrder } from './discount'
 
 const generateOrderFromCart = (
   cart: Cart,
@@ -30,6 +31,8 @@ const generateOrderFromCart = (
     created_at: Date.now(),
     items: cart.items,
     summary: cart.summary,
+    redeemedVouchers: [],
+    redeemedPromotions: [],
   }
 }
 
@@ -44,5 +47,13 @@ export const createOrder: CommerceService['createOrder'] = async ({
     )
   }
 
-  return saveOrder(generateOrderFromCart(cart, checkout))
+  const updatedOrder = generateOrderFromCart(cart, checkout)
+  if (
+    updatedOrder.status === 'complete' &&
+    (cart.vouchersApplied || cart.promotionsApplied)
+  ) {
+    const orderWithDiscounts = await addDiscountsToOrder(cart, updatedOrder)
+    return await saveOrder(orderWithDiscounts)
+  }
+  return await saveOrder(updatedOrder)
 }

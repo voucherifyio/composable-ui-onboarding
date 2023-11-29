@@ -2,7 +2,7 @@ import { Cart } from '@composable/types'
 import { validateCouponsAndPromotions } from './validate-discounts'
 import { VoucherifyServerSide } from '@voucherify/sdk'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
-import { cartWithDiscount } from '../data/cart-with-discount'
+import { cartWithDiscount } from '../../data/cart-with-discount'
 
 if (
   !process.env.VOUCHERIFY_APPLICATION_ID ||

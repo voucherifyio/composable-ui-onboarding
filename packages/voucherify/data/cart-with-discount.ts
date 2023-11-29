@@ -4,7 +4,7 @@ import {
   StackableRedeemableResponse,
   ValidationValidateStackableResponse,
 } from '@voucherify/sdk'
-import { centToString, toCent } from '../src/to-cent'
+import { centToString, toCent } from '../src/cart/to-cent'
 
 export const cartWithDiscount = (
   cart: Cart,
