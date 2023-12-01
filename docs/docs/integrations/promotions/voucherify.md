@@ -5,6 +5,11 @@ Voucherify is an API-first Promotions and Loyalty Engine that helps brands run p
 
 ## Integration architecture
 
+The application already has basic functionalities related to discounts:
+- `packages/commerce-generic/src/services/cart/add-voucher.ts` - this is a service responsible for validating and adding entered vouchers to the array in the cart called: `vouchersApplied`. This service calls the `addVoucherToCart` function located in `packages/commerce-generic/src/services/cart/discount.ts`
+- `packages/commerce-generic/src/services/cart/delete-voucher.ts`- this is a service responsible for removing selected vouchers from cart. This service calls the `deleteVoucherFromCart` function located in `packages/commerce-generic/src/services/cart/discount.ts`
+- `packages/commerce-generic/src/services/cart/discount.ts` - main file containing the function that handles operations on discounts
+
 The built-in cart already has basic services responsible for validating, displaying and adding vouchers to the cart.
 However, in order to use Voucherify as a tool for managing vouchers and promotions, it was necessary to create functions that would use Voucherify REST API.
 

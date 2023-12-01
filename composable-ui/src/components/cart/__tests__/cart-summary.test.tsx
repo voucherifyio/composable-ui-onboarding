@@ -22,11 +22,14 @@ jest.mock('hooks', () => ({
           totalDiscountAmount: 10,
           totalPrice: 85,
         },
-        vouchersApplied: {
-          code: 'CODE',
-          label: 'VOUCHER',
-          discount: '10',
-        },
+        vouchersApplied: [
+          {
+            code: 'CODE',
+            label: 'VOUCHER',
+            discount: '10',
+          },
+        ],
+        promotionsApplied: [],
       },
     }
   },
@@ -34,7 +37,7 @@ jest.mock('hooks', () => ({
 
 const translations = {
   'action.proceedToCheckout': 'Proceed to Checkout',
-  'cart.summary.orderTotal': 'Order Total',
+  'cart.summary.orderTotal': 'Grand Total',
   'cart.summary.shipping': 'Shipping Label',
   'cart.summary.subtotal': 'Subtotal',
   'cart.summary.taxes': 'Taxes Label',
@@ -85,6 +88,8 @@ describe('CartSummary', () => {
     const proceedToCheckout = screen.getByText(
       translations['action.proceedToCheckout']
     )
+    // vouchers
+    const vouchers = screen.getByText(translations['cart.summary.vouchers'])
 
     expect(title).toBeInTheDocument()
     expect(subtotalPrice).toBeInTheDocument()
@@ -100,6 +105,7 @@ describe('CartSummary', () => {
     expect(totalPrice).toBeInTheDocument()
     expect(totalPriceLabel).toBeInTheDocument()
     expect(proceedToCheckout).toBeInTheDocument()
+    expect(vouchers).toBeInTheDocument()
 
     fireEvent.click(proceedToCheckout)
     expect(pushMock).toHaveBeenCalledWith('/checkout')
