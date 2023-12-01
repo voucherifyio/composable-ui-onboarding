@@ -9,15 +9,12 @@ The application already has basic functionalities related to discounts:
 - `packages/commerce-generic/src/services/cart/add-voucher.ts` - this is a service responsible for validating and adding entered vouchers to the array in the cart called: `vouchersApplied`. This service calls the `addVoucherToCart` function located in `packages/commerce-generic/src/services/cart/discount.ts`
 - `packages/commerce-generic/src/services/cart/delete-voucher.ts`- this is a service responsible for removing selected vouchers from cart. This service calls the `deleteVoucherFromCart` function located in `packages/commerce-generic/src/services/cart/discount.ts`
 - `packages/commerce-generic/src/services/cart/discount.ts` - main file containing the function that handles operations on discounts
+- `packages/commerce-generic/src/services/checkout/create-order.ts` - when creating an order, vouchers and promotions from the cart are saved to the properties:`redeemedVouchers` and `redeemedPromotions`.
 
-The built-in cart already has basic services responsible for validating, displaying and adding vouchers to the cart.
+As we see above, the cart already has basic services responsible for handling discounts.
 However, in order to use Voucherify as a tool for managing vouchers and promotions, it was necessary to create functions that would use Voucherify REST API.
 
-To extend the storefront by promotion capabilities provided  by Voucherify integration:
-1. A separate package called `voucherify` has been created, which contains the necessary functions needed to manage discounts.
-2. To switch between the classic implementation and the Voucherify integration you can run `pnpm voucherify-install` in `packages/voucherify` directory.
-3. This action will make commerce-generic services start using methods from `@composable/voucherify`.
-4. To stop using Voucherify integration, run `pnpm voucherify-uninstall` from `packages/voucherify` directory.
+To extend the storefront by capabilities provided by Voucherify integration a separate package called `voucherify` has been created, which contains the necessary functions needed to manage discounts.
 
 `@composable/voucherify` dependency implements a standard checkout integration pattern, where for each cart update, the Voucherify functions make Validation (eligibility check, discount calculations) and Qualification (list of applicable promotions) requests to Voucherify REST API. Collected pieces of information extend cart data.
 
@@ -51,7 +48,7 @@ sequenceDiagram
 
 ### Backend Files
 
-- `packages/voucherify`: This package contains functions that change the default behavior of functions related to discounts.
+- `packages/voucherify`: This package contains functions that enhance the default behavior of functions related to discounts.
 
 ### React Components
 
@@ -61,22 +58,22 @@ sequenceDiagram
 
 ## Integrating Voucherify with Composable UI
 
+### First steps
+
 1. [Create a Voucherify account](https://app.voucherify.io/#/signup).
 2. In Voucherify Dashboard, [set Discount Application Rule to "Partial"](https://support.voucherify.io/article/604-stacking-rules#application-rules)
 3. Retrieve your API keys from your Voucherify dashboard and set the following environment variables:
 
-:::caution
-
-Ensure you never expose your Voucherify API keys in the NEXT_PUBLIC_* environment variables or client-side code. Take the necessary steps to ensure that secret keys are never disclosed to the public.
-:::
-
-```bash
+```code
 VOUCHERIFY_API_URL=https://api.voucherify.io
 VOUCHERIFY_APPLICATION_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
 VOUCHERIFY_SECRET_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
 ```
 
-## Populating the Products Using the Script
+**Caution:** Ensure you never expose your Voucherify API keys in the NEXT_PUBLIC_* environment variables or client-side code. Take the necessary steps to ensure that secret keys are never disclosed to the public.
+
+
+### Populating the Products Using the Script
 
 To configure product base promotions in Voucherify, propagate product definitions to your Voucherify account:
 
@@ -91,6 +88,21 @@ To configure product base promotions in Voucherify, propagate product definition
   ```
 
 For more information about the configurations, see the [Application Configuration](essentials/configuration.md) section.
+
+###  Enabling the use of Voucherify in the store
+
+1. To switch between the classic implementation and the Voucherify integration you can run:  
+```
+pnpm voucherify-install
+``` 
+in `scripts` directory.
+2. This action will make commerce-generic services start using methods from `@composable/voucherify`.
+3. To stop using Voucherify integration, run:
+```
+pnpm voucherify-uninstall
+``` 
+in `scripts` directory.
+
 
 ## Related Resources
 
