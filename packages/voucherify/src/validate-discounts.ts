@@ -40,7 +40,6 @@ export const validateCouponsAndPromotions = async (
   const codes = code ? [...appliedCodes, code] : appliedCodes
 
   const promotionsResult = await voucherify.promotions.validate({ order })
-
   if (!codes.length && !promotionsResult.promotions?.length) {
     return { promotionsResult, validationResult: false }
   }

@@ -11,13 +11,13 @@
   },
   "dependencies": {
     "@composable/types": "workspace:*",
-    "@voucherify/sdk": "^2.5.0"
+    "@voucherify/sdk": "^2.6.0"
   },
   "devDependencies": {
     "@types/node": "^18.6.3",
-    "ts-node": "^10.9.1",
-    "typescript": "^4.9.5",
     "eslint-config-custom": "workspace:*",
-    "tsconfig": "workspace:*"
+    "ts-node": "^10.9.1",
+    "tsconfig": "workspace:*",
+    "typescript": "^4.9.5"
   }
 }

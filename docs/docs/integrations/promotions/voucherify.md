@@ -97,6 +97,9 @@ pnpm voucherify-install
 ``` 
 in `scripts` directory.
 2. This action will make commerce-generic services start using methods from `@composable/voucherify`.
+
+**Note:** In order for the changes to take effect, a re-run of `pnpm install` from root directory is required.
+
 3. To stop using Voucherify integration, run:
 ```
 pnpm voucherify-uninstall
