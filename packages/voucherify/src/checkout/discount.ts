@@ -17,6 +17,11 @@ export const addDiscountsToOrder = async (cart: Cart, order: Order) => {
   return order
 }
 
+// NOTE
+// The function below performs redemption in Voucherify.
+// This is just an example code, so please note that in normal use redemption can only be performed when payment for the order has been confirmed.
+// In this situation, an exception has been made and redemption is performed in Voucherify when the order is created.
+
 const redeemInVoucherify = async (cart: Cart) => {
   const voucherifyOrder = cartToVoucherifyOrder(cart)
 

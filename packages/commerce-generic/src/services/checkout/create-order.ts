@@ -7,14 +7,12 @@ import { addDiscountsToOrder } from './discount'
 
 const generateOrderFromCart = (
   cart: Cart,
-  checkoutInput: CheckoutInput,
-  status: string,
-  payment: string
+  checkoutInput: CheckoutInput
 ): Order => {
   return {
     id: randomUUID(),
-    payment: payment,
-    status: status,
+    status: 'complete',
+    payment: 'unpaid',
     shipping: 'unfulfilled',
     customer: {
       email: checkoutInput.customer.email,
@@ -40,8 +38,6 @@ const generateOrderFromCart = (
 
 export const createOrder: CommerceService['createOrder'] = async ({
   checkout,
-  status,
-  payment,
 }) => {
   const cart = await getCart(checkout.cartId)
 
@@ -51,14 +47,9 @@ export const createOrder: CommerceService['createOrder'] = async ({
     )
   }
 
-  const updatedOrder = generateOrderFromCart(cart, checkout, status, payment)
+  const updatedOrder = generateOrderFromCart(cart, checkout)
 
-  if (
-    updatedOrder.status === 'complete' &&
-    (updatedOrder.payment === 'paid' ||
-      updatedOrder.payment === 'pay-on-delivery') &&
-    (cart?.vouchersApplied || cart?.promotionsApplied)
-  ) {
+  if (cart?.vouchersApplied || cart?.promotionsApplied) {
     const orderWithDiscounts = await addDiscountsToOrder(cart, updatedOrder)
     return await saveOrder(orderWithDiscounts)
   }

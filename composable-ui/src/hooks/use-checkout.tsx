@@ -46,6 +46,13 @@ export const useCheckout = () => {
             }
           }
 
+          const response =
+            (await client.commerce.createOrder.mutate({ checkout: params })) ??
+            undefined
+
+          __checkoutResponse = response
+          __setCheckoutResponse(response)
+
           if (
             publicContext.paymentHandler.selected?.key === PAYMENT_METHOD.STRIPE
           ) {
@@ -57,41 +64,15 @@ export const useCheckout = () => {
                 cartId: cart.id!,
                 redirectUrl:
                   window.location.origin +
-                  // `/checkout/success?order=${__checkoutResponse?.id}`,
-                  `/checkout/success?order=`,
+                  `/checkout/success?order=${__checkoutResponse?.id}`,
               })
 
-            if (stripePaymentIntent.status === 'succeeded') {
-              const response =
-                (await client.commerce.createOrder.mutate({
-                  checkout: params,
-                  status: 'complete',
-                  payment: 'paid',
-                })) ?? undefined
-
-              __checkoutResponse = response
-              __setCheckoutResponse(response)
-
-              redirectUrl = stripePaymentIntent?.next_action?.redirect_to_url
-                .url
-                ? stripePaymentIntent?.next_action?.redirect_to_url.url
-                : `/checkout/success?order=${__checkoutResponse?.id}&payment_intent=${stripePaymentIntent.id}`
-            }
+            redirectUrl = stripePaymentIntent?.next_action?.redirect_to_url.url
+              ? stripePaymentIntent?.next_action?.redirect_to_url.url
+              : `/checkout/success?order=${__checkoutResponse?.id}&payment_intent=${stripePaymentIntent.id}`
           } else {
             // Cash
-            if (cart?.id) {
-              const response =
-                (await client.commerce.createOrder.mutate({
-                  checkout: params,
-                  status: 'complete',
-                  payment: 'pay-on-delivery',
-                })) ?? undefined
-
-              __checkoutResponse = response
-              __setCheckoutResponse(response)
-
-              redirectUrl = `/checkout/success?order=${__checkoutResponse?.id}`
-            }
+            redirectUrl = `/checkout/success?order=${__checkoutResponse?.id}`
           }
         } catch (e: any) {
           throw new Error(

@@ -67,11 +67,7 @@ export interface CommerceService {
    * Checkout methods
    */
 
-  createOrder(params: {
-    checkout: CheckoutInput
-    status: string
-    payment: string
-  }): Promise<Order | null>
+  createOrder(params: { checkout: CheckoutInput }): Promise<Order | null>
 
   getOrder(params: { orderId: string }): Promise<Order | null>
 

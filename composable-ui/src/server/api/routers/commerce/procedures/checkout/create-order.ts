@@ -30,8 +30,6 @@ export const createOrder = protectedProcedure
           phone_number: z.string().optional(),
         }),
       }),
-      status: z.string(),
-      payment: z.string(),
     })
   )
   .mutation(async ({ input }) => {
