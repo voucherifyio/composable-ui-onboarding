@@ -15,8 +15,8 @@ export interface Order {
   created_at: number
   items: Cart['items']
   summary: Cart['summary']
-  redeemedVouchers: Voucher[]
-  redeemedPromotions: Promotion[]
+  vouchers_applied: Voucher[]
+  promotions_applied: Promotion[]
 }
 
 export interface Address {

@@ -40,7 +40,6 @@ async function processFiles(
   }
 }
 
-// Example usage
 const filePaths = [
   '../../../../packages/commerce-generic/src/services/cart/add-cart-item.ts',
   '../../../../packages/commerce-generic/src/services/cart/delete-cart-item.ts',
@@ -49,13 +48,19 @@ const filePaths = [
   '../../../../packages/commerce-generic/src/services/cart/get-cart.ts',
   '../../../../packages/commerce-generic/src/services/cart/delete-voucher.ts',
   '../../../../packages/commerce-generic/src/services/cart/add-voucher.ts',
-  '../../../../packages/commerce-generic/src/services/checkout/create-order.ts',
 ]
 
 const searchPhrase = "from './discount'"
 const replacePhrase = "from '@composable/voucherify'"
 
 processFiles(filePaths, searchPhrase, replacePhrase)
+processFiles(
+  [
+    '../../../../packages/commerce-generic/src/services/checkout/create-order.ts',
+  ],
+  searchPhrase,
+  replacePhrase
+)
 
 async function updatePackageJson(
   packageJsonPath: string,

@@ -1,8 +1,9 @@
-import { Cart } from '@composable/types'
+import { Cart, Order } from '@composable/types'
 import { validateCouponsAndPromotions } from './validate-discounts'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
-import { cartWithDiscount } from '../../data/cart-with-discount'
-import { voucherify } from '../voucherify-config'
+import { cartWithDiscount } from '../data/cart-with-discount'
+import { voucherify } from './voucherify-config'
+import { cartToVoucherifyOrder } from '../data/cart-to-voucherify-order'
 
 export const deleteVoucherFromCart = async (
   cart: Cart,
@@ -67,4 +68,23 @@ export const addVoucherToCart = async (
     success: isApplicable,
     errorMessage: error || 'This voucher is not applicable',
   }
+}
+
+export const orderPaid = async (order: Order) => {
+  const voucherifyOrder = cartToVoucherifyOrder(order)
+
+  const vouchers = order.vouchers_applied?.map((voucher) => ({
+    id: voucher.code,
+    object: 'voucher' as const,
+  }))
+  const promotions = order.promotions_applied?.map((promotion) => ({
+    id: promotion.id,
+    object: 'promotion_tier' as const,
+  }))
+
+  return await voucherify.redemptions.redeemStackable({
+    redeemables: [...(vouchers || []), ...(promotions || [])],
+    order: voucherifyOrder,
+    options: { expand: ['order'] },
+  })
 }
