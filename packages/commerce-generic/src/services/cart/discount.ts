@@ -1,4 +1,5 @@
 import { Cart, Voucher, Promotion } from '@composable/types'
+import { centToString, toCent } from './to-cent'
 
 const examplePromotion: Promotion = {
   id: 'prom_1',
@@ -83,19 +84,4 @@ export const updateCartDiscount = async (cart: Cart): Promise<Cart> => {
       totalPrice,
     },
   }
-}
-
-export const toCent = (amount: string | undefined | null): number => {
-  if (!amount) {
-    return 0
-  }
-
-  return Math.round(parseFloat(amount) * 100)
-}
-
-export const centToString = (amount: number | null | undefined) => {
-  if (!amount) {
-    return ''
-  }
-  return Number(amount / 100).toString()
 }

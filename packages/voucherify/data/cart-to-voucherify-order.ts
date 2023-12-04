@@ -1,6 +1,6 @@
 import { Cart } from '@composable/types'
 import { OrdersCreate } from '@voucherify/sdk'
-import { toCent } from '../src/cart/to-cent'
+import { toCent } from '../../commerce-generic/src/services/cart/to-cent'
 
 export const cartToVoucherifyOrder = (cart: Cart): OrdersCreate => {
   return {
