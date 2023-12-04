@@ -7,7 +7,7 @@ const examplePromotion: Promotion = {
 }
 
 const vouchersAvailable: Voucher[] = [
-  { code: '5$OFF', label: 'Five bucks off in winter', discountAmount: '5' },
+  { code: '5$OFF', label: '5 bucks off in winter', discountAmount: '5' },
   { code: '15$OFF', label: '15 bucks off in winter', discountAmount: '15' },
 ]
 
