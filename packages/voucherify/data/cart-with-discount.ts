@@ -4,33 +4,24 @@ import {
   StackableRedeemableResponse,
   ValidationValidateStackableResponse,
 } from '@voucherify/sdk'
-import { centToString, toCent } from '../src/cart/to-cent'
+import { centToString, toCent } from '../src/to-cent'
 
 export const cartWithDiscount = (
   cart: Cart,
   validationResponse: ValidationValidateStackableResponse | false,
   promotionsResult: PromotionsValidateResponse | false
 ): Cart => {
-  if (!validationResponse) {
+  if (!validationResponse || !validationResponse.redeemables) {
     return cart
   }
-  const promotions: Promotion[] = validationResponse
-    ? validationResponse.redeemables
-        ?.filter((redeemable) => redeemable.object === 'promotion_tier')
-        .map((redeemable) =>
-          mapRedeemableToPromotion(redeemable, promotionsResult)
-        ) || []
-    : []
 
-  const vouchers: Voucher[] = validationResponse
-    ? validationResponse.redeemables
-        ?.filter((redeemable) => redeemable.object === 'voucher')
-        .map((redeemable) => mapRedeemableToVoucher(redeemable)) || []
-    : []
+  const promotions: Promotion[] = validationResponse.redeemables
+    .filter((redeemable) => redeemable.object === 'promotion_tier')
+    .map((redeemable) => mapRedeemableToPromotion(redeemable, promotionsResult))
 
-  const items: CartItem[] = cart.items.map((item) => ({
-    ...item,
-  }))
+  const vouchers: Voucher[] = validationResponse.redeemables
+    .filter((redeemable) => redeemable.object === 'voucher')
+    .map(mapRedeemableToVoucher)
 
   const totalDiscountAmount = centToString(
     validationResponse.order?.total_applied_discount_amount ?? 0
@@ -49,7 +40,6 @@ export const cartWithDiscount = (
     },
     vouchersApplied: vouchers,
     promotionsApplied: promotions,
-    items,
   }
 }
 
