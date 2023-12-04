@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "algolia-setup": "ts-node src/algolia-setup/index.ts",
-    "voucherify-setup": "ts-node src/voucherify-setup/index.ts",
-    "voucherify-install": "ts-node ./src/voucherify-setup/cli/install.ts",
-    "voucherify-uninstall": "ts-node ./src/voucherify-setup/cli/uninstall.ts"
+    "voucherify-preconfigure": "ts-node src/voucherify-setup/index.ts",
+    "voucherify-activate": "ts-node src/voucherify-setup/install.ts",
+    "voucherify-deactive": "ts-node src/voucherify-setup/uninstall.ts"
   },
   "devDependencies": {
     "@types/node": "^18.6.3",

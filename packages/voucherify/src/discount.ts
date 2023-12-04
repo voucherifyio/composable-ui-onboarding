@@ -1,9 +1,9 @@
 import { Cart, Order } from '@composable/types'
 import { validateCouponsAndPromotions } from './validate-discounts'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
-import { cartWithDiscount } from '../data/cart-with-discount'
+import { cartWithDiscount } from './cart-with-discount'
 import { voucherify } from './voucherify-config'
-import { cartToVoucherifyOrder } from '../data/cart-to-voucherify-order'
+import { orderToVoucherifyOrder } from './order-to-voucherify-order'
 
 export const deleteVoucherFromCart = async (
   cart: Cart,
@@ -71,7 +71,7 @@ export const addVoucherToCart = async (
 }
 
 export const orderPaid = async (order: Order) => {
-  const voucherifyOrder = cartToVoucherifyOrder(order)
+  const voucherifyOrder = orderToVoucherifyOrder(order)
 
   const vouchers = order.vouchers_applied?.map((voucher) => ({
     id: voucher.code,
