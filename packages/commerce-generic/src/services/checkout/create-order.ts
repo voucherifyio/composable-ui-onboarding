@@ -3,7 +3,6 @@ import { getCart } from '../../data/mock-storage'
 import { saveOrder } from '../../data/mock-storage'
 import shippingMethods from '../../data/shipping-methods.json'
 import { randomUUID } from 'crypto'
-import { orderPaid } from '@composable/voucherify'
 
 const generateOrderFromCart = (
   cart: Cart,
@@ -48,10 +47,6 @@ export const createOrder: CommerceService['createOrder'] = async ({
   }
 
   const updatedOrder = generateOrderFromCart(cart, checkout)
-
-  // V%
-  updatedOrder.payment = 'paid'
-  orderPaid(updatedOrder)
 
   return await saveOrder(updatedOrder)
 }

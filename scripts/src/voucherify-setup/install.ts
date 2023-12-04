@@ -11,7 +11,7 @@ async function replaceInFile(
     const fullPath = path.join(__dirname, filePath) // assuming file paths are relative to the script's directory
     const data = await fs.readFile(fullPath, 'utf8')
 
-    // Replace the search phrase with the replace phrase
+    // Replace the search phrase with the replacement phrase
     const updatedContent = data.replace(
       new RegExp(searchPhrase, 'g'),
       replacePhrase
@@ -20,6 +20,36 @@ async function replaceInFile(
     // Write the updated content back to the file
     await fs.writeFile(fullPath, updatedContent, 'utf8')
 
+    console.log(`Replacement complete in ${fullPath}`)
+  } catch (err) {
+    console.error(`Error: ${err}`)
+  }
+}
+
+async function addVoucherifyImplementationToCreateOrderFile() {
+  const createOrderFilePath =
+    '../../../packages/commerce-generic/src/services/checkout/create-order.ts'
+  const importContent = "import { orderPaid } from '@composable/voucherify'\n"
+  const updatePaidOrderContent =
+    '  \n  // V%\n' +
+    "  updatedOrder.payment = 'paid'\n" +
+    '  await orderPaid(updatedOrder)'
+  const searchedText =
+    'const updatedOrder = generateOrderFromCart(cart, checkout)'
+
+  try {
+    const fullPath = path.join(__dirname, createOrderFilePath)
+    const data = await fs.readFile(fullPath, 'utf8')
+    const dataWithImportAdded = importContent.concat(data)
+
+    const updatedContent = dataWithImportAdded.replace(
+      searchedText,
+      (match) => {
+        return match + updatePaidOrderContent
+      }
+    )
+
+    await fs.writeFile(fullPath, updatedContent, 'utf8')
     console.log(`Replacement complete in ${fullPath}`)
   } catch (err) {
     console.error(`Error: ${err}`)
@@ -41,26 +71,22 @@ async function processFiles(
 }
 
 const filePaths = [
-  '../../../../packages/commerce-generic/src/services/cart/add-cart-item.ts',
-  '../../../../packages/commerce-generic/src/services/cart/delete-cart-item.ts',
-  '../../../../packages/commerce-generic/src/services/cart/discount.ts',
-  '../../../../packages/commerce-generic/src/services/cart/update-cart-item.ts',
-  '../../../../packages/commerce-generic/src/services/cart/get-cart.ts',
-  '../../../../packages/commerce-generic/src/services/cart/delete-voucher.ts',
-  '../../../../packages/commerce-generic/src/services/cart/add-voucher.ts',
+  '../../../packages/commerce-generic/src/services/cart/add-cart-item.ts',
+  '../../../packages/commerce-generic/src/services/cart/delete-cart-item.ts',
+  '../../../packages/commerce-generic/src/services/cart/discount.ts',
+  '../../../packages/commerce-generic/src/services/cart/update-cart-item.ts',
+  '../../../packages/commerce-generic/src/services/cart/get-cart.ts',
+  '../../../packages/commerce-generic/src/services/cart/delete-voucher.ts',
+  '../../../packages/commerce-generic/src/services/cart/add-voucher.ts',
 ]
 
 const searchPhrase = "from './discount'"
 const replacePhrase = "from '@composable/voucherify'"
 
 processFiles(filePaths, searchPhrase, replacePhrase)
-processFiles(
-  [
-    '../../../../packages/commerce-generic/src/services/checkout/create-order.ts',
-  ],
-  searchPhrase,
-  replacePhrase
-)
+
+//Add Voucherify implementation to create order
+addVoucherifyImplementationToCreateOrderFile()
 
 async function updatePackageJson(
   packageJsonPath: string,
@@ -89,7 +115,7 @@ async function updatePackageJson(
 }
 
 // Example usage
-const packageJsonPath = '../../../../packages/commerce-generic/package.json' // Replace with the actual path
+const packageJsonPath = '../../../packages/commerce-generic/package.json' // Replace with the actual path
 const newDependencyName = '@composable/voucherify' // Replace with the actual package and version
 const newDependencyVersion = 'workspace:*' // Replace with the actual package and version
 updatePackageJson(packageJsonPath, newDependencyName, newDependencyVersion)
