@@ -6,7 +6,7 @@
     "algolia-setup": "ts-node src/algolia-setup/index.ts",
     "voucherify-preconfigure": "ts-node src/voucherify-setup/index.ts",
     "voucherify-activate": "ts-node src/voucherify-setup/install.ts",
-    "voucherify-deactive": "ts-node src/voucherify-setup/uninstall.ts"
+    "voucherify-deactivate": "ts-node src/voucherify-setup/uninstall.ts"
   },
   "devDependencies": {
     "@types/node": "^18.6.3",
