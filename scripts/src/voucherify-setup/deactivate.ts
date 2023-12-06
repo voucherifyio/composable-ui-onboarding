@@ -1,11 +1,11 @@
 import {
-  addVoucherifyToCreateOrderFile,
-  processFiles,
-  updatePackageJson,
+  replaceInFiles,
+  removeFromPackageJson,
+  removeVoucherifyFromCreateOrderFile,
 } from './operations'
 
 // Usage
-// Replace classic usage with Voucherify usage
+// Replace Voucherify usage with classic usage
 const filePaths = [
   '../../../packages/commerce-generic/src/services/cart/add-cart-item.ts',
   '../../../packages/commerce-generic/src/services/cart/delete-cart-item.ts',
@@ -16,12 +16,12 @@ const filePaths = [
   '../../../packages/commerce-generic/src/services/cart/add-voucher.ts',
 ]
 
-const searchPhrase = "from './discount'"
-const replacePhrase = "from '@composable/voucherify'"
+const replacePhrase = "from './discount'"
+const searchPhrase = "from '@composable/voucherify'"
 
-processFiles(filePaths, searchPhrase, replacePhrase)
+replaceInFiles(filePaths, searchPhrase, replacePhrase)
 
-// Add Voucherify implementation to create order
+// Remove Voucherify implementation from create order
 const createOrderFilePath =
   '../../../packages/commerce-generic/src/services/checkout/create-order.ts'
 const importContent = "import { orderPaid } from '@composable/voucherify'\n"
@@ -29,18 +29,14 @@ const updatePaidOrderContent =
   '  \n  // V%\n' +
   "  updatedOrder.payment = 'paid'\n" +
   '  await orderPaid(updatedOrder)'
-const searchedText =
-  'const updatedOrder = generateOrderFromCart(cart, checkout)'
 
-addVoucherifyToCreateOrderFile(
+removeVoucherifyFromCreateOrderFile(
   createOrderFilePath,
   importContent,
-  updatePaidOrderContent,
-  searchedText
+  updatePaidOrderContent
 )
 
-// Add Voucherify to package.json
+// Remove Voucherify from package.json
 const packageJsonPath = '../../../packages/commerce-generic/package.json' // Replace with the actual path
-const newDependencyName = '@composable/voucherify' // Replace with the actual package and version
-const newDependencyVersion = 'workspace:*' // Replace with the actual package and version
-updatePackageJson(packageJsonPath, newDependencyName, newDependencyVersion)
+const dependencyToRemove = '@composable/voucherify' // Replace with the actual package and version
+removeFromPackageJson(packageJsonPath, dependencyToRemove)

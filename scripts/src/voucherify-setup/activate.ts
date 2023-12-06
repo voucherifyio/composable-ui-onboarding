@@ -1,11 +1,11 @@
 import {
-  processFiles,
-  removeFromPackageJson,
-  removeVoucherifyFromCreateOrderFile,
+  addVoucherifyToCreateOrderFile,
+  replaceInFiles,
+  updatePackageJson,
 } from './operations'
 
 // Usage
-// Replace Voucherify usage with classic usage
+// Replace classic usage with Voucherify usage
 const filePaths = [
   '../../../packages/commerce-generic/src/services/cart/add-cart-item.ts',
   '../../../packages/commerce-generic/src/services/cart/delete-cart-item.ts',
@@ -16,12 +16,12 @@ const filePaths = [
   '../../../packages/commerce-generic/src/services/cart/add-voucher.ts',
 ]
 
-const replacePhrase = "from './discount'"
-const searchPhrase = "from '@composable/voucherify'"
+const searchPhrase = "from './discount'"
+const replacePhrase = "from '@composable/voucherify'"
 
-processFiles(filePaths, searchPhrase, replacePhrase)
+replaceInFiles(filePaths, searchPhrase, replacePhrase)
 
-// Remove Voucherify implementation from create order
+// Add Voucherify implementation to create order
 const createOrderFilePath =
   '../../../packages/commerce-generic/src/services/checkout/create-order.ts'
 const importContent = "import { orderPaid } from '@composable/voucherify'\n"
@@ -29,14 +29,18 @@ const updatePaidOrderContent =
   '  \n  // V%\n' +
   "  updatedOrder.payment = 'paid'\n" +
   '  await orderPaid(updatedOrder)'
+const searchedText =
+  'const updatedOrder = generateOrderFromCart(cart, checkout)'
 
-removeVoucherifyFromCreateOrderFile(
+addVoucherifyToCreateOrderFile(
   createOrderFilePath,
   importContent,
-  updatePaidOrderContent
+  updatePaidOrderContent,
+  searchedText
 )
 
-// Remove Voucherify from package.json
+// Add Voucherify to package.json
 const packageJsonPath = '../../../packages/commerce-generic/package.json' // Replace with the actual path
-const dependencyToRemove = '@composable/voucherify' // Replace with the actual package and version
-removeFromPackageJson(packageJsonPath, dependencyToRemove)
+const newDependencyName = '@composable/voucherify' // Replace with the actual package and version
+const newDependencyVersion = 'workspace:*' // Replace with the actual package and version
+updatePackageJson(packageJsonPath, newDependencyName, newDependencyVersion)

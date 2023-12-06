@@ -27,7 +27,7 @@ export async function replaceInFile(
   }
 }
 
-export async function processFiles(
+export async function replaceInFiles(
   filePaths: string[],
   searchPhrase: string,
   replacePhrase: string
