@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@composable/types": "workspace:*",
-    "@composable/commerce-generic": "workspace:*",
     "@voucherify/sdk": "^2.6.0"
   },
   "devDependencies": {

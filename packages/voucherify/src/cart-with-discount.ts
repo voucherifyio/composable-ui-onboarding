@@ -1,13 +1,11 @@
+import { centToString } from '@composable/commerce-generic'
 import { Cart, Promotion, Voucher } from '@composable/types'
 import {
   PromotionsValidateResponse,
   StackableRedeemableResponse,
   ValidationValidateStackableResponse,
 } from '@voucherify/sdk'
-import {
-  centToString,
-  toCent,
-} from '../../commerce-generic/src/services/cart/to-cent'
+import { toCent } from './to-cent'
 
 export const cartWithDiscount = (
   cart: Cart,
