@@ -75,8 +75,12 @@ export const CartSummary = ({
               />
             </CartSummaryItem>
           )}
-          <Divider m={'2px 0'} />
-          <CartPromotions promotions={promotions} />
+          {promotions.length > 0 && (
+            <>
+              <Divider m={'2px 0'} />
+              <CartPromotions promotions={promotions} />
+            </>
+          )}
           <Divider m={'2px 0'} />
           <CartVouchers />
           <Divider />
