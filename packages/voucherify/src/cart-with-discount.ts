@@ -12,7 +12,10 @@ export const cartWithDiscount = (
   promotionsResult: PromotionsValidateResponse | false
 ): Cart => {
   if (!validationResponse || !validationResponse.redeemables) {
-    return cart
+    return {
+      ...cart,
+      summary: { ...cart.summary, totalDiscountAmount: undefined },
+    }
   }
 
   const promotions: Promotion[] = validationResponse.redeemables
@@ -26,7 +29,6 @@ export const cartWithDiscount = (
   const totalDiscountAmount = centToString(
     validationResponse.order?.total_applied_discount_amount ?? 0
   )
-
   const totalPrice = centToString(
     validationResponse.order?.total_amount ?? toCent(cart.summary.totalPrice)
   )
