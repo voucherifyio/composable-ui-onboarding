@@ -66,7 +66,7 @@ export async function addVoucherifyToCreateOrderFile(
   }
 }
 
-export async function updatePackageJson(
+export async function addDependencyToPackage(
   packageJsonPath: string,
   newDependency: string,
   newDependencyVersion: string
@@ -113,7 +113,7 @@ export async function removeVoucherifyFromCreateOrderFile(
   }
 }
 
-export async function removeFromPackageJson(
+export async function removeDependencyFromPackage(
   packageJsonPath: string,
   dependency: string
 ): Promise<void> {

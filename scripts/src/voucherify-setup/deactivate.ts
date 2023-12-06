@@ -1,6 +1,6 @@
 import {
   replaceInFiles,
-  removeFromPackageJson,
+  removeDependencyFromPackage,
   removeVoucherifyFromCreateOrderFile,
 } from './operations'
 
@@ -25,8 +25,12 @@ replaceInFiles(filePaths, searchPhrase, replacePhrase)
 const createOrderFilePath =
   '../../../packages/commerce-generic/src/services/checkout/create-order.ts'
 const importContent = "import { orderPaid } from '@composable/voucherify'\n"
+const commentContent =
+  '  /* Redemptions using Voucherify should only be performed when we receive information that the payment was successful. \n' +
+  "  In this situation, the ‘payment’ property is always set as 'unpaid' (in 'generateOrderFromCart'), \n" +
+  "  so to simulate the correct behavior, the ‘payment’ value was changed here to 'paid' and the ‘orderPaid’ function was called to trigger the redemptions process.*/"
 const updatePaidOrderContent =
-  '  \n  // V%\n' +
+  `\n${commentContent} \n` +
   "  updatedOrder.payment = 'paid'\n" +
   '  await orderPaid(updatedOrder)'
 
@@ -39,4 +43,4 @@ removeVoucherifyFromCreateOrderFile(
 // Remove Voucherify from package.json
 const packageJsonPath = '../../../packages/commerce-generic/package.json' // Replace with the actual path
 const dependencyToRemove = '@composable/voucherify' // Replace with the actual package and version
-removeFromPackageJson(packageJsonPath, dependencyToRemove)
+removeDependencyFromPackage(packageJsonPath, dependencyToRemove)
