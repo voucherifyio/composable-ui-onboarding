@@ -35,7 +35,7 @@ sequenceDiagram
   activate V
   V-->>CV: promotions
   deactivate V
-  CV->>V: Validate promotions and vouchers codes
+  CV->>V: Validate promotions and voucher codes
   activate V
   V-->>CV: Eligibility check and discount calculations results
   deactivate V
@@ -93,7 +93,7 @@ For more information about the configurations, see the [Application Configuratio
 
 1. To switch between the classic implementation and the Voucherify integration you can run:  
 ```
-pnpm voucherify-install
+pnpm voucherify-activate
 ``` 
 in `scripts` directory.
 2. This action will make commerce-generic services start using methods from `@composable/voucherify`.
@@ -102,7 +102,7 @@ in `scripts` directory.
 
 3. To stop using Voucherify integration, run:
 ```
-pnpm voucherify-uninstall
+pnpm voucherify-deactivate
 ``` 
 in `scripts` directory.
 
