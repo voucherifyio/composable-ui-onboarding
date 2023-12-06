@@ -14,7 +14,7 @@ import {
   replaceInFiles,
   addDependencyToPackage,
   replaceInFile,
-} from './code-updater'
+} from './source-code-updater'
 
 const activate = async () => {
   // Update commerce generic files - replace classic usage with Voucherify usage

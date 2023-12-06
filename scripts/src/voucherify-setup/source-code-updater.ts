@@ -18,8 +18,9 @@ export async function replaceInFile(
     await fs.writeFile(fullPath, updatedContent, 'utf8')
 
     console.log(`Replacement complete in ${fullPath}`)
-  } catch (err) {
-    console.error(`Error: ${err}`)
+  } catch (error) {
+    const errorMessage = `Error replacing content in ${filePath}: ${error.message}`
+    throw new Error(errorMessage)
   }
 }
 
@@ -33,7 +34,7 @@ export async function replaceInFiles(
       await replaceInFile(filePath, searchPhrase, replacePhrase)
     }
   } catch (err) {
-    console.error(`Error: ${err}`)
+    console.error(`The process of replacement has stopped due to error.`)
   }
 }
 
@@ -58,8 +59,9 @@ export async function addDependencyToPackage(
     await fs.writeFile(fullPath, JSON.stringify(packageJson, null, 2), 'utf8')
 
     console.log(`Dependency added to package.json: ${newDependency}`)
-  } catch (err) {
-    console.error(`Error: ${err}`)
+  } catch (error) {
+    const errorMessage = `Error adding dependency to ${packageJsonPath}: ${error.message}`
+    throw new Error(errorMessage)
   }
 }
 
@@ -87,7 +89,8 @@ export async function removeDependencyFromPackage(
     await fs.writeFile(fullPath, JSON.stringify(packageJson, null, 2), 'utf8')
 
     console.log(`Dependency removed from package.json: ${dependency}`)
-  } catch (err) {
-    console.error(`Error: ${err}`)
+  } catch (error) {
+    const errorMessage = `Error removing dependency from ${packageJsonPath}: ${error.message}`
+    throw new Error(errorMessage)
   }
 }
