@@ -12,7 +12,7 @@ import {
   replaceInFiles,
   removeDependencyFromPackage,
   replaceInFile,
-} from './operations'
+} from './code-updater'
 
 const deactivate = async () => {
   // Update commerce generic files Replace Voucherify usage with classic usage
