@@ -1,7 +1,6 @@
 import * as fs from 'fs/promises'
 import * as path from 'path'
 
-// Functions
 export async function replaceInFile(
   filePath: string,
   searchPhrase: string,
@@ -13,10 +12,7 @@ export async function replaceInFile(
     const data = await fs.readFile(fullPath, 'utf8')
 
     // Replace the search phrase with the replacement phrase
-    const updatedContent = data.replace(
-      new RegExp(searchPhrase, 'g'),
-      replacePhrase
-    )
+    const updatedContent = data.replace(searchPhrase, replacePhrase)
 
     // Write the updated content back to the file
     await fs.writeFile(fullPath, updatedContent, 'utf8')
@@ -36,31 +32,6 @@ export async function replaceInFiles(
     for (const filePath of filePaths) {
       await replaceInFile(filePath, searchPhrase, replacePhrase)
     }
-  } catch (err) {
-    console.error(`Error: ${err}`)
-  }
-}
-
-export async function addVoucherifyToCreateOrderFile(
-  createOrderFilePath: string,
-  importContent: string,
-  updatePaidOrderContent: string,
-  searchedText: string
-) {
-  try {
-    const fullPath = path.join(__dirname, createOrderFilePath)
-    const data = await fs.readFile(fullPath, 'utf8')
-    const dataWithImportAdded = importContent.concat(data)
-
-    const updatedContent = dataWithImportAdded.replace(
-      searchedText,
-      (match) => {
-        return match + updatePaidOrderContent
-      }
-    )
-
-    await fs.writeFile(fullPath, updatedContent, 'utf8')
-    console.log(`Replacement complete in ${fullPath}`)
   } catch (err) {
     console.error(`Error: ${err}`)
   }
@@ -87,27 +58,6 @@ export async function addDependencyToPackage(
     await fs.writeFile(fullPath, JSON.stringify(packageJson, null, 2), 'utf8')
 
     console.log(`Dependency added to package.json: ${newDependency}`)
-  } catch (err) {
-    console.error(`Error: ${err}`)
-  }
-}
-
-export async function removeVoucherifyFromCreateOrderFile(
-  createOrderFilePath: string,
-  importContent: string,
-  updatePaidOrderContent: string
-) {
-  try {
-    const fullPath = path.join(__dirname, createOrderFilePath)
-    const data = await fs.readFile(fullPath, 'utf8')
-    const dataWithImportRemoved = data.replace(importContent, '')
-
-    const updatedContent = dataWithImportRemoved.replace(
-      updatePaidOrderContent,
-      ''
-    )
-    await fs.writeFile(fullPath, updatedContent, 'utf8')
-    console.log(`Replacement complete in ${fullPath}`)
   } catch (err) {
     console.error(`Error: ${err}`)
   }
