@@ -1,11 +1,11 @@
-import { Cart } from '@composable/types'
+import { Order } from '@composable/types'
 import { OrdersCreate } from '@voucherify/sdk'
 import { toCent } from './to-cent'
 
-export const cartToVoucherifyOrder = (cart: Cart): OrdersCreate => {
+export const orderToVoucherifyOrder = (order: Order): OrdersCreate => {
   return {
-    amount: toCent(cart.summary.priceBeforeDiscount),
-    items: cart.items.map((item) => ({
+    amount: toCent(order.summary.priceBeforeDiscount),
+    items: order.items.map((item) => ({
       quantity: item.quantity,
       product_id: item.id,
       sku_id: item.sku,

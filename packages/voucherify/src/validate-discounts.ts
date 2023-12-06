@@ -8,7 +8,7 @@ import {
 import {
   getRedeemablesForValidation,
   getRedeemablesForValidationFromPromotions,
-} from '../data/get-redeemables-for-validation'
+} from './get-redeemables-for-validation'
 import { cartToVoucherifyOrder } from './cart-to-voucherify-order'
 
 type ValidateDiscountsParam = {

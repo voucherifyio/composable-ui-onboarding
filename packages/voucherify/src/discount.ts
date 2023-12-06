@@ -1,24 +1,9 @@
-import { Cart } from '@composable/types'
+import { Cart, Order } from '@composable/types'
 import { validateCouponsAndPromotions } from './validate-discounts'
-import { VoucherifyServerSide } from '@voucherify/sdk'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
-import { cartWithDiscount } from '../data/cart-with-discount'
-
-if (
-  !process.env.VOUCHERIFY_APPLICATION_ID ||
-  !process.env.VOUCHERIFY_SECRET_KEY ||
-  !process.env.VOUCHERIFY_API_URL
-) {
-  throw new Error('[voucherify] Missing configuration')
-}
-
-const voucherify = VoucherifyServerSide({
-  applicationId: process.env.VOUCHERIFY_APPLICATION_ID,
-  secretKey: process.env.VOUCHERIFY_SECRET_KEY,
-  exposeErrorCause: true,
-  apiUrl: process.env.VOUCHERIFY_API_URL,
-  channel: 'ComposableUI',
-})
+import { cartWithDiscount } from './cart-with-discount'
+import { voucherify } from './voucherify-config'
+import { orderToVoucherifyOrder } from './order-to-voucherify-order'
 
 export const deleteVoucherFromCart = async (
   cart: Cart,
@@ -83,4 +68,23 @@ export const addVoucherToCart = async (
     success: isApplicable,
     errorMessage: error || 'This voucher is not applicable',
   }
+}
+
+export const orderPaid = async (order: Order) => {
+  const voucherifyOrder = orderToVoucherifyOrder(order)
+
+  const vouchers = order.vouchers_applied?.map((voucher) => ({
+    id: voucher.code,
+    object: 'voucher' as const,
+  }))
+  const promotions = order.promotions_applied?.map((promotion) => ({
+    id: promotion.id,
+    object: 'promotion_tier' as const,
+  }))
+
+  return await voucherify.redemptions.redeemStackable({
+    redeemables: [...(vouchers || []), ...(promotions || [])],
+    order: voucherifyOrder,
+    options: { expand: ['order'] },
+  })
 }

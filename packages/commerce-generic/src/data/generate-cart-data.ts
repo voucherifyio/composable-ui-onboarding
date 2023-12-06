@@ -23,6 +23,7 @@ export const generateCartItem = (productId: string, quantity: number) => {
     image: _product.images[0],
     name: _product.name,
     price: _product.price,
+    tax: _product.price * 0.07,
     quantity: quantity ?? 1,
     sku: _product.sku,
     slug: _product.slug,
@@ -43,6 +44,8 @@ export const calculateCartSummary = (
     subtotalPrice: subtotal.toFixed(2),
     taxes: taxes.toFixed(2),
     priceBeforeDiscount: total.toFixed(2),
+    totalDiscountAmount: '0',
+    totalPrice: total.toFixed(2),
     shipping: 'Free',
   }
 }

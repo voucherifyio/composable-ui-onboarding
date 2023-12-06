@@ -90,11 +90,11 @@ export const CartDrawerSummary = () => {
               />
             </Box>
           </CartDrawerSummaryItem>
-          <Divider m={'10px 0'} />
         </>
       )}
       {cart.summary?.totalPrice && (
         <>
+          <Divider m={'10px 0'} />
           <Flex
             justify="space-between"
             textStyle={{ base: 'Mobile/S', md: 'Desktop/S' }}
