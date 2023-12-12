@@ -1,3 +1,4 @@
+import { orderPaid } from '@composable/voucherify'
 import { Cart, CheckoutInput, CommerceService, Order } from '@composable/types'
 import { getCart } from '../../data/mock-storage'
 import { saveOrder } from '../../data/mock-storage'
@@ -30,6 +31,8 @@ const generateOrderFromCart = (
     created_at: Date.now(),
     items: cart.items,
     summary: cart.summary,
+    vouchers_applied: cart.vouchersApplied || [],
+    promotions_applied: cart.promotionsApplied || [],
   }
 }
 
@@ -44,5 +47,12 @@ export const createOrder: CommerceService['createOrder'] = async ({
     )
   }
 
-  return saveOrder(generateOrderFromCart(cart, checkout))
+  const updatedOrder = generateOrderFromCart(cart, checkout)
+  /* Redemptions using Voucherify should only be performed when we receive information that the payment was successful.
+    In this situation, the ‘payment’ property is always set as 'unpaid' (in 'generateOrderFromCart'),
+    so to simulate the correct behavior, the ‘payment’ value was changed here to 'paid' and the ‘orderPaid’ function was called to trigger the redemptions process.*/
+  updatedOrder.payment = 'paid'
+  await orderPaid(updatedOrder)
+
+  return await saveOrder(updatedOrder)
 }

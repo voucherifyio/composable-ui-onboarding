@@ -8,7 +8,7 @@ base = "composable-ui/"
 publish = ".next/"
 
 # Default build command.
-command = "pnpm build"
+command = 'cd ../scripts && pnpm run algolia-setup && pnpm run voucherify-preconfigure && pnpm run voucherify-activate && cd .. && pnpm install --no-frozen-lockfile && cd composable-ui && pnpm build'
 
 [[plugins]]
 package = "@netlify/plugin-nextjs"

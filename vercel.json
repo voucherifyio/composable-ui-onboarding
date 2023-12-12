@@ -1,0 +1,3 @@
+{
+  "buildCommand": "cd ../scripts && pnpm run algolia-setup && pnpm run voucherify-preconfigure && cd ../composable-ui && pnpm build"
+}
