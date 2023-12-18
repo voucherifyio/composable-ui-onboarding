@@ -5,7 +5,7 @@ Composable UI is an examplary online store where the ability to use the capabili
 
 To get the most out of onboarding in Voucherify, the ability to deploy Composable UI to Vercel has been created so that you can use your own Voucherify project within the Composable UI sample store.
 
-## Prerequisites
+## Pre-requisites
 
 To properly configure Composable UI, you should first:
 
