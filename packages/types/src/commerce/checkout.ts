@@ -1,9 +1,8 @@
+import { Customer } from './customer'
+
 export interface CheckoutInput {
   cartId: string
-  customer: {
-    id?: string
-    email: string
-  }
+  customer: Customer
   billing_address: {
     full_name: string
     address_line_1: string

@@ -1,4 +1,4 @@
-import { Cart } from '@composable/types'
+import { Cart, UserSession } from '@composable/types'
 import {
   PromotionsValidateResponse,
   QualificationsRedeemable,
@@ -11,12 +11,13 @@ import {
   getRedeemablesForValidationFromPromotions,
 } from './get-redeemables-for-validation'
 import { cartToVoucherifyOrder } from './cart-to-voucherify-order'
+import { userSessionToVoucherifyCustomer } from './user-session-to-voucherify-customer'
 
 type ValidateDiscountsParam = {
   cart: Cart
   code?: string
   voucherify: ReturnType<typeof VoucherifyServerSide>
-  customer?: any
+  user?: UserSession
 }
 
 export type ValidateCouponsAndPromotionsResponse = {
@@ -31,7 +32,7 @@ export type ValidateStackableResult =
 export const validateCouponsAndPromotions = async (
   params: ValidateDiscountsParam
 ): Promise<ValidateCouponsAndPromotionsResponse> => {
-  const { cart, code, voucherify } = params
+  const { cart, code, voucherify, user } = params
 
   const appliedCodes =
     cart.vouchersApplied?.map((voucher) => voucher.code) || []
@@ -42,7 +43,7 @@ export const validateCouponsAndPromotions = async (
   const qualificationsResult = await voucherify.qualifications.checkEligibility(
     {
       order,
-      customer: {},
+      customer: user ? userSessionToVoucherifyCustomer(user) : undefined,
       scenario: 'ALL',
       mode: 'BASIC',
       options: {
@@ -63,6 +64,7 @@ export const validateCouponsAndPromotions = async (
       ...getRedeemablesForValidationFromPromotions(promotions),
     ],
     order,
+    customer: user ? userSessionToVoucherifyCustomer(user) : undefined,
     options: { expand: ['order'] },
   })
 

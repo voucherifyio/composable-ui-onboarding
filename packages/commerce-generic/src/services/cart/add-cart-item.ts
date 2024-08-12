@@ -11,6 +11,7 @@ export const addCartItem: CommerceService['addCartItem'] = async ({
   cartId,
   productId,
   quantity,
+  user
 }) => {
   const cart = (await getCart(cartId)) || generateEmptyCart(cartId)
 
