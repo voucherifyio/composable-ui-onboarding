@@ -1,9 +1,9 @@
 import { config } from 'dotenv'
 config()
 
-export const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID
+export const ALGOLIA_APP_ID = process.env.NEXT_PUBLIC_ALGOLIA_APP_ID || process.env.ALGOLIA_APP_ID
 export const ALGOLIA_API_ADMIN_KEY = process.env.ALGOLIA_API_ADMIN_KEY
-export const ALGOLIA_INDEX_NAME = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME
+export const ALGOLIA_INDEX_NAME = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME|| process.env.ALGOLIA_INDEX_NAME
 
 // Algolia defaults
 export const DEFAULT_RANKING_OPTIONS = [

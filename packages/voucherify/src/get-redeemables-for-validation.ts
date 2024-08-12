@@ -1,4 +1,4 @@
-import { PromotionsValidateResponse } from '@voucherify/sdk'
+import { QualificationsRedeemable } from '@voucherify/sdk'
 
 export const getRedeemablesForValidation = (codes: string[]) =>
   codes.map((code) => ({
@@ -7,9 +7,9 @@ export const getRedeemablesForValidation = (codes: string[]) =>
   }))
 
 export const getRedeemablesForValidationFromPromotions = (
-  promotionResult: PromotionsValidateResponse
+  promotions: QualificationsRedeemable[],
 ) =>
-  promotionResult.promotions?.map((promotion) => ({
+  promotions?.map((promotion) => ({
     id: promotion.id,
     object: 'promotion_tier' as const,
   })) || []

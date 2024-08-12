@@ -39,19 +39,29 @@ export const validateCouponsAndPromotions = async (
   const order = cartToVoucherifyOrder(cart)
   const codes = code ? [...appliedCodes, code] : appliedCodes
 
-  const promotionsResult = await voucherify.promotions.validate({ order })
-  if (!codes.length && !promotionsResult.promotions?.length) {
-    return { promotionsResult, validationResult: false }
+  const qualificationsResult = await voucherify.qualifications.checkEligibility({
+    order,
+    customer: {},
+    scenario: 'ALL',
+    mode: 'BASIC',
+    options: {
+      sorting_rule: 'BEST_DEAL',
+      filters:{ voucher_type: { conditions: {$is: ["promotion_tier"]}} }
+    }
+  })
+  const promotions = qualificationsResult.redeemables.data
+  if (!codes.length && !promotions?.length) {
+    return { promotionsResult: promotions, validationResult: false }
   }
 
   const validationResult = await voucherify.validations.validateStackable({
     redeemables: [
       ...getRedeemablesForValidation(codes),
-      ...getRedeemablesForValidationFromPromotions(promotionsResult),
+      ...getRedeemablesForValidationFromPromotions(promotions),
     ],
     order,
     options: { expand: ['order'] },
   })
 
-  return { promotionsResult, validationResult }
+  return { promotionsResult: promotions, validationResult }
 }
