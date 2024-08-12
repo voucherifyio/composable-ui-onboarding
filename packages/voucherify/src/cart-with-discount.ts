@@ -1,6 +1,7 @@
 import { Cart, Promotion, Voucher } from '@composable/types'
 import {
   PromotionsValidateResponse,
+  QualificationsRedeemable,
   StackableRedeemableResponse,
   ValidationValidateStackableResponse,
 } from '@voucherify/sdk'
@@ -9,7 +10,7 @@ import { centToString, toCent } from './to-cent'
 export const cartWithDiscount = (
   cart: Cart,
   validationResponse: ValidationValidateStackableResponse | false,
-  promotionsResult: PromotionsValidateResponse | false
+  promotions: QualificationsRedeemable[] | false
 ): Cart => {
   if (!validationResponse || !validationResponse.redeemables) {
     return {
@@ -18,9 +19,9 @@ export const cartWithDiscount = (
     }
   }
 
-  const promotions: Promotion[] = validationResponse.redeemables
+  const promotionsApplied: Promotion[] = validationResponse.redeemables
     .filter((redeemable) => redeemable.object === 'promotion_tier')
-    .map((redeemable) => mapRedeemableToPromotion(redeemable, promotionsResult))
+    .map((redeemable) => mapRedeemableToPromotion(redeemable, promotions))
 
   const vouchers: Voucher[] = validationResponse.redeemables
     .filter((redeemable) => redeemable.object === 'voucher')
@@ -41,13 +42,13 @@ export const cartWithDiscount = (
       totalPrice,
     },
     vouchersApplied: vouchers,
-    promotionsApplied: promotions,
+    promotionsApplied,
   }
 }
 
 const mapRedeemableToPromotion = (
   redeemable: StackableRedeemableResponse,
-  promotionsResult: PromotionsValidateResponse | false
+  promotions: QualificationsRedeemable[] | false
 ) => ({
   id: redeemable.id,
   discountAmount: centToString(
@@ -58,13 +59,11 @@ const mapRedeemableToPromotion = (
   ),
   label:
     redeemable.object === 'promotion_tier'
-      ? promotionsResult
-        ? promotionsResult.promotions?.find(
-            (promotion) => promotion.id === redeemable.id
-          )?.banner ||
-          promotionsResult.promotions?.find(
-            (promotion) => promotion.id === redeemable.id
-          )?.name ||
+      ? promotions
+        ? promotions?.find((promotion) => promotion.id === redeemable.id)
+            ?.banner ||
+          promotions?.find((promotion) => promotion.id === redeemable.id)
+            ?.name ||
           ''
         : redeemable.id
       : redeemable.id,

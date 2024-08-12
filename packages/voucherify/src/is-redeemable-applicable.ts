@@ -1,4 +1,5 @@
 import { ValidateStackableResult } from './validate-discounts'
+import { StackableRedeemableInapplicableResponse } from '@voucherify/sdk'
 
 export const isRedeemableApplicable = (
   coupon: string,
@@ -9,7 +10,8 @@ export const isRedeemableApplicable = (
     validationResult && validationResult.redeemables
       ? [
           ...validationResult.redeemables,
-          ...(validationResult?.inapplicable_redeemables || []),
+          ...((validationResult?.inapplicable_redeemables as unknown as StackableRedeemableInapplicableResponse[]) ||
+            []),
         ]?.find((redeemable) => redeemable.id === coupon)
       : false
 
