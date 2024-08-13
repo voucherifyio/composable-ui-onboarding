@@ -10,6 +10,10 @@ export const updateCartItem = protectedProcedure
       quantity: z.number(),
     })
   )
-  .mutation(async ({ input }) => {
-    return await commerce.updateCartItem({ ...input })
+  .mutation(async ({ input, ctx }) => {
+    const user = ctx.session?.user
+    return await commerce.updateCartItem({
+      ...input,
+      user,
+    })
   })

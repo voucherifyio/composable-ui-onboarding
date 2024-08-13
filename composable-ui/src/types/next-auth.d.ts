@@ -1,4 +1,4 @@
-import { type DefaultSession } from 'next-auth'
+import { DefaultUser, type DefaultSession } from 'next-auth'
 import { DefaultJWT, JWT } from 'next-auth/jwt'
 
 declare module 'next-auth' {
@@ -10,16 +10,21 @@ declare module 'next-auth' {
     loggedIn?: boolean
     sub?: string
     user?: {
+      // id: string
       voucherifyId?: string
       sourceId?: string
-      registrationDate?: string
-      registeredCustomer?: boolean
-      // id: string
+      registeredAt?: string
+      registered?: boolean
     } & DefaultSession['user']
   }
+
+  interface User extends DefaultUser {
+    voucherifyId?: string
+    sourceId?: string
+    registeredAt?: string
+    registered?: boolean
+  }
 }
-
-
 declare module 'next-auth/jwt' {
   /** Returned by the `jwt` callback and `getToken`, when using JWT sessions */
   interface JWT extends DefaultJWT {
@@ -27,7 +32,7 @@ declare module 'next-auth/jwt' {
     idToken?: string
     voucherifyId?: string
     sourceId?: string
-    registrationDate?: string
-    registeredCustomer?: boolean
+    registeredAt?: string
+    registered?: boolean
   }
 }

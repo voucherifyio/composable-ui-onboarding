@@ -10,7 +10,7 @@ import {
   LOCAL_STORAGE_CART_ID,
   LOCAL_STORAGE_CART_UPDATED_AT,
 } from 'utils/constants'
-import { Cart, UserSession } from '@composable/types'
+import { Cart, ProductListResponse, UserSession } from '@composable/types'
 import { useSession } from 'next-auth/react'
 import { undefined } from 'zod'
 

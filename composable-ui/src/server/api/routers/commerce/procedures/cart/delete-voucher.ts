@@ -9,6 +9,7 @@ export const deleteVoucher = protectedProcedure
       code: z.string(),
     })
   )
-  .mutation(async ({ input }) => {
-    return await commerce.deleteVoucher({ ...input })
+  .mutation(async ({ input, ctx }) => {
+    const user = ctx.session?.user
+    return await commerce.deleteVoucher({ ...input, user })
   })
