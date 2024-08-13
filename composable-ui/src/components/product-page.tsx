@@ -75,6 +75,7 @@ export const ProductPage = () => {
   if (!product) {
     return <DynamicNoMatchPage />
   }
+  console.log(product)
 
   const phpAccordion = [
     {

@@ -91,7 +91,6 @@ export const orderPaid = async (order: Order, user?: UserSession) => {
     return await voucherify.orders.create(voucherifyOrder)
   }
 
-  //TODO if no discount, create order/do not redeem
   return await voucherify.redemptions.redeemStackable({
     redeemables,
     order: voucherifyOrder,
