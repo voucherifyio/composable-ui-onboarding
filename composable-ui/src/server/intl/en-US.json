@@ -113,7 +113,7 @@
   "cart.item.delete.action": "Delete",
 
   "cart.item.quantity": "Quantity",
-  "cart.item.price": "Item Price",
+  "cart.item.price": "Items Price",
   "cart.item.totalPrice": "Total Price",
 
   "cart.summary.estimatedTotal": "Estimated Total",

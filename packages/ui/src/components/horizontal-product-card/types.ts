@@ -14,8 +14,8 @@ export interface HorizontalProductCardCommon {
     id: string
     value: string | number
   }[]
-  regularPrice: string
-  salePrice?: string
+  price: number
+  priceAfterDiscount?: number
   quantity: number
   metaText?: string
   size?: 'sm' | 'lg'

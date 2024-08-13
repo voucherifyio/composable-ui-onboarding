@@ -126,10 +126,16 @@ export const CartDrawer = () => {
                           remove: intl.formatMessage({ id: 'action.remove' }),
                         }}
                         quantity={item.quantity}
-                        regularPrice={intl.formatNumber(
-                          item.price,
+                        price={intl.formatNumber(
+                          item.price*item.quantity+item.tax*item.quantity,
                           currencyFormatConfig
                         )}
+                        priceAfterDiscount={
+                          item.discount ? intl.formatNumber(
+                            (item.price*item.quantity+item.tax*item.quantity)-item.discount,
+                            currencyFormatConfig
+                          ) : undefined
+                        }
                         onAddToWishlist={() => null}
                         onRemove={() => {
                           deleteCartItem.mutate({ itemId: item.id })

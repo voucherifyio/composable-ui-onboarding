@@ -40,7 +40,16 @@ export const ProductsList = ({
               alt: item.image.alt ?? item.name,
               onClickImage: () => router.push(`/product/${item.slug}`),
             }}
-            regularPrice={intl.formatNumber(item.price, currencyFormatConfig)}
+            price={intl.formatNumber(
+              item.price*item.quantity+item.tax*item.quantity,
+              currencyFormatConfig
+            )}
+            priceAfterDiscount={
+              item.discount ? intl.formatNumber(
+                (item.price*item.quantity+item.tax*item.quantity)-item.discount,
+                currencyFormatConfig
+              ) : undefined
+            }
             labels={{
               quantity: intl.formatMessage({
                 id: 'cart.item.quantity',

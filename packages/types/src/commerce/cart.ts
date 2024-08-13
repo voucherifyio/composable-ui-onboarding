@@ -36,6 +36,7 @@ export interface CartItem {
   image: { url: string; alt: string }
   name: string
   price: number
+  discount?: number
   tax: number
   quantity: number
   sku: string

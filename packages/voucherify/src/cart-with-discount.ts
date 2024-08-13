@@ -34,8 +34,49 @@ export const cartWithDiscount = (
     validationResponse.order?.total_amount ?? toCent(cart.summary.totalPrice)
   )
 
+  const redeemables = validationResponse.redeemables.filter(redeemable => redeemable.status==='APPLICABLE')
+  const cartItems = cart.items
+
+  const discounts:{targetSku?:string, money:number}[] = [];
+  redeemables.forEach((coupon) => {
+    let totalDiscountAmount =
+      coupon?.order?.items_applied_discount_amount ||
+      coupon.order?.applied_discount_amount ||
+      0;
+
+    coupon.order?.items?.forEach((item) => {
+      if (item.product_id === 'prod_5h1pp1ng') {
+        return;
+      }
+
+      if (item?.applied_discount_amount && cartItems.find(cartItem => cartItem.sku === item?.sku?.source_id)) {
+        discounts.push({
+          targetSku: item?.sku?.source_id,
+          money: item.applied_discount_amount,
+        });
+        totalDiscountAmount -= item.applied_discount_amount;
+      }
+    });
+
+    if (totalDiscountAmount) {
+      discounts.push({
+        money: totalDiscountAmount,
+      });
+    }
+  });
+
   return {
     ...cart,
+    items: cartItems.map(item => {
+      const itemDiscounts = discounts.filter(discount => discount.targetSku===item.sku)
+      if(!itemDiscounts.length) {
+        return item;
+      }
+      return {
+        ...item,
+        discount: itemDiscounts.reduce((acc,cur)=> (acc+cur.money) ,0) / 100
+      }
+    }),
     summary: {
       ...cart.summary,
       totalDiscountAmount,

@@ -159,8 +159,8 @@ export const HorizontalProductCardReadOnly = (
     brand,
     name,
     details = [],
-    regularPrice,
-    salePrice,
+    price,
+    priceAfterDiscount,
     quantity,
     metaText,
     labels,
@@ -254,15 +254,15 @@ export const HorizontalProductCardReadOnly = (
           <Text
             as={priceOptions?.display === 'block' ? 'p' : 'span'}
             mr={priceOptions?.display !== 'block' ? 1 : undefined}
-            textDecoration={salePrice ? 'line-through' : undefined}
+            textDecoration={priceAfterDiscount ? 'line-through' : undefined}
           >
-            {regularPrice}
+            {price}
           </Text>
           <Text
             as={priceOptions?.display === 'block' ? 'p' : 'span'}
             color="danger-med"
           >
-            {salePrice}
+            {priceAfterDiscount}
           </Text>
         </GridItem>
         <GridItem area="remove" display="flex" justifyContent="end">

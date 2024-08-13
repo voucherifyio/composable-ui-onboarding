@@ -76,7 +76,7 @@ export const addVoucherToCart = async (
 }
 
 export const orderPaid = async (order: Order, user?: UserSession) => {
-  const voucherifyOrder = orderToVoucherifyOrder(order)
+  const voucherifyOrder = orderToVoucherifyOrder(order, user)
 
   const vouchers = order.vouchers_applied?.map((voucher) => ({
     id: voucher.code,
@@ -86,12 +86,16 @@ export const orderPaid = async (order: Order, user?: UserSession) => {
     id: promotion.id,
     object: 'promotion_tier' as const,
   }))
+  const redeemables = [...(vouchers || []), ...(promotions || [])]
+  if(redeemables.length === 0) {
+    return await voucherify.orders.create(voucherifyOrder)
+  }
 
   //TODO if no discount, create order/do not redeem
   return await voucherify.redemptions.redeemStackable({
-    redeemables: [...(vouchers || []), ...(promotions || [])],
+    redeemables,
     order: voucherifyOrder,
-    customer: user ? userSessionToVoucherifyCustomer(user) : undefined,
+    customer: voucherifyOrder.customer,
     options: { expand: ['order'] },
   })
 }
