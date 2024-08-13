@@ -17,7 +17,6 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { useSession, signIn } from 'next-auth/react'
 import NextLink from 'next/link'
 import { useState } from 'react'
-import { signOut } from 'next-auth/react'
 
 import { AccountForm, AccountPage } from '../account/account-drawer'
 import {
@@ -112,23 +111,23 @@ export const LoginForm = ({
           {content.loginWithFacebook}
         </Text>
       </Button>
-      <Button
-        size={{ base: 'md', md: 'lg' }}
-        variant={'outline'}
-        border={'1px solid'}
-        borderColor={'text-muted'}
-        color={'text'}
-        leftIcon={<IoLogoGoogle />}
-        aria-label={content.loginWithGoogle}
-        onClick={async () => {
-          // sign out any existing anonymous session before signing in
-          signIn('google')
-        }}
-      >
-        <Text textStyle={{ base: 'Mobile/XS', md: 'Mobile/S' }}>
-          {content.loginWithGoogle}
-        </Text>
-      </Button>
+      {/*<Button*/}
+      {/*  size={{ base: 'md', md: 'lg' }}*/}
+      {/*  variant={'outline'}*/}
+      {/*  border={'1px solid'}*/}
+      {/*  borderColor={'text-muted'}*/}
+      {/*  color={'text'}*/}
+      {/*  leftIcon={<IoLogoGoogle />}*/}
+      {/*  aria-label={content.loginWithGoogle}*/}
+      {/*  onClick={async () => {*/}
+      {/*    // sign out any existing anonymous session before signing in*/}
+      {/*    signIn('google')*/}
+      {/*  }}*/}
+      {/*>*/}
+      {/*  <Text textStyle={{ base: 'Mobile/XS', md: 'Mobile/S' }}>*/}
+      {/*    {content.loginWithGoogle}*/}
+      {/*  </Text>*/}
+      {/*</Button>*/}
     </VStack>
   )
 
@@ -145,28 +144,18 @@ export const LoginForm = ({
           {content.error.incorrectSignIn}
         </Alert>
       )}
-      <SocialLogin />
-      <SectionDivider text={content.or} />
       <Box py={6}>
         <form
           role={'form'}
           aria-label={content.ariaLabel.signIn}
-          onSubmit={handleSubmit(async (data) => {
-            setIsError(false)
+          onSubmit={handleSubmit((data) => {
             setSimulatingLoading(true)
-
-            setTimeout(async () => {
+            signIn('only-email', {
+              redirect: true,
+              email: data.email,
+            }).catch(e => {
               setSimulatingLoading(false)
-              // sign out any existing anonymous session before signing in
-              const res = await signIn('credentials', {
-                redirect: false,
-                username: data.email,
-                password: data.password,
-              })
-              if (res?.status !== 200) {
-                setIsError(true)
-              }
-            }, 1000)
+            })
           })}
         >
           <Stack spacing="20px" direction="column">
@@ -178,22 +167,6 @@ export const LoginForm = ({
                 ...register('email'),
               }}
               error={errors.email}
-              isRequired
-            />
-            <PasswordField
-              label={content.input.password.label}
-              inputProps={{
-                defaultValue: DEFAULT_DEMO_ACCOUNT?.password,
-                placeholder: content.input.password.placeholder,
-                ...register('password'),
-              }}
-              error={errors.password}
-              messages={{
-                password: {
-                  mask: intl.formatMessage({ id: 'action.passwordMask' }),
-                  reveal: intl.formatMessage({ id: 'action.passwordReveal' }),
-                },
-              }}
               isRequired
             />
           </Stack>
@@ -214,95 +187,6 @@ export const LoginForm = ({
               >
                 <Text textStyle={'Mobile/S'}>{content.button.login}</Text>
               </Button>
-
-              {type === AccountPage.PAGE ? (
-                <HStack justifyContent={'space-between'} width="full">
-                  <Link as={NextLink} passHref href={'/forget-password'}>
-                    <Box
-                      as="a"
-                      fontSize="sm"
-                      fontWeight="extrabold"
-                      margin={'none'}
-                      textDecorationLine={'underline'}
-                      textUnderlineOffset={4}
-                    >
-                      {content.button.forgotPassword}
-                    </Box>
-                  </Link>
-                  <Link
-                    as={NextLink}
-                    passHref
-                    href={'/register'}
-                    legacyBehavior
-                  >
-                    <Box
-                      as="a"
-                      fontSize="sm"
-                      fontWeight="extrabold"
-                      textDecorationLine={'underline'}
-                      textUnderlineOffset={4}
-                    >
-                      {content.button.needToRegister}
-                    </Box>
-                  </Link>
-                </HStack>
-              ) : (
-                // type === drawer
-                <>
-                  <HStack
-                    justifyContent={{
-                      md: 'center',
-                      base: 'space-between',
-                    }}
-                    width="full"
-                  >
-                    <Button
-                      color={'text'}
-                      fontSize="sm"
-                      fontWeight="extrabold"
-                      textDecorationLine={'underline'}
-                      textUnderlineOffset={4}
-                      variant={'link'}
-                      onClick={() => setAccountFormToShow?.('forgot_password')}
-                    >
-                      {content.button.forgotPassword}
-                    </Button>
-
-                    <Button
-                      display={{ md: 'none', xs: 'initial' }}
-                      color={'text'}
-                      fontSize="sm"
-                      fontWeight="extrabold"
-                      textDecorationLine={'underline'}
-                      textUnderlineOffset={4}
-                      variant={'link'}
-                      onClick={() => setAccountFormToShow?.('create_account')}
-                    >
-                      {content.button.needToRegister}
-                    </Button>
-                  </HStack>
-                  <VStack
-                    display={{ xs: 'none', md: 'initial' }}
-                    alignItems={'self-start'}
-                    width={'full'}
-                    paddingTop={10}
-                    spacing={6}
-                  >
-                    <Text textStyle={'Desktop/M'}>{content.notAMemberYet}</Text>
-                    <Button
-                      size={{ base: 'md', md: 'lg' }}
-                      variant={'outline'}
-                      border={'1px solid'}
-                      borderColor={'primary'}
-                      color={'primary'}
-                      width={'full'}
-                      onClick={() => setAccountFormToShow?.('create_account')}
-                    >
-                      <Text textStyle={''}>{content.createAnAccount}</Text>
-                    </Button>
-                  </VStack>
-                </>
-              )}
             </VStack>
           </Box>
         </form>
@@ -318,9 +202,5 @@ const loginFormSchema = (deps: { intl: IntlShape }) => {
       .string()
       .email(intl.formatMessage({ id: 'validation.emailValid' }))
       .required(intl.formatMessage({ id: 'validation.emailRequired' })),
-
-    password: yup
-      .string()
-      .required(intl.formatMessage({ id: 'validation.passwordRequired' })),
   })
 }

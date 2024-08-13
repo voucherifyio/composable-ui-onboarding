@@ -4,6 +4,7 @@ import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getCRSFCookieInfo } from 'server/auth-utils'
+import { upsertVoucherifyCustomer } from '@composable/voucherify'
 
 const authOptions = async (req: NextApiRequest, res: NextApiResponse) => {
   const actionList = req.query.nextauth || []
@@ -47,38 +48,37 @@ const authOptions = async (req: NextApiRequest, res: NextApiResponse) => {
         },
       }),
       CredentialsProvider({
-        id: 'credentials',
-        name: 'Credentials',
-        // `credentials` is used to generate a form on the sign in page.
-        // You can specify which fields should be submitted, by adding keys to the `credentials` object.
-        // e.g. domain, username, password, 2FA token, etc.
-        // You can pass any HTML attribute to the <input> tag through the object.
+        id: 'only-email',
+        name: 'Only Email',
         credentials: {
-          username: { label: 'Email', type: 'text' },
-          password: { label: 'Password', type: 'password' },
+          email: { label: 'Email address', type: 'text' },
         },
         async authorize(credentials, req) {
-          // Add logic here to look up the user from the credentials supplied
-          const user = {
-            id: randomUUID(),
-            name: 'Test User',
-            email: 'test@email.com',
-            image: '',
+          if (!credentials?.email) {
+            return null
           }
 
-          if (
-            credentials?.username === 'test@email.com' &&
-            credentials?.password === 'password'
-          ) {
-            // Any object returned will be saved in `user` property of the JWT
-            return user
-          } else {
-            // If you return null then an error will be displayed advising the user to check their details.
+          const voucherifyCustomer = await upsertVoucherifyCustomer(
+            credentials.email
+          )
+
+          if (!voucherifyCustomer) {
             return null
-            // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+          }
+
+          return {
+            id: voucherifyCustomer.id,
+            voucherifyId: voucherifyCustomer.id,
+            sourceId: voucherifyCustomer.source_id,
+            name: voucherifyCustomer.name,
+            email: voucherifyCustomer.email,
+            phoneNumber: voucherifyCustomer.source_id,
+            registeredCustomer: true,
+            registrationDate: voucherifyCustomer.created_at,
+            image: '',
           }
         },
-      }),
+      })
     ],
     callbacks: {
       jwt: async ({ token }) => {
