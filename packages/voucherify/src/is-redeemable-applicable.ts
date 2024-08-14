@@ -21,7 +21,7 @@ export const isRedeemableApplicable = (
 
   if (!isApplicable) {
     error = addedRedeemable
-      ? addedRedeemable.result?.error?.message
+      ? addedRedeemable.result?.details?.message || addedRedeemable.result?.error?.message
       : 'Redeemable not found in response from Voucherify'
   }
 

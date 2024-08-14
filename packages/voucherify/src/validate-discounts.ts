@@ -60,8 +60,9 @@ export const validateCouponsAndPromotions = async (
 
   const validationResult = await voucherify.validations.validateStackable({
     redeemables: [
-      ...getRedeemablesForValidation(codes),
+      ...getRedeemablesForValidation(codes.slice(0,-1)),
       ...getRedeemablesForValidationFromPromotions(promotions.slice(0,1)),
+      ...getRedeemablesForValidation(codes.slice(-1)),
     ],
     order,
     customer: user ? userSessionToVoucherifyCustomer(user) : undefined,
