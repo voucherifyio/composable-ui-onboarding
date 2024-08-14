@@ -46,9 +46,12 @@ export const ProductListingPage = ({
   return (
     <InstantSearchSSRProvider {...serverState}>
       <InstantSearch searchClient={searchClient} indexName={ALGOLIA_INDEX_NAME}>
-        <Configure
-          hitsPerPage={12}
-          query={query}
+        <Configure /*
+      // @ts-ignore */
+          hitsPerPage={12} /*
+      // @ts-ignore */
+          query={query} /*
+      // @ts-ignore */
           restrictSearchableAttributes={['category']}
         />
 

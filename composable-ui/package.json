@@ -58,7 +58,6 @@
     "@voucherify/sdk": "^2.7.3"
   },
   "devDependencies": {
-    "lodash": "^4.17.21",
     "@netlify/plugin-nextjs": "^4.33.0",
     "@next/bundle-analyzer": "^13.1.6",
     "@testing-library/dom": "^8.20.0",

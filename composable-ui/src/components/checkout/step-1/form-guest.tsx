@@ -46,7 +46,6 @@ export const FormGuest = ({ initialValues, onChange }: GuestFormProps) => {
               id: 'checkout.forms.input.emailAddress.placeholder',
             }),
           }}
-          error={errors.email}
           caption={intl.formatMessage({
             id: 'checkout.forms.input.emailAddress.caption',
           })}

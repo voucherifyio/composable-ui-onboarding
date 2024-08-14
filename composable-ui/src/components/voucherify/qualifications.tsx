@@ -34,10 +34,6 @@ export const Qualifications = ({ product }: { product?: Product }) => {
   if (product && session) {
     return <QualificationsProduct product={product} user={session?.user} />
   }
-
-  console.log({ cart })
-  console.log({ session })
-  console.log({ product })
   return <></>
 }
 
@@ -49,7 +45,7 @@ export const QualificationsProduct = ({
   user: UserSession | undefined
 }) => {
   const { data: qualificationsRedeemables } = useQuery(
-    [user],
+    [user, product],
     async () => {
       const voucherify = getVoucherifyClientSide()
       const items = [
@@ -97,6 +93,7 @@ export const QualificationsProduct = ({
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {qualificationsRedeemables.map((redeemable) => (
             <SimpleAlertBox
+              key={redeemable.id}
               title={
                 <>
                   {redeemable.object === 'promotion_tier'

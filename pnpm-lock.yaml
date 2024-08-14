@@ -189,9 +189,6 @@ importers:
       jest-environment-jsdom:
         specifier: ^29.4.0
         version: 29.5.0
-      lodash:
-        specifier: ^4.17.21
-        version: 4.17.21
       tsconfig:
         specifier: workspace:*
         version: link:../packages/tsconfig
