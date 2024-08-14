@@ -13,7 +13,6 @@
     "dev": "turbo run dev --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,js,json}\"",
     "lint": "turbo run lint",
-    "prepare": "husky install",
     "test:ci": "turbo run test:ci",
     "ts": "turbo run ts"
   },
