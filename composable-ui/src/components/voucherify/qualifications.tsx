@@ -88,7 +88,7 @@ export const QualificationsProduct = ({
   ) => {
     return {
       defaultOpen: true,
-      label: 'Discounts related to the products',
+      label: 'Discounts related to the product',
       content: (
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
           {qualificationsRedeemables.map((redeemable) => (
