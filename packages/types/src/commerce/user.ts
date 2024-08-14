@@ -10,13 +10,13 @@ export interface LoginCredentials {
   password: string
 }
 
-export type UserSession = ({
-  voucherifyId?: string;
-  sourceId?: string;
-  registeredAt?: string;
-  registered?: boolean } &
-  {
-    name?: string | null;
-    email?: string | null;
-    image?: string | null
-  })
+export type UserSession = {
+  voucherifyId?: string
+  sourceId?: string
+  registeredAt?: string
+  registered?: boolean
+} & {
+  name?: string | null
+  email?: string | null
+  image?: string | null
+}

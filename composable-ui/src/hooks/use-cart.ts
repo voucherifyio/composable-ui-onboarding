@@ -13,6 +13,7 @@ import {
 import { Cart, ProductListResponse, UserSession } from '@composable/types'
 import { useSession } from 'next-auth/react'
 import { undefined } from 'zod'
+import { useChannel } from './use-channel'
 
 const USE_CART_KEY = 'useCartKey'
 
@@ -61,6 +62,7 @@ export const useCart = (options?: UseCartOptions) => {
   const { client } = api.useContext()
   const [cartId] = useLocalStorage(LOCAL_STORAGE_CART_ID, '')
   const [updatedAt] = useLocalStorage(LOCAL_STORAGE_CART_UPDATED_AT, Date.now())
+  const { channel } = useChannel()
   const optionsRef = useRef(options)
   optionsRef.current = options
 
@@ -68,9 +70,9 @@ export const useCart = (options?: UseCartOptions) => {
    * Fetch Cart
    */
   const { data: cart, status } = useQuery(
-    [USE_CART_KEY, cartId, updatedAt],
+    [USE_CART_KEY, cartId, updatedAt, channel],
     async () => {
-      const response = await client.commerce.getCart.query({ cartId })
+      const response = await client.commerce.getCart.query({ cartId, channel })
       return response
     },
     {
@@ -106,13 +108,14 @@ export const useCart = (options?: UseCartOptions) => {
         productId: variables.productId,
         variantId: variables.variantId,
         quantity: variables.quantity,
+        channel,
       }
 
       const response = await client.commerce.addCartItem.mutate(params)
       const updatedAt = Date.now()
 
       queryClient.setQueryData(
-        [USE_CART_KEY, variables.cartId, updatedAt],
+        [USE_CART_KEY, variables.cartId, updatedAt, channel],
         response
       )
 
@@ -160,6 +163,7 @@ export const useCart = (options?: UseCartOptions) => {
         cartId: variables.cartId,
         productId: variables.itemId,
         quantity: variables.quantity,
+        channel,
       }
 
       const response = await client.commerce.updateCartItem.mutate(params)
@@ -206,6 +210,7 @@ export const useCart = (options?: UseCartOptions) => {
       const params = {
         cartId: variables.cartId,
         productId: variables.itemId,
+        channel,
       }
 
       const response = await client.commerce.deleteCartItem.mutate(params)
@@ -251,6 +256,7 @@ export const useCart = (options?: UseCartOptions) => {
       const params = {
         cartId: variables.cartId,
         code: variables.code,
+        channel,
       }
 
       const response = await client.commerce.addVoucher.mutate(params)
@@ -303,6 +309,7 @@ export const useCart = (options?: UseCartOptions) => {
       const params = {
         cartId: variables.cartId,
         code: variables.code,
+        channel
       }
 
       const response = await client.commerce.deleteVoucher.mutate(params)

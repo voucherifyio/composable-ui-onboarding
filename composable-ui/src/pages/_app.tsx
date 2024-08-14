@@ -9,6 +9,7 @@ import { ErrorBoundary } from 'components/error-boundary'
 import { Composable } from 'components/composable'
 import { Layout } from 'components/layout/layout'
 import { GOOGLE_TAG_MANAGER_ID } from 'utils/constants'
+import AppContext from 'app-context/app-context'
 
 const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
   return (
@@ -18,7 +19,9 @@ const App = ({ Component, pageProps: { session, ...pageProps } }: AppProps) => {
           <Composable theme={theme} googleTagManagerId={GOOGLE_TAG_MANAGER_ID}>
             <Layout>
               <ErrorBoundary>
-                <Component {...pageProps} />
+                <AppContext>
+                  <Component {...pageProps} />
+                </AppContext>
               </ErrorBoundary>
             </Layout>
           </Composable>

@@ -5,6 +5,15 @@ import GoogleProvider from 'next-auth/providers/google'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { getCRSFCookieInfo } from 'server/auth-utils'
 import { upsertVoucherifyCustomer } from '@composable/voucherify'
+import Analitycs from '@segment/analytics-node'
+
+const getAnalytics = () => {
+  if (!process.env.SEGMENTIO_SOURCE_WRITE_KEY) {
+    throw new Error('SEGMENTIO_SOURCE_WRITE_KEY not defined in env variables')
+  }
+
+  return new Analitycs({ writeKey: process.env.SEGMENTIO_SOURCE_WRITE_KEY })
+}
 
 export const rawAuthOptions: NextAuthOptions = {
   pages: {},
@@ -50,6 +59,14 @@ export const rawAuthOptions: NextAuthOptions = {
           credentials.email
         )
 
+        const analitycs = getAnalytics()
+        analitycs.identify({
+          userId: credentials.email,
+          traits: {
+            email: credentials.email,
+          },
+        })
+
         if (!voucherifyCustomer) {
           return null
         }
@@ -65,7 +82,7 @@ export const rawAuthOptions: NextAuthOptions = {
           registeredAt: voucherifyCustomer.created_at,
         }
       },
-    })
+    }),
   ],
   callbacks: {
     jwt: async ({ token, user }) => {

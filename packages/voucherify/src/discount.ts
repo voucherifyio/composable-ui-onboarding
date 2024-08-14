@@ -3,13 +3,17 @@ import { validateCouponsAndPromotions } from './validate-discounts'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
 import { cartWithDiscount } from './cart-with-discount'
 import { voucherify } from './voucherify-config'
-import { orderToVoucherifyOrder } from './order-to-voucherify-order'
+import {
+  addChannelToOrder,
+  orderToVoucherifyOrder,
+} from './order-to-voucherify-order'
 import { userSessionToVoucherifyCustomer } from './user-session-to-voucherify-customer'
 
 export const deleteVoucherFromCart = async (
   cart: Cart,
   code: string,
-  user?: UserSession
+  user?: UserSession,
+  channel?: string
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
   const cartAfterDeletion: Cart = {
     ...cart,
@@ -17,19 +21,24 @@ export const deleteVoucherFromCart = async (
       (voucher) => voucher.code !== code
     ),
   }
-  const updatedCart = await updateCartDiscount(cartAfterDeletion, user)
+  const updatedCart = await updateCartDiscount(cartAfterDeletion, user, channel)
   return {
     cart: updatedCart,
     success: true,
   }
 }
 
-export const updateCartDiscount = async (cart: Cart, user?: UserSession): Promise<Cart> => {
+export const updateCartDiscount = async (
+  cart: Cart,
+  user?: UserSession,
+  channel?: string
+): Promise<Cart> => {
   const { validationResult, promotionsResult } =
     await validateCouponsAndPromotions({
       cart,
       voucherify,
       user,
+      channel,
     })
   return cartWithDiscount(cart, validationResult, promotionsResult)
 }
@@ -38,6 +47,7 @@ export const addVoucherToCart = async (
   cart: Cart,
   code: string,
   user?: UserSession,
+  channel?: string
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
   if (cart.vouchersApplied?.some((voucher) => voucher.code === code)) {
     return {
@@ -52,6 +62,7 @@ export const addVoucherToCart = async (
       code,
       voucherify,
       user,
+      channel,
     })
 
   const { isApplicable, error } = isRedeemableApplicable(code, validationResult)
@@ -75,8 +86,15 @@ export const addVoucherToCart = async (
   }
 }
 
-export const orderPaid = async (order: Order, user?: UserSession) => {
-  const voucherifyOrder = orderToVoucherifyOrder(order, user)
+export const orderPaid = async (
+  order: Order,
+  user?: UserSession,
+  channel?: string
+) => {
+  const voucherifyOrder = addChannelToOrder(
+    orderToVoucherifyOrder(order, user),
+    channel
+  )
 
   const vouchers = order.vouchers_applied?.map((voucher) => ({
     id: voucher.code,
@@ -87,7 +105,7 @@ export const orderPaid = async (order: Order, user?: UserSession) => {
     object: 'promotion_tier' as const,
   }))
   const redeemables = [...(vouchers || []), ...(promotions || [])]
-  if(redeemables.length === 0) {
+  if (redeemables.length === 0) {
     return await voucherify.orders.create(voucherifyOrder)
   }
 
