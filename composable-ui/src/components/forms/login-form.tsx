@@ -16,7 +16,7 @@ import { IoLogoFacebook, IoLogoGoogle } from 'react-icons/io5'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useSession, signIn } from 'next-auth/react'
 import NextLink from 'next/link'
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 
 import { AccountForm, AccountPage } from '../account/account-drawer'
 import {
@@ -25,6 +25,7 @@ import {
   SectionDivider,
   TitleSection,
 } from '@composable/ui'
+import { MainAppContext } from 'app-context/app-context'
 
 export interface LoginFormProps {
   setAccountFormToShow?: React.Dispatch<React.SetStateAction<AccountForm>>
@@ -38,7 +39,6 @@ export const LoginForm = ({
   setAccountFormToShow,
 }: LoginFormProps) => {
   const intl = useIntl()
-  const { data, status } = useSession()
   const [simulatingLoading, setSimulatingLoading] = useState(false)
   const [isError, setIsError] = useState(false)
   const {
@@ -49,6 +49,8 @@ export const LoginForm = ({
     resolver: yupResolver(loginFormSchema({ intl })),
     mode: 'all',
   })
+
+  const { updateBrazeUser } = useContext(MainAppContext)
 
   const DEFAULT_DEMO_ACCOUNT = {
     username: 'test@email.com',
@@ -153,9 +155,13 @@ export const LoginForm = ({
             signIn('only-email', {
               redirect: true,
               email: data.email,
-            }).catch(e => {
-              setSimulatingLoading(false)
             })
+              .then((_) => {
+                updateBrazeUser(data.email)
+              })
+              .catch((e) => {
+                setSimulatingLoading(false)
+              })
           })}
         >
           <Stack spacing="20px" direction="column">

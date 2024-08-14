@@ -7,6 +7,7 @@ export const deleteCartItem = protectedProcedure
     z.object({
       cartId: z.string(),
       productId: z.string(),
+      channel: z.string(),
     })
   )
   .mutation(async ({ input, ctx }) => {

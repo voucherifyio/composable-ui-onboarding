@@ -7,9 +7,10 @@ export const addVoucher = protectedProcedure
     z.object({
       cartId: z.string(),
       code: z.string(),
+      channel: z.string(),
     })
   )
   .mutation(async ({ input, ctx }) => {
     const user = ctx.session?.user
-    return await commerce.addVoucher({ ...input,user })
+    return await commerce.addVoucher({ ...input, user })
   })
