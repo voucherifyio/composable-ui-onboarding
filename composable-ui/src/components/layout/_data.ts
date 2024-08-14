@@ -1,17 +1,10 @@
-export const cmsNavLinks = [
-  {
-    name: 'Accessories',
-    slug: 'accessories',
-  },
-  {
-    name: 'Men',
-    slug: 'men',
-  },
-  {
-    name: 'Women',
-    slug: 'women',
-  },
-]
+
+
+import products from '../../../../packages/commerce-generic/src/data/products.json'
+import slugify from 'slugify'
+import _ from 'lodash'
+
+export const cmsNavLinks = _.uniq(products.map(p=>p.category)).map(category => ({name: category, slug: slugify(category)}))
 
 export const cmsFooterLinks = {
   title: 'footerLinks',

@@ -81,7 +81,7 @@ export const ProductPage = () => {
     {
       defaultOpen: false,
       label: 'Material & Care',
-      content: product.materialAndCare,
+      content: '',
       id: 'b3ac576d-c527-4818-9540-fbc3933b5fb7',
     },
     ...pdpAccordionData,
