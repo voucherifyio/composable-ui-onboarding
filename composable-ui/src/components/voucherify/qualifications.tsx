@@ -25,11 +25,13 @@ import {
   useDisclosure,
 } from '@chakra-ui/react'
 import { lineHeights } from '@composable/ui/src/chakra/theme/foundations/typography'
+import { useQuery } from '@tanstack/react-query'
 
 export const Qualifications = ({ product }: { product?: Product }) => {
   const { cart } = useCart()
   const { data: session } = useSession()
-  if (product) {
+
+  if (product && session) {
     return <QualificationsProduct product={product} user={session?.user} />
   }
 
@@ -46,16 +48,14 @@ export const QualificationsProduct = ({
   product: Product
   user: UserSession | undefined
 }) => {
-  const [qualificationsRedeemables, setQualificationRedeemables] = useState<
-    QualificationsRedeemable[]
-  >([])
-  useEffect(() => {
-    ;(async () => {
+  const { data: qualificationsRedeemables } = useQuery(
+    [user],
+    async () => {
       const voucherify = getVoucherifyClientSide()
       const items = [
         itemToVoucherifyItem(generateCartItem(product.id, 1, product)),
       ]
-      setQualificationRedeemables(
+      return (
         (
           await voucherify.qualifications({
             order: {
@@ -77,9 +77,13 @@ export const QualificationsProduct = ({
           })
         )?.redeemables?.data || []
       )
-    })()
-  }, [])
-  if (!qualificationsRedeemables.length) {
+    },
+    {
+      retry: false,
+      keepPreviousData: false,
+    }
+  )
+  if (!qualificationsRedeemables?.length) {
     return null
   }
 
