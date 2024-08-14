@@ -2,9 +2,8 @@ import { Cart, Order, UserSession } from '@composable/types'
 import { validateCouponsAndPromotions } from './validate-discounts'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
 import { cartWithDiscount } from './cart-with-discount'
-import { voucherify } from './voucherify-config'
+import { getVoucherify } from './voucherify-config'
 import { orderToVoucherifyOrder } from './order-to-voucherify-order'
-import { userSessionToVoucherifyCustomer } from './user-session-to-voucherify-customer'
 
 export const deleteVoucherFromCart = async (
   cart: Cart,
@@ -24,11 +23,14 @@ export const deleteVoucherFromCart = async (
   }
 }
 
-export const updateCartDiscount = async (cart: Cart, user?: UserSession): Promise<Cart> => {
+export const updateCartDiscount = async (
+  cart: Cart,
+  user?: UserSession
+): Promise<Cart> => {
   const { validationResult, promotionsResult } =
     await validateCouponsAndPromotions({
       cart,
-      voucherify,
+      voucherify: getVoucherify(),
       user,
     })
   return cartWithDiscount(cart, validationResult, promotionsResult)
@@ -37,7 +39,7 @@ export const updateCartDiscount = async (cart: Cart, user?: UserSession): Promis
 export const addVoucherToCart = async (
   cart: Cart,
   code: string,
-  user?: UserSession,
+  user?: UserSession
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
   if (cart.vouchersApplied?.some((voucher) => voucher.code === code)) {
     return {
@@ -50,7 +52,7 @@ export const addVoucherToCart = async (
     await validateCouponsAndPromotions({
       cart,
       code,
-      voucherify,
+      voucherify: getVoucherify(),
       user,
     })
 
@@ -87,11 +89,11 @@ export const orderPaid = async (order: Order, user?: UserSession) => {
     object: 'promotion_tier' as const,
   }))
   const redeemables = [...(vouchers || []), ...(promotions || [])]
-  if(redeemables.length === 0) {
-    return await voucherify.orders.create(voucherifyOrder)
+  if (redeemables.length === 0) {
+    return await getVoucherify().orders.create(voucherifyOrder)
   }
 
-  return await voucherify.redemptions.redeemStackable({
+  return await getVoucherify().redemptions.redeemStackable({
     redeemables,
     order: voucherifyOrder,
     customer: voucherifyOrder.customer,

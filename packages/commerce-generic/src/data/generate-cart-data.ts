@@ -1,4 +1,4 @@
-import { Cart, CartItem } from '@composable/types'
+import { Cart, CartItem, Product } from '@composable/types'
 import products from './products.json'
 import { randomUUID } from 'crypto'
 
@@ -14,8 +14,12 @@ export const generateEmptyCart = (cartId?: string): Cart => ({
   summary: {},
 })
 
-export const generateCartItem = (productId: string, quantity: number) => {
-  const _product = findProductById(productId)
+export const generateCartItem = (
+  productId: string,
+  quantity: number,
+  product?: Product
+) => {
+  const _product = product || findProductById(productId)
   return {
     brand: _product.brand,
     category: _product.category,

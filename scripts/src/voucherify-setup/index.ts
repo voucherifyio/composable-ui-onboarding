@@ -1,6 +1,6 @@
 import { voucherifyClient } from './voucherify'
 import {
-  VOUCHERIFY_API_URL,
+  NEXT_PUBLIC_VOUCHERIFY_API_URL,
   VOUCHERIFY_APPLICATION_ID,
   VOUCHERIFY_SECRET_KEY,
 } from './config'
@@ -9,7 +9,7 @@ import _ from 'lodash'
 import products from '../../../packages/commerce-generic/src/data/products.json'
 
 const VOUCHERIFY_KEYS = [
-  VOUCHERIFY_API_URL,
+  NEXT_PUBLIC_VOUCHERIFY_API_URL,
   VOUCHERIFY_APPLICATION_ID,
   VOUCHERIFY_SECRET_KEY,
 ]
@@ -21,7 +21,7 @@ const voucherifySetup = async () => {
     if (voucherifyKeysMissing) {
       console.error(
         'You are missing some Voucherify keys in your .env file.',
-        `You must set the following:VOUCHERIFY_API_URL, VOUCHERIFY_APPLICATION_ID, VOUCHERIFY_SECRET_KEY.`
+        `You must set the following:NEXT_PUBLIC_VOUCHERIFY_API_URL, VOUCHERIFY_APPLICATION_ID, VOUCHERIFY_SECRET_KEY.`
       )
       throw new Error('VOUCHERIFY_MISSING_KEYS')
     }
@@ -32,7 +32,13 @@ const voucherifySetup = async () => {
         source_id: product.id,
         price: product.price * 100,
         image_url: product.images[0].url,
-        metadata: _.omit(product,['name','source_id','price','image_url','images'])
+        metadata: _.omit(product, [
+          'name',
+          'source_id',
+          'price',
+          'image_url',
+          'images',
+        ]),
       })
       const createdSKU = await voucherifyClient.products.createSku(
         createdProduct.id,

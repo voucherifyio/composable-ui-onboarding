@@ -1,8 +1,8 @@
-import { voucherify } from './voucherify-config'
+import { getVoucherify } from './voucherify-config'
 
 export const getProducts = async () => {
   try {
-    const { products } = await voucherify.products.list()
+    const { products } = await getVoucherify().products.list()
     return products
   } catch (err) {
     return []
