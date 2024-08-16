@@ -1,6 +1,7 @@
 {
   "account.dashboard.title": "My Account",
   "account.dashboard.account": "Account",
+  "account.dashboard.menu.myWallet": "My wallet",
   "account.dashboard.menu.profileAndPreferences": "Profile & Preferences",
   "account.dashboard.menu.savedAddresses": "Saved Addresses",
   "account.dashboard.menu.paymentMethod": "Payment Methods",
