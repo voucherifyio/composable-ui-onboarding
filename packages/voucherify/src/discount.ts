@@ -3,7 +3,8 @@ import { validateCouponsAndPromotions } from './validate-discounts'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
 import { cartWithDiscount } from './cart-with-discount'
 import { getVoucherify } from './voucherify-config'
-import { addChannelToOrder,orderToVoucherifyOrder } from './order-to-voucherify-order'
+import { orderToVoucherifyOrder } from './order-to-voucherify-order'
+import { addChannelToOrder } from './add-channel-to-voucherify-order'
 
 export const deleteVoucherFromCart = async (
   cart: Cart,
