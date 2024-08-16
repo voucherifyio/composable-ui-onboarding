@@ -1,5 +1,5 @@
 import { useCart } from '../../hooks'
-import { Product, UserSession } from '@composable/types'
+import { AlgoliaProduct, Product, UserSession } from '@composable/types'
 import { useSession } from 'next-auth/react'
 import { ReactNode, useEffect, useState } from 'react'
 import {
@@ -21,18 +21,31 @@ import {
   AlertTitle,
   Box,
   CloseButton,
+  Text,
   useColorModeValue,
   useDisclosure,
 } from '@chakra-ui/react'
 import { lineHeights } from '@composable/ui/src/chakra/theme/foundations/typography'
 import { useQuery } from '@tanstack/react-query'
 
-export const Qualifications = ({ product }: { product?: Product }) => {
+export const Qualifications = ({
+  product,
+  options,
+}: {
+  product?: Product
+  options?: { onlyPromotionCount: boolean }
+}) => {
   const { cart } = useCart()
   const { data: session } = useSession()
 
   if (product && session) {
-    return <QualificationsProduct product={product} user={session?.user} />
+    return (
+      <QualificationsProduct
+        product={product}
+        user={session?.user}
+        options={options}
+      />
+    )
   }
   return <></>
 }
@@ -40,9 +53,11 @@ export const Qualifications = ({ product }: { product?: Product }) => {
 export const QualificationsProduct = ({
   product,
   user,
+  options,
 }: {
-  product: Product
+  product: Product | AlgoliaProduct
   user: UserSession | undefined
+  options?: { onlyPromotionCount: boolean }
 }) => {
   const { data: qualificationsRedeemables } = useQuery(
     [user, product],
@@ -81,6 +96,17 @@ export const QualificationsProduct = ({
   )
   if (!qualificationsRedeemables?.length) {
     return null
+  }
+
+  if (options?.onlyPromotionCount) {
+    return (
+      <Box sx={{}}>
+        <Text as={'p'} color="success-med">
+          {qualificationsRedeemables.length} discounts found related to this
+          product
+        </Text>
+      </Box>
+    )
   }
 
   const getAccordionItem = (
@@ -146,7 +172,7 @@ export const SimpleAlertBox = ({
   title,
 }: {
   title: ReactNode
-  description: ReactNode
+  description?: ReactNode
 }) => {
   const bgValue = useColorModeValue('info.100', 'info.700')
 

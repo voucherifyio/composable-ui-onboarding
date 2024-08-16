@@ -4,7 +4,7 @@ import { APP_CONFIG } from 'utils/constants'
 
 export interface PriceProps {
   rootProps?: BoxProps
-  price?: string
+  price?: number
 }
 
 export const Price = ({ rootProps, price }: PriceProps) => {
@@ -14,13 +14,11 @@ export const Price = ({ rootProps, price }: PriceProps) => {
     return null
   }
 
-  const value = parseFloat(price)
-
   return (
     <Box {...rootProps}>
-      {Number.isNaN(value)
+      {Number.isNaN(price)
         ? price
-        : intl.formatNumber(parseFloat(price), {
+        : intl.formatNumber(price, {
             currency: APP_CONFIG.CURRENCY_CODE,
             style: 'currency',
           })}
