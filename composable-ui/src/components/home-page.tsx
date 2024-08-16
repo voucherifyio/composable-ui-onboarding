@@ -11,8 +11,12 @@ import {
 import { UiContainer } from '@composable/ui/src/components/ui-container'
 import { PageItem } from '@composable/types'
 import { useOnScreen } from 'hooks'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { LAZY_LOAD_BATCH_SIZE } from 'utils/constants'
+import * as braze from '@braze/web-sdk'
+import { MainAppContext } from 'app-context/app-context'
+import BrazePermissionModal from './braze-permission-modal'
+import { useSession } from 'next-auth/react'
 
 const renderItem = (item: PageItem) => {
   switch (item?.__typename) {
@@ -46,6 +50,16 @@ export const HomePage = () => {
   const [loaderRef, isLoaderVisible] = useOnScreen<HTMLDivElement>({
     rootMargin: '200px',
   })
+  const { data: session } = useSession()
+  const { braze } = useContext(MainAppContext)
+  const [permission, setPermission] = useState<boolean | undefined>(true)
+
+  useEffect(() => {
+    const notificationSet = localStorage.getItem('notifications')
+    if (braze && session?.loggedIn && !notificationSet) {
+      setPermission(braze?.isPushPermissionGranted())
+    }
+  }, [braze, session])
 
   useEffect(() => {
     if (isLoaderVisible) {
@@ -59,6 +73,7 @@ export const HomePage = () => {
         description="Welcome to Composable UI! Create impactful, online storefronts with a foundational React and Next.js design system and UI library for modern composable commerce websites."
       />
       <Container maxW="container.xl">
+        {!permission && <BrazePermissionModal braze={braze} />}
         {data?.items?.slice(0, visibleCount).map((item) => {
           return (
             <UiContainer

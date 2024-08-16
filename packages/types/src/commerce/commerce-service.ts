@@ -6,7 +6,8 @@ import {
   Order,
   User,
   Product,
-  SitemapField, UserSession,
+  SitemapField,
+  UserSession,
 } from './index'
 
 type VoucherifyOrderListItem = {
@@ -152,37 +153,51 @@ export interface CommerceService {
     cartId: string
     productId: string
     variantId?: string
-    quantity: number,
+    quantity: number
     user?: UserSession
+    channel?: string
   }): Promise<Cart>
 
   createCart(): Promise<Cart>
 
   deleteCartItem(params: {
-    cartId: string;
-    productId: string,
+    cartId: string
+    productId: string
     user?: UserSession
+    channel?: string
   }): Promise<Cart>
 
   getCart(params: {
-    cartId: string,
+    cartId: string
     user?: UserSession
+    channel?: string
   }): Promise<Cart | null>
 
   updateCartItem(params: {
     cartId: string
     productId: string
-    quantity: number,
+    quantity: number
     user?: UserSession
+    channel?: string
   }): Promise<Cart>
 
-  addVoucher(params: { cartId: string; code: string, user?:UserSession }): Promise<{
+  addVoucher(params: {
+    cartId: string
+    code: string
+    user?: UserSession
+    channel?: string
+  }): Promise<{
     cart: Cart
     success: boolean
     errorMessage?: string
   }>
 
-  deleteVoucher(params: { cartId: string; code: string, user?:UserSession }): Promise<Cart>
+  deleteVoucher(params: {
+    cartId: string
+    code: string
+    user?: UserSession
+    channel?: string
+  }): Promise<Cart>
 
   /**
    * Catalog methods
@@ -211,8 +226,9 @@ export interface CommerceService {
    */
 
   createOrder(params: {
-    checkout: CheckoutInput,
+    checkout: CheckoutInput
     user?: UserSession
+    channel?: string
   }): Promise<Order | null>
 
   getOrder(params: { orderId: string }): Promise<Order | null>

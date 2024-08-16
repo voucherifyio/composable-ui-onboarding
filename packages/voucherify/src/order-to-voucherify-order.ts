@@ -3,7 +3,10 @@ import { OrdersCreate } from '@voucherify/sdk'
 import { toCent } from './to-cent'
 import { userSessionToVoucherifyCustomer } from './user-session-to-voucherify-customer'
 
-export const orderToVoucherifyOrder = (order: Order, user?: UserSession): OrdersCreate => {
+export const orderToVoucherifyOrder = (
+  order: Order,
+  user?: UserSession
+): OrdersCreate => {
   return {
     amount: toCent(order.summary.priceBeforeDiscount),
     items: order.items.map((item) => ({
@@ -13,15 +16,33 @@ export const orderToVoucherifyOrder = (order: Order, user?: UserSession): Orders
       price: (item.price + item.tax) * 100,
     })),
     customer: {
-      ...(user? userSessionToVoucherifyCustomer(user): {}),
+      ...(user ? userSessionToVoucherifyCustomer(user) : {}),
       address: {
         city: order.billing_address.city || order.shipping_address.city,
         state: order.billing_address.state || order.shipping_address.state,
-        line_1: order.billing_address.address_line_1 || order.shipping_address.address_line_1,
-        country: order.billing_address.country || order.shipping_address.country,
-        postal_code: order.billing_address.postcode || order.shipping_address.postcode,
+        line_1:
+          order.billing_address.address_line_1 ||
+          order.shipping_address.address_line_1,
+        country:
+          order.billing_address.country || order.shipping_address.country,
+        postal_code:
+          order.billing_address.postcode || order.shipping_address.postcode,
       },
     },
     status: 'PAID',
+  }
+}
+
+const CHANNELS = ['Web B2B', 'App B2B']
+
+export const addChannelToOrder = (order: OrdersCreate, channel?: string) => {
+
+  if (!channel || !CHANNELS.includes(channel)) {
+    return order
+  }
+
+  return {
+    ...order,
+    metadata: { ...(order?.metadata || {}), location_id: channel },
   }
 }

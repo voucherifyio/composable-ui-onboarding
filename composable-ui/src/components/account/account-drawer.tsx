@@ -48,6 +48,7 @@ export const AccountDrawer = ({
   const intl = useIntl()
   const handleLogout = () => {
     signOut()
+    localStorage.removeItem('notifications')
     accountDrawer.onClose()
   }
 

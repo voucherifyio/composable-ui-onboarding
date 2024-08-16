@@ -7,7 +7,8 @@ import { deleteVoucherFromCart } from '@composable/voucherify'
 export const deleteVoucher: CommerceService['deleteVoucher'] = async ({
   cartId,
   code,
-  user
+  user,
+  channel,
 }) => {
   const cart = await getCartFromStorage(cartId)
 
@@ -20,7 +21,8 @@ export const deleteVoucher: CommerceService['deleteVoucher'] = async ({
   const { cart: cartWithDiscount, success } = await deleteVoucherFromCart(
     cart,
     code,
-    user
+    user,
+    channel
   )
 
   if (success) {

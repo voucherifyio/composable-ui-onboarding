@@ -16,6 +16,7 @@ import { HamburgerIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import { MenuItem } from 'components/menu/menu-item'
 import NextLink from 'next/link'
+import Channel from 'components/channel'
 
 export const Header = () => {
   const { cart } = useCart()
@@ -53,9 +54,7 @@ export const Header = () => {
             alignItems={'center'}
             justifyContent={{ base: 'center', md: 'left' }}
           >
-            <Link as={NextLink} href="/">
-              <Logo h="21px" />
-            </Link>
+            {/* {HERE LOGO CAN BE INCLUDED} */}
           </Flex>
           <Box
             as="nav"
@@ -82,7 +81,15 @@ export const Header = () => {
             justifyContent="flex-end"
             gap={3}
           >
-            <Box display={{ base: 'none', md: 'flex' }}>
+            <Channel />
+            <Box
+              display={{
+                base: 'none',
+                md: 'flex',
+                gap: '10px',
+                display: 'flex',
+              }}
+            >
               <LoginAction />
             </Box>
             <Button

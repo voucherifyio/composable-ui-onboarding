@@ -2,7 +2,7 @@ import { CommerceService } from '@composable/types'
 import { getCart as getCartFromStorage } from '../../data/mock-storage'
 import { updateCartDiscount } from '@composable/voucherify'
 
-export const getCart: CommerceService['getCart'] = async ({ cartId,user }) => {
+export const getCart: CommerceService['getCart'] = async ({ cartId, user, channel }) => {
   if (!cartId) {
     return null
   }
@@ -13,7 +13,7 @@ export const getCart: CommerceService['getCart'] = async ({ cartId,user }) => {
     return null
   }
 
-  const cartWithDiscount = await updateCartDiscount(cart, user)
+  const cartWithDiscount = await updateCartDiscount(cart, user, channel)
 
   return cartWithDiscount || null
 }
