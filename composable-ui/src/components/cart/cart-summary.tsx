@@ -54,7 +54,7 @@ export const CartSummary = ({
             </CartSummaryItem>
           )}
 
-          {_cartData.summary?.taxes && (
+          {(_cartData.summary?.taxes && (
             <CartSummaryItem
               label={intl.formatMessage({ id: 'cart.summary.taxes' })}
             >
@@ -63,7 +63,8 @@ export const CartSummary = ({
                 price={_cartData.summary.taxes}
               />
             </CartSummaryItem>
-          )}
+          )) ||
+            undefined}
 
           {_cartData.summary?.shipping && (
             <CartSummaryItem

@@ -1,6 +1,5 @@
 import { Cart } from '@composable/types'
 import { CustomerRequest, OrdersCreate } from '@voucherify/sdk'
-import { toCent } from './to-cent'
 import { itemToVoucherifyItem } from './item-to-voucherify-item'
 
 export const cartToVoucherifyOrder = (
@@ -8,7 +7,9 @@ export const cartToVoucherifyOrder = (
   customer?: CustomerRequest
 ): OrdersCreate => {
   return {
-    amount: toCent(cart.summary.priceBeforeDiscount),
+    amount: cart.summary.priceBeforeDiscount
+      ? cart.summary.priceBeforeDiscount * 100
+      : cart.summary.priceBeforeDiscount,
     items: cart.items.map(itemToVoucherifyItem),
     customer: customer,
   }

@@ -134,42 +134,36 @@ export const CheckoutSuccessPage = ({
           <SuccessOrderSummary
             items={<OrderItems items={order?.items || []} />}
             itemsQuantity={order?.items.length ?? 0}
-            subtotal={intl.formatNumber(
-              parseFloat(order?.summary.subtotalPrice ?? '0'),
-              {
-                currency: APP_CONFIG.CURRENCY_CODE,
-                style: 'currency',
-              }
-            )}
+            subtotal={intl.formatNumber(order?.summary.subtotalPrice || 0, {
+              currency: APP_CONFIG.CURRENCY_CODE,
+              style: 'currency',
+            })}
             deliveryTitle={intl.formatMessage({
               id: 'cart.summary.shipping.complimentaryDelivery',
             })}
             delivery={intl.formatMessage({ id: 'cart.summary.shipping.free' })}
-            tax={intl.formatNumber(parseFloat(order?.summary.taxes ?? '0'), {
+            tax={intl.formatNumber(order?.summary.taxes || 0, {
               currency: APP_CONFIG.CURRENCY_CODE,
               style: 'currency',
             })}
             priceBeforeDiscount={intl.formatNumber(
-              parseFloat(order?.summary.priceBeforeDiscount || '0'),
+              order?.summary.priceBeforeDiscount || 0,
               {
                 currency: APP_CONFIG.CURRENCY_CODE,
                 style: 'currency',
               }
             )}
             totalDiscountAmount={intl.formatNumber(
-              parseFloat(order?.summary.totalDiscountAmount || '0'),
+              order?.summary.totalDiscountAmount || 0,
               {
                 currency: APP_CONFIG.CURRENCY_CODE,
                 style: 'currency',
               }
             )}
-            total={intl.formatNumber(
-              parseFloat(order?.summary.totalPrice ?? '0'),
-              {
-                currency: APP_CONFIG.CURRENCY_CODE,
-                style: 'currency',
-              }
-            )}
+            total={intl.formatNumber(order?.summary.totalPrice || 0, {
+              currency: APP_CONFIG.CURRENCY_CODE,
+              style: 'currency',
+            })}
           />
         </VStack>
       </Container>
