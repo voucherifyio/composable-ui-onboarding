@@ -100,7 +100,7 @@ export const QualificationsProduct = ({
 
   if (options?.onlyPromotionCount) {
     return (
-      <Box sx={{}}>
+      <Box sx={{ fontSize: { base: 'xs', lg: 'sm' } }}>
         <Text as={'p'} color="success-med">
           {qualificationsRedeemables.length} discounts found related to this
           product
