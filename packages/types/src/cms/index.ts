@@ -1,3 +1,21 @@
+type BaseHit = Record<string, unknown>
+
+export interface AlgoliaProduct extends BaseHit {
+  id: string
+  category: string
+  type: string
+  sku: string
+  slug: string
+  name: string
+  description: string
+  brand: string
+  price: number
+  images: {
+    url: string
+    alt: string
+  }[]
+}
+
 export interface ImageProps {
   description: string
   title: string

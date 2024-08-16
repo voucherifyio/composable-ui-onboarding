@@ -15,6 +15,7 @@ import { APP_CONFIG } from '../../utils/constants'
 import { useCart, useToast } from 'hooks'
 import { HorizontalProductCard } from '@composable/ui'
 import { CartEmptyState, CartLoadingState, CartSummary, CartTotal } from '.'
+import { Qualifications } from '../voucherify/qualifications'
 
 export const CartPage = () => {
   const router = useRouter()
@@ -148,14 +149,18 @@ export const CartPage = () => {
                         }}
                         quantity={item.quantity}
                         price={intl.formatNumber(
-                          item.price*item.quantity+item.tax*item.quantity,
+                          item.price * item.quantity + item.tax * item.quantity,
                           currencyFormatConfig
                         )}
                         priceAfterDiscount={
-                          item.discount ? intl.formatNumber(
-                            (item.price*item.quantity+item.tax*item.quantity)-item.discount,
-                            currencyFormatConfig
-                          ) : undefined
+                          item.discount
+                            ? intl.formatNumber(
+                                item.price * item.quantity +
+                                  item.tax * item.quantity -
+                                  item.discount,
+                                currencyFormatConfig
+                              )
+                            : undefined
                         }
                         onAddToWishlist={() => null}
                         onRemove={() => {
@@ -174,7 +179,7 @@ export const CartPage = () => {
                     </Box>
                   )
                 })}
-                <></> {/* for bottom divider */}
+                <Qualifications cart={cart} />
               </Stack>
             </Box>
             <Flex

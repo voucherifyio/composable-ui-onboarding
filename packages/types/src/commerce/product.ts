@@ -10,5 +10,5 @@ export interface Product {
   images: Array<{ url: string; alt: string }>
   sku: string
   slug: string
-  updatedAt: number
+  updatedAt?: number
 }

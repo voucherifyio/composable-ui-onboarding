@@ -104,7 +104,7 @@ export const ProductPage = () => {
         height: 'fit-content',
         top: '12',
       }}
-      price={<Price price={product.price.toString()} />}
+      price={<Price price={product.price} />}
       main={
         <>
           <HStack
