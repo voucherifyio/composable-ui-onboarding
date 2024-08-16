@@ -71,13 +71,10 @@ export const OrderSummary = ({
                 <AccordionIcon />
               </Text>
               <Text fontWeight={700}>
-                {intl.formatNumber(
-                  parseFloat(_cart.summary?.subtotalPrice || '0'),
-                  {
-                    currency: APP_CONFIG.CURRENCY_CODE,
-                    style: 'currency',
-                  }
-                )}
+                {intl.formatNumber(_cart.summary?.subtotalPrice || 0, {
+                  currency: APP_CONFIG.CURRENCY_CODE,
+                  style: 'currency',
+                })}
               </Text>
             </AccordionButton>
             <AccordionPanel px={0}>
@@ -90,7 +87,7 @@ export const OrderSummary = ({
 
         <OrderTotals
           subtotal={intl.formatNumber(
-            parseFloat(_cart?.summary?.subtotalPrice ?? '0'),
+            _cart?.summary?.subtotalPrice || 0,
             currencyFormatConfig
           )}
           deliveryTitle={intl.formatMessage({
@@ -98,28 +95,28 @@ export const OrderSummary = ({
           })}
           delivery={intl.formatMessage({ id: 'cart.summary.shipping.free' })}
           tax={intl.formatNumber(
-            parseFloat(_cart?.summary?.taxes ?? '0'),
+            _cart?.summary?.taxes || 0,
             currencyFormatConfig
           )}
           priceBeforeDiscountTitle={intl.formatMessage({
             id: 'cart.summary.priceBeforeDiscount',
           })}
           priceBeforeDiscount={intl.formatNumber(
-            parseFloat(_cart?.summary?.priceBeforeDiscount ?? '0'),
+            _cart?.summary?.priceBeforeDiscount || 0,
             currencyFormatConfig
           )}
           totalDiscountAmountTitle={intl.formatMessage({
             id: 'cart.summary.totalDiscountAmount',
           })}
           totalDiscountAmount={intl.formatNumber(
-            parseFloat(_cart?.summary?.totalDiscountAmount ?? '0'),
+            _cart?.summary?.totalDiscountAmount || 0,
             currencyFormatConfig
           )}
           totalTitle={intl.formatMessage({
             id: 'cart.summary.orderTotal',
           })}
           total={intl.formatNumber(
-            parseFloat(_cart?.summary?.totalPrice ?? '0'),
+            _cart?.summary?.totalPrice || 0,
             currencyFormatConfig
           )}
         />

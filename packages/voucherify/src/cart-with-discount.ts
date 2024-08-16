@@ -27,12 +27,11 @@ export const cartWithDiscount = (
     .filter((redeemable) => redeemable.object === 'voucher')
     .map(mapRedeemableToVoucher)
 
-  const totalDiscountAmount = centToString(
-    validationResponse.order?.total_applied_discount_amount ?? 0
-  )
-  const totalPrice = centToString(
-    validationResponse.order?.total_amount ?? toCent(cart.summary.totalPrice)
-  )
+  const totalDiscountAmount =
+    validationResponse.order?.total_applied_discount_amount || 0
+  const totalPrice =
+    validationResponse.order?.total_amount ||
+    (cart.summary.totalPrice || 0) * 100
 
   const redeemables = validationResponse.redeemables.filter(
     (redeemable) => redeemable.status === 'APPLICABLE'
@@ -86,8 +85,8 @@ export const cartWithDiscount = (
     }),
     summary: {
       ...cart.summary,
-      totalDiscountAmount,
-      totalPrice,
+      totalDiscountAmount: totalDiscountAmount / 100,
+      totalPrice: totalPrice / 100,
     },
     vouchersApplied: vouchers,
     promotionsApplied,
@@ -119,11 +118,6 @@ const mapRedeemableToPromotion = (
 
 const mapRedeemableToVoucher = (redeemable: StackableRedeemableResponse) => ({
   code: redeemable.id,
-  discountAmount: centToString(
-    redeemable.order?.total_applied_discount_amount ||
-      redeemable.result?.discount?.amount_off ||
-      redeemable.result?.discount?.percent_off ||
-      0
-  ),
+  discountAmount: redeemable.result?.discount?.amount_off || 0,
   label: redeemable.id,
 })

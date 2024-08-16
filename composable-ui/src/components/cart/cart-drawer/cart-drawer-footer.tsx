@@ -33,7 +33,9 @@ export const CartDrawerFooter = () => {
           <Box>
             <Price
               rootProps={{ textStyle: { base: 'Mobile/XS', md: 'Desktop/M' } }}
-              price={cart.summary?.totalPrice ?? ''}
+              price={
+                cart.summary?.totalPrice || cart.summary?.priceBeforeDiscount
+              }
             />
           </Box>
         </VStack>

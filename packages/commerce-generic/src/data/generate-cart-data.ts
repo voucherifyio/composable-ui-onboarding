@@ -29,7 +29,7 @@ export const generateCartItem = (
     image: _product.images[0],
     name: _product.name,
     price: _product.price,
-    tax: _product.price * 0.07,
+    tax: _product.price * 0, //0.07
     quantity: quantity ?? 1,
     sku: _product.sku,
     slug: _product.slug,
@@ -43,15 +43,15 @@ export const calculateCartSummary = (
   const subtotal = cartItems.reduce((_subtotal, item) => {
     return _subtotal + item.price * (item.quantity ?? 1)
   }, 0)
-  const taxes = subtotal * 0.07
+  const taxes = subtotal * 0 //0.07
   const total = subtotal + taxes
 
   return {
-    subtotalPrice: subtotal.toFixed(2),
-    taxes: taxes.toFixed(2),
-    priceBeforeDiscount: total.toFixed(2),
-    totalDiscountAmount: '0',
-    totalPrice: total.toFixed(2),
+    subtotalPrice: subtotal,
+    taxes: taxes,
+    priceBeforeDiscount: total,
+    totalDiscountAmount: 0,
+    totalPrice: total,
     shipping: 'Free',
   }
 }

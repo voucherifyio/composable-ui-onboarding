@@ -25,8 +25,7 @@ export const CartDrawerSummary = () => {
           />
         </CartDrawerSummaryItem>
       )}
-
-      {cart.summary?.taxes && (
+      {(cart.summary?.taxes && (
         <CartDrawerSummaryItem
           label={intl.formatMessage({ id: 'cart.summary.taxes' })}
         >
@@ -35,7 +34,8 @@ export const CartDrawerSummary = () => {
             price={cart.summary.taxes}
           />
         </CartDrawerSummaryItem>
-      )}
+      )) ||
+        undefined}
 
       {cart.summary?.shipping && (
         <CartDrawerSummaryItem
@@ -73,7 +73,7 @@ export const CartDrawerSummary = () => {
         </CartDrawerSummaryItem>
       )}
 
-      {cart.summary?.totalDiscountAmount && (
+      {(cart.summary?.totalDiscountAmount && (
         <>
           <CartDrawerSummaryItem
             label={intl.formatMessage({
@@ -91,8 +91,9 @@ export const CartDrawerSummary = () => {
             </Box>
           </CartDrawerSummaryItem>
         </>
-      )}
-      {cart.summary?.totalPrice && (
+      )) ||
+        undefined}
+      {(cart.summary?.totalPrice && (
         <>
           <Divider m={'10px 0'} />
           <Flex
@@ -108,7 +109,8 @@ export const CartDrawerSummary = () => {
             </Box>
           </Flex>
         </>
-      )}
+      )) ||
+        undefined}
     </Box>
   )
 }
