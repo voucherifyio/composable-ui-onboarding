@@ -144,6 +144,13 @@ export type ProductListResponse = {
   }
 }
 
+export type CustomerActivitiesListResponse = {
+  object: 'list'
+  total: number
+  data_ref: 'data'
+  data: Record<string, any>[]
+}
+
 export interface CommerceService {
   /**
    * Cart methods
@@ -247,6 +254,12 @@ export interface CommerceService {
   }): Promise<User | null>
 
   resetPassword(params: { email: string }): Promise<void>
+
+  getOrderHistory(params: {
+    customerSourceId: string
+    channel?: string
+    user?: UserSession
+  }): Promise<Record<string, any>[] | null>
 
   // getOrdersList(params: {
   //   user?: UserSession

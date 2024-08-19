@@ -21,7 +21,6 @@ export interface ComposableProviderProps {
 }
 
 export const ComposableProvider = ({ children }: ComposableProviderProps) => {
-  const session = useSession()
   const router = useRouter()
   const cartDrawer = useDisclosure()
   const menuDrawer = useDisclosure()
@@ -36,13 +35,6 @@ export const ComposableProvider = ({ children }: ComposableProviderProps) => {
     },
     [router]
   )
-
-  useEffect(() => {
-    // If user is not logged in, sign in anonymously
-    if (session.status === 'unauthenticated') {
-      signIn('anon', { redirect: false })
-    }
-  }, [session])
 
   return (
     <ComposableContext.Provider

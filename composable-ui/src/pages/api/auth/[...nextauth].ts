@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto'
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
@@ -28,20 +27,6 @@ export const rawAuthOptions: NextAuthOptions = {
           access_type: 'offline',
           response_type: 'code',
         },
-      },
-    }),
-    CredentialsProvider({
-      id: 'anon',
-      name: 'Anonymous',
-      credentials: {},
-      async authorize() {
-        const anonymousUser = {
-          id: randomUUID(),
-          name: `anonymous_user`,
-          email: `anonymous_user`,
-        }
-        //anyone can do an anonymous login
-        return anonymousUser
       },
     }),
     CredentialsProvider({
