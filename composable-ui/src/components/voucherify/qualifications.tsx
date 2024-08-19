@@ -1,33 +1,25 @@
 import { CartData, useCart } from '../../hooks'
 import { AlgoliaProduct, Cart, Product, UserSession } from '@composable/types'
 import { useSession } from 'next-auth/react'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import {
   addChannelToOrder,
   cartToVoucherifyOrder,
   itemToVoucherifyItem,
   userSessionToVoucherifyCustomer,
 } from '@composable/voucherify'
-import { QualificationsCheckEligibilityResponseBody } from '@voucherify/sdk'
 import { generateCartItem } from '@composable/commerce-generic/src/data/generate-cart-data'
 import { getVoucherifyClientSide } from './client-side-voucherify-config'
-import {
-  QualificationsRedeemable,
-  QualificationsRedeemableList,
-} from '@voucherify/sdk/dist/types/Qualifications'
-import { Accordion, AccordionSize } from '@composable/ui'
+import { QualificationsRedeemable } from '@voucherify/sdk/dist/types/Qualifications'
+import { Accordion } from '@composable/ui'
 import {
   Alert,
   AlertDescription,
-  AlertIcon,
   AlertTitle,
   Box,
-  CloseButton,
   Text,
   useColorModeValue,
-  useDisclosure,
 } from '@chakra-ui/react'
-import { lineHeights } from '@composable/ui/src/chakra/theme/foundations/typography'
 import { useQuery } from '@tanstack/react-query'
 import { useChannel } from '../../hooks/use-channel'
 
@@ -37,7 +29,15 @@ export const Qualifications = ({
   options,
 }: {
   product?: Product
-  options?: { onlyPromotionCount: boolean }
+  options?: {
+    onlyPromotionCount?: boolean
+    scenario?:
+      | 'CUSTOMER_WALLET'
+      | 'AUDIENCE_ONLY'
+      | 'PRODUCTS'
+      | 'PRODUCTS_DISCOUNT'
+    title?: string
+  }
   cart?: CartData
 }) => {
   const { channel } = useChannel()
@@ -121,7 +121,14 @@ export const QualificationsCart = ({
 }: {
   cart: Cart
   user: UserSession | undefined
-  options?: {}
+  options?: {
+    scenario?:
+      | 'CUSTOMER_WALLET'
+      | 'AUDIENCE_ONLY'
+      | 'PRODUCTS'
+      | 'PRODUCTS_DISCOUNT'
+    title?: string
+  }
   channel: string
 }) => {
   const { data: qualificationsRedeemables } = useQuery(
@@ -138,7 +145,7 @@ export const QualificationsCart = ({
           await voucherify.qualifications({
             order: voucherifyOrder,
             customer,
-            scenario: 'ALL',
+            scenario: options?.scenario || 'ALL',
             mode: 'BASIC',
             options: {
               sorting_rule: 'BEST_DEAL',
@@ -169,7 +176,9 @@ export const QualificationsCart = ({
         getAccordionItem({
           qualificationsRedeemables,
           key: 'cart',
-          title: 'Applicable vouchers and promotions sorted by best deal',
+          title:
+            options?.title ||
+            'Applicable vouchers and promotions sorted by best deal',
         }),
       ]}
       accordionProps={{
@@ -194,7 +203,7 @@ export const QualificationsProduct = ({
 }: {
   product: Product | AlgoliaProduct
   user: UserSession | undefined
-  options?: { onlyPromotionCount: boolean }
+  options?: { onlyPromotionCount?: boolean; title?: string }
   channel: string
 }) => {
   const { data: qualificationsRedeemables } = useQuery(
@@ -259,7 +268,7 @@ export const QualificationsProduct = ({
         getAccordionItem({
           qualificationsRedeemables,
           key: product.id,
-          title: 'Discounts related to the product',
+          title: options?.title || 'Discounts related to the product',
         }),
       ]}
       accordionProps={{
