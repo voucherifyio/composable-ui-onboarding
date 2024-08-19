@@ -10,7 +10,8 @@ export const deleteVoucherFromCart = async (
   cart: Cart,
   code: string,
   user?: UserSession,
-  channel?: string
+  channel?: string,
+  dontApplyCodes?: string[]
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
   const cartAfterDeletion: Cart = {
     ...cart,
@@ -18,7 +19,12 @@ export const deleteVoucherFromCart = async (
       (voucher) => voucher.code !== code
     ),
   }
-  const updatedCart = await updateCartDiscount(cartAfterDeletion, user, channel)
+  const updatedCart = await updateCartDiscount(
+    cartAfterDeletion,
+    user,
+    channel,
+    dontApplyCodes
+  )
   return {
     cart: updatedCart,
     success: true,
@@ -28,7 +34,8 @@ export const deleteVoucherFromCart = async (
 export const updateCartDiscount = async (
   cart: Cart,
   user?: UserSession,
-  channel?: string
+  channel?: string,
+  dontApplyCodes?: string[]
 ): Promise<Cart> => {
   const { validationResult, promotionsResult } =
     await validateCouponsAndPromotions({
@@ -36,6 +43,7 @@ export const updateCartDiscount = async (
       voucherify: getVoucherify(),
       user,
       channel,
+      dontApplyCodes,
     })
   return cartWithDiscount(cart, validationResult, promotionsResult)
 }
@@ -44,7 +52,8 @@ export const addVoucherToCart = async (
   cart: Cart,
   code: string,
   user?: UserSession,
-  channel?: string
+  channel?: string,
+  dontApplyCodes?: string[]
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
   if (cart.vouchersApplied?.some((voucher) => voucher.code === code)) {
     return {
@@ -60,6 +69,7 @@ export const addVoucherToCart = async (
       voucherify: getVoucherify(),
       user,
       channel,
+      dontApplyCodes,
     })
 
   const { isApplicable, error } = isRedeemableApplicable(code, validationResult)

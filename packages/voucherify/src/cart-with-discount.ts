@@ -24,7 +24,10 @@ export const cartWithDiscount = (
     .map((redeemable) => mapRedeemableToPromotion(redeemable, promotions))
 
   const vouchers: Voucher[] = validationResponse.redeemables
-    .filter((redeemable) => redeemable.object === 'voucher')
+    .filter(
+      (redeemable) =>
+        redeemable.object === 'voucher' && redeemable.status === 'APPLICABLE'
+    )
     .map(mapRedeemableToVoucher)
 
   const totalDiscountAmount =
@@ -118,6 +121,6 @@ const mapRedeemableToPromotion = (
 
 const mapRedeemableToVoucher = (redeemable: StackableRedeemableResponse) => ({
   code: redeemable.id,
-  discountAmount: redeemable.result?.discount?.amount_off || 0,
+  discountAmount: (redeemable.result?.discount?.amount_off || 0) / 100,
   label: redeemable.id,
 })

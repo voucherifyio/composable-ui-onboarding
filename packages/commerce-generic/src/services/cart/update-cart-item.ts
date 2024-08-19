@@ -10,6 +10,7 @@ export const updateCartItem: CommerceService['updateCartItem'] = async ({
   quantity,
   user,
   channel,
+  dontApplyCodes,
 }) => {
   const cart = await getCart(cartId)
 
@@ -31,7 +32,12 @@ export const updateCartItem: CommerceService['updateCartItem'] = async ({
 
   cart.summary = calculateCartSummary(cart.items)
 
-  const cartWithDiscount = await updateCartDiscount(cart, user, channel)
+  const cartWithDiscount = await updateCartDiscount(
+    cart,
+    user,
+    channel,
+    dontApplyCodes
+  )
 
   return saveCart(cartWithDiscount)
 }

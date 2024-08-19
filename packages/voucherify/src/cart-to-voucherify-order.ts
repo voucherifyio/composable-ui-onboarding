@@ -9,7 +9,9 @@ export const cartToVoucherifyOrder = (
   return {
     amount: cart.summary.priceBeforeDiscount
       ? cart.summary.priceBeforeDiscount * 100
-      : cart.summary.priceBeforeDiscount,
+      : cart.summary.totalPrice
+      ? cart.summary.totalPrice * 100
+      : undefined,
     items: cart.items.map(itemToVoucherifyItem),
     customer: customer,
   }
