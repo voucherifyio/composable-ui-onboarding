@@ -53,9 +53,11 @@
     "react-instantsearch-hooks-web": "^6.39.1",
     "react-intl": "^5.21.1",
     "sharp": "^0.31.3",
+    "slugify": "1.6.6",
     "superjson": "1.9.1",
     "yup": "^0.32.11",
-    "zod": "^3.20.2"
+    "zod": "^3.20.2",
+    "@voucherify/sdk": "^2.7.3"
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^4.33.0",

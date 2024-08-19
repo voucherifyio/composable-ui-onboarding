@@ -70,7 +70,7 @@ sequenceDiagram
 3. Retrieve your API keys from your Voucherify dashboard and set the following environment variables:
 
 ```code
-VOUCHERIFY_API_URL=https://api.voucherify.io
+NEXT_PUBLIC_VOUCHERIFY_API_URL=https://api.voucherify.io
 VOUCHERIFY_APPLICATION_ID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
 VOUCHERIFY_SECRET_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxxx
 ```

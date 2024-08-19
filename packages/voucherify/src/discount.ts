@@ -2,12 +2,9 @@ import { Cart, Order, UserSession } from '@composable/types'
 import { validateCouponsAndPromotions } from './validate-discounts'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
 import { cartWithDiscount } from './cart-with-discount'
-import { voucherify } from './voucherify-config'
-import {
-  addChannelToOrder,
-  orderToVoucherifyOrder,
-} from './order-to-voucherify-order'
-import { userSessionToVoucherifyCustomer } from './user-session-to-voucherify-customer'
+import { getVoucherify } from './voucherify-config'
+import { orderToVoucherifyOrder } from './order-to-voucherify-order'
+import { addChannelToOrder } from './add-channel-to-voucherify-order'
 
 export const deleteVoucherFromCart = async (
   cart: Cart,
@@ -36,7 +33,7 @@ export const updateCartDiscount = async (
   const { validationResult, promotionsResult } =
     await validateCouponsAndPromotions({
       cart,
-      voucherify,
+      voucherify: getVoucherify(),
       user,
       channel,
     })
@@ -60,7 +57,7 @@ export const addVoucherToCart = async (
     await validateCouponsAndPromotions({
       cart,
       code,
-      voucherify,
+      voucherify: getVoucherify(),
       user,
       channel,
     })
@@ -106,11 +103,10 @@ export const orderPaid = async (
   }))
   const redeemables = [...(vouchers || []), ...(promotions || [])]
   if (redeemables.length === 0) {
-    return await voucherify.orders.create(voucherifyOrder)
+    return await getVoucherify().orders.create(voucherifyOrder)
   }
 
-  //TODO if no discount, create order/do not redeem
-  return await voucherify.redemptions.redeemStackable({
+  return await getVoucherify().redemptions.redeemStackable({
     redeemables,
     order: voucherifyOrder,
     customer: voucherifyOrder.customer,

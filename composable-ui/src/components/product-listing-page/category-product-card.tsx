@@ -4,21 +4,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { FunctionComponent } from 'react'
 import { APP_CONFIG } from '../../utils/constants'
-
-type BaseHit = Record<string, unknown>
-
-export interface AlgoliaProduct extends BaseHit {
-  sku: string
-  slug: string
-  name: string
-  description: string
-  brand: string
-  price: string
-  images: {
-    url: string
-    alt?: string
-  }[]
-}
+import { Qualifications } from '../voucherify/qualifications'
+import { AlgoliaProduct } from '@composable/types'
 
 interface CategoryProductCardProps {
   product: AlgoliaProduct
@@ -77,6 +64,10 @@ export const CategoryProductCard: FunctionComponent<
         <Price
           price={product.price}
           rootProps={{ fontSize: { base: 'xs', lg: 'sm' } }}
+        />
+        <Qualifications
+          product={product}
+          options={{ onlyPromotionCount: true }}
         />
       </VStack>
     </VStack>

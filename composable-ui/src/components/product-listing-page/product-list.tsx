@@ -3,8 +3,8 @@ import {
   UseInfiniteHitsProps,
 } from 'react-instantsearch-hooks-web'
 import { Box, Button, Grid, GridItem, VStack } from '@chakra-ui/react'
-import { AlgoliaProduct, CategoryProductCard } from './category-product-card'
-import { CategoryPageProductGrid } from '@composable/types'
+import { CategoryProductCard } from './category-product-card'
+import { AlgoliaProduct, CategoryPageProductGrid } from '@composable/types'
 
 const GRID_TEMPLATE_COLUMNS: Record<CategoryPageProductGrid, string> = {
   single: 'repeat(1, 1fr)',

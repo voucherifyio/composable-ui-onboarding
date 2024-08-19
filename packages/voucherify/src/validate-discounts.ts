@@ -1,8 +1,6 @@
 import { Cart, UserSession } from '@composable/types'
 import {
-  PromotionsValidateResponse,
   QualificationsRedeemable,
-  StackableRedeemableResponse,
   ValidationValidateStackableResponse,
   VoucherifyServerSide,
 } from '@voucherify/sdk'
@@ -12,7 +10,7 @@ import {
 } from './get-redeemables-for-validation'
 import { cartToVoucherifyOrder } from './cart-to-voucherify-order'
 import { userSessionToVoucherifyCustomer } from './user-session-to-voucherify-customer'
-import { addChannelToOrder } from './order-to-voucherify-order'
+import { addChannelToOrder } from './add-channel-to-voucherify-order'
 
 type ValidateDiscountsParam = {
   cart: Cart
@@ -39,7 +37,13 @@ export const validateCouponsAndPromotions = async (
   const appliedCodes =
     cart.vouchersApplied?.map((voucher) => voucher.code) || []
 
-  const order = addChannelToOrder(cartToVoucherifyOrder(cart), channel)
+  const order = addChannelToOrder(
+    cartToVoucherifyOrder(
+      cart,
+      user ? userSessionToVoucherifyCustomer(user) : undefined
+    ),
+    channel
+  )
   const codes = code ? [...appliedCodes, code] : appliedCodes
 
   const qualificationsResult = await voucherify.qualifications.checkEligibility(
@@ -62,8 +66,9 @@ export const validateCouponsAndPromotions = async (
 
   const validationResult = await voucherify.validations.validateStackable({
     redeemables: [
-      ...getRedeemablesForValidation(codes),
+      ...getRedeemablesForValidation(codes.slice(0, -1)),
       ...getRedeemablesForValidationFromPromotions(promotions.slice(0, 1)),
+      ...getRedeemablesForValidation(codes.slice(-1)),
     ],
     order,
     customer: user ? userSessionToVoucherifyCustomer(user) : undefined,

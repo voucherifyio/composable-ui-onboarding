@@ -54,6 +54,7 @@ const BrazePermissionModal: FC<BrazePermissionModalProps> = ({ braze }) => {
         </Box>
       </Box>
     )
+  return null
 }
 
 export default BrazePermissionModal
