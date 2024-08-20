@@ -1,8 +1,9 @@
 import { Box, Button, Text } from '@chakra-ui/react'
+import { BrazeInstance } from 'hooks'
 import { FC, useState } from 'react'
 
 type BrazePermissionModalProps = {
-  braze: typeof import('@braze/web-sdk') | undefined
+  braze: BrazeInstance | undefined
 }
 
 const BrazePermissionModal: FC<BrazePermissionModalProps> = ({ braze }) => {

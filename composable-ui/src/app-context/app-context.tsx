@@ -1,8 +1,8 @@
-import { useBraze } from 'hooks'
+import { BrazeInstance, useBraze } from 'hooks'
 import { createContext } from 'react'
 
 type AppContextType = {
-  braze: typeof import('@braze/web-sdk') | undefined
+  braze: BrazeInstance | undefined
   updateBrazeUser: (email: string) => Promise<string | null | undefined>
 }
 
