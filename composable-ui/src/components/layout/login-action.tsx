@@ -24,7 +24,7 @@ export const LoginAction = (props: { rootProps?: BoxProps }) => {
   return (
     <Box display={'flex'} {...props.rootProps}>
       <Button
-        color={'text'}
+        color={'#FFF'}
         variant="link"
         textDecoration={'underline'}
         textUnderlineOffset={'5px'}
@@ -55,11 +55,11 @@ export const LoginAction = (props: { rootProps?: BoxProps }) => {
               {userName}
             </Box>
           ) : (
-            <IoPersonCircleOutline size="26px" color="#111111" />
+            <IoPersonCircleOutline size="26px" color="#FFF" />
           )}
         </Box>
 
-        <Text textStyle={'Desktop/Body-S'} fontWeight={'700'}>
+        <Text textStyle={'Desktop/Body-S'} fontWeight={'700'} color="#FFF">
           {loggedIn ? message.myAccount : message.signIn}
         </Text>
       </Button>

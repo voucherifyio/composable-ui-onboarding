@@ -1,4 +1,11 @@
-import { Box, ButtonGroup, IconButton, Stack, Text } from '@chakra-ui/react'
+import {
+  Box,
+  ButtonGroup,
+  Flex,
+  IconButton,
+  Stack,
+  Text,
+} from '@chakra-ui/react'
 import { FaInstagramSquare, FaTwitter, FaYoutube } from 'react-icons/fa'
 
 export interface CopyrightFooterProps {
@@ -8,19 +15,16 @@ export interface CopyrightFooterProps {
 export const CopyrightFooter = ({ copyrightText }: CopyrightFooterProps) => {
   return (
     <Stack
-      pt="8"
-      pb="12"
-      justify="space-between"
+      pb="2"
+      justify="center"
       direction={{ base: 'column-reverse', md: 'row' }}
       align="center"
     >
-      <Box>
-        <Text fontSize="sm" color="subtle">
-          {copyrightText}
-        </Text>
-      </Box>
+      <Text fontSize="sm" color="#FFF" fontWeight="600">
+        {copyrightText}
+      </Text>
 
-      <ButtonGroup variant="ghost">
+      {/* <ButtonGroup variant="ghost">
         <IconButton
           as="a"
           href="#"
@@ -39,7 +43,7 @@ export const CopyrightFooter = ({ copyrightText }: CopyrightFooterProps) => {
           aria-label="YouTube"
           icon={<FaYoutube fontSize="1.25rem" />}
         />
-      </ButtonGroup>
+      </ButtonGroup> */}
     </Stack>
   )
 }

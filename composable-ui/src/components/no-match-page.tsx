@@ -22,7 +22,12 @@ export const NoMatchPage = () => {
         <Heading mb={3}>{title}</Heading>
         <Text>{intl.formatMessage({ id: 'noMatchPage.description' })}</Text>
         <Box mt={6}>
-          <Button variant="solid" onClick={() => router.push('/')}>
+          <Button
+            variant="solid"
+            onClick={() => router.push('/')}
+            backgroundColor={'#000'}
+            _hover={{ bg: '#000' }}
+          >
             {intl.formatMessage({ id: 'action.continueShopping' })}
           </Button>
         </Box>

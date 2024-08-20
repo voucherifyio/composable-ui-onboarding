@@ -20,7 +20,7 @@ export const CheckoutStepLink = ({
     <Button
       borderBottom={active ? '2px' : '0'}
       borderRadius={'0'}
-      color={active || done ? 'primary' : 'text-muted'}
+      color={active || done ? '#FFF' : '#b4b4b4'}
       disabled={!isAllowed}
       fontSize={{ base: 'xs', md: 'sm' }}
       onClick={() => isAllowed && onClick !== undefined && onClick()}

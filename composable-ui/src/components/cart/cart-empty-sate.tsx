@@ -32,6 +32,8 @@ export const CartEmptyState = () => {
         color={'text'}
         size={'lg'}
         onClick={() => router.push('/category/accessories')}
+        backgroundColor={'#000'}
+        _hover={{ bg: '#000' }}
       >
         {intl.formatMessage({ id: 'action.continueShopping' })}
       </Button>

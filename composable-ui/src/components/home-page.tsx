@@ -21,12 +21,12 @@ const renderItem = (item: PageItem) => {
   switch (item?.__typename) {
     case 'BannerSplit':
       return <BannerSplit {...item} />
-    case 'BannerFull':
-      return <BannerFull {...item} />
-    case 'BannerTextOnly':
-      return <BannerTextOnly {...item} />
-    case 'Grid':
-      return <Grid {...item} />
+    // case 'BannerFull':
+    //   return <BannerFull {...item} />
+    // case 'BannerTextOnly':
+    //   return <BannerTextOnly {...item} />
+    // case 'Grid':
+    //   return <Grid {...item} />
     case 'CommerceConnector':
       return <CommerceConnector {...item} />
     default:
@@ -82,6 +82,7 @@ export const HomePage = () => {
               marginTop={item?.containerMarginTop}
             >
               {renderItem(item)}
+              {/* <CommerceConnector {...item} /> */}
             </UiContainer>
           )
         })}

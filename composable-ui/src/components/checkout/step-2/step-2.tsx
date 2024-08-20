@@ -107,6 +107,8 @@ const Step2 = memo(function Step2({
           isLoading={isLoading || paymentIsLoading}
           isDisabled={!reviewOrderEnabled}
           onClick={handleSubmit}
+          backgroundColor={'#000'}
+          _hover={{ bg: '#000' }}
         >
           {intl.formatMessage({ id: 'action.reviewOrder' })}
         </Button>

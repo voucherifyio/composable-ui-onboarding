@@ -128,6 +128,8 @@ export const ProductPage = () => {
               <Button
                 size={'lg'}
                 width={'full'}
+                backgroundColor="#000"
+                _hover={{ bg: '#000' }}
                 onClick={() => handleAddToCart()}
                 isLoading={addCartItem.isLoading}
               >

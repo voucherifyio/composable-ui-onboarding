@@ -1,5 +1,13 @@
 import React from 'react'
-import { Badge, Container, Flex, Kbd, Tag, Text } from '@chakra-ui/react'
+import {
+  Badge,
+  Container,
+  Flex,
+  Heading,
+  Kbd,
+  Tag,
+  Text,
+} from '@chakra-ui/react'
 import { useIntl } from 'react-intl'
 import { NextSeo } from 'next-seo'
 import { useQuery } from '@tanstack/react-query'
@@ -8,7 +16,7 @@ import { useSession } from 'next-auth/react'
 import { useChannel } from 'hooks/use-channel'
 import dayjs from 'dayjs'
 
-const USER_ORDER_HISTORY_KEY = 'useOrderHistory'
+const ORDER_HISTORY_KEY = 'useOrderHistory'
 
 type ProductItem = {
   amount: number
@@ -30,7 +38,7 @@ export const OrderHistory = () => {
   const { channel } = useChannel()
   const { client } = api.useContext()
   const { data: historyData } = useQuery(
-    [USER_ORDER_HISTORY_KEY],
+    [ORDER_HISTORY_KEY],
     async () => {
       const response = await client.commerce.getOrderHistory.query({
         customerSourceId: session?.user?.email || '',
@@ -51,32 +59,35 @@ export const OrderHistory = () => {
 
   if (status === 'unauthenticated' || !session?.loggedIn) {
     return (
-      <Container
+      <Flex
         maxW="container.xl"
-        py={{ base: '8', md: '8' }}
+        justify="center"
+        alignItems="center"
+        py={{ base: '4', md: '8' }}
         px={{ base: '2' }}
-        width={'100%'}
+        w="100%"
       >
         <Text textAlign={'center'}>
-          You are not logged in. Please login to see your order history.
+          {intl.formatMessage({ id: 'orderHistory.loggedOut' })}
         </Text>
-      </Container>
+      </Flex>
     )
   }
 
   if (!historyData || historyData?.length <= 0) {
     return (
-      <Container
+      <Flex
+        justify="center"
+        alignItems="center"
         maxW="container.xl"
-        py={{ base: '8', md: '8' }}
+        py={{ base: '4', md: '8' }}
         px={{ base: '2' }}
-        width={'100%'}
+        width="100%"
       >
         <Text textAlign={'center'}>
-          Your order history is empty. Place an order to view your order
-          history.
+          {intl.formatMessage({ id: 'orderHistory.noData' })}
         </Text>
-      </Container>
+      </Flex>
     )
   }
 
@@ -93,13 +104,15 @@ export const OrderHistory = () => {
         gap={{ base: '0.5rem', md: '0.625rem' }}
         mb={'1.5rem'}
         alignItems={'baseline'}
+        justify={'center'}
       >
-        <Text
+        <Heading
+          size="md"
           textStyle={{ base: 'Mobile/L', md: 'Desktop/L' }}
           color={'shading.700'}
         >
           {title}
-        </Text>
+        </Heading>
       </Flex>
       <Flex direction={'column'} gap={2} width={'100%'}>
         {historyData?.map(({ data }, i) => (
@@ -119,7 +132,17 @@ export const OrderHistory = () => {
               alignItems={'center'}
             >
               <Text fontSize={'14px'} fontWeight={'700'}>
-                Order ID: <Tag variant={'solid'}>{data.order.id}</Tag>
+                Order ID:{' '}
+                <span
+                  style={{
+                    backgroundColor: '#f40008',
+                    padding: '3px 6px',
+                    borderRadius: '4px',
+                    color: '#FFF',
+                  }}
+                >
+                  {data.order.id}
+                </span>
               </Text>
               <Text fontSize={'14px'} fontWeight={'700'}>
                 {data.order.metadata?.location_id || '-'}
@@ -159,32 +182,22 @@ export const OrderHistory = () => {
                 key={i}
                 justifyContent={'space-between'}
                 direction={'column'}
-                gap={2}
               >
-                <Flex justifyContent={'space-between'} alignItems={'center'}>
-                  <Kbd fontSize={'14px'}>
-                    {i + 1}. {item.product.name || 'No product name'}
+                <Flex
+                  justifyContent={'space-between'}
+                  alignItems={'center'}
+                  gap={1}
+                >
+                  <Kbd fontSize={'13px'}>
+                    {item.product.name || 'No product name'}
                   </Kbd>
                   <Badge variant={'outline'} fontSize={'14px'}>
                     ${(item.price / 100).toFixed(2)}
                   </Badge>
                 </Flex>
-                <Flex
-                  justifyContent={'space-between'}
-                  alignItems={'flex-start'}
-                  direction={'column'}
-                >
+                <Flex justifyContent={'flex-end'}>
                   <Text fontSize={'14px'} fontWeight={'700'}>
-                    Product ID:
-                  </Text>
-                  <Tag variant={'solid'}>{item.product_id}</Tag>
-                </Flex>
-                <Flex justifyContent={'space-between'}>
-                  <Text fontSize={'14px'} fontWeight={'700'}>
-                    {item.sku?.sku || item.sku_id}
-                  </Text>
-                  <Text fontSize={'14px'} fontWeight={'700'}>
-                    Quantity: <span>{item.quantity}</span>
+                    x{item.quantity}
                   </Text>
                 </Flex>
               </Flex>

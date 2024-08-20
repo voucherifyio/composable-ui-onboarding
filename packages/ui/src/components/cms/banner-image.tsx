@@ -43,7 +43,7 @@ export const BannerImage = ({
           fill
           src={imageDesktop?.src || imageMobile?.src || ''}
           alt={imageDesktop?.alt || imageMobile?.alt || ''}
-          style={{ objectFit: 'cover' }}
+          style={{ objectFit: 'contain' }}
           loading={isLazy ? 'lazy' : 'eager'}
           priority={!isLazy}
           sizes={
@@ -69,7 +69,7 @@ export const BannerImage = ({
           fill
           src={imageMobile?.src || imageDesktop?.src || ''}
           alt={imageMobile?.alt || imageDesktop?.alt || ''}
-          style={{ objectFit: 'cover' }}
+          style={{ objectFit: 'contain' }}
           loading={isLazy ? 'lazy' : 'eager'}
           priority={!isLazy}
           sizes={'50vw'}

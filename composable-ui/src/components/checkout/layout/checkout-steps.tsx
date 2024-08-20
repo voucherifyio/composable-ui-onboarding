@@ -12,6 +12,7 @@ export const CheckoutSteps = () => {
         justifyContent={'center'}
         w={'full'}
         px={{ base: 1, md: 'none' }}
+        backgroundColor='#000'
       >
         {steps.map((s) => {
           const isPreviousOrEqual = step.position >= s.position
