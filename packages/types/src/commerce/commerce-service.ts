@@ -261,6 +261,8 @@ export interface CommerceService {
     user?: UserSession
   }): Promise<Record<string, any>[] | null>
 
+  wallet({ user }: { user?: UserSession }): Promise<any>
+
   // getOrdersList(params: {
   //   user?: UserSession
   // }): Promise<VoucherifyOrderListItem[]>
