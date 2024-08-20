@@ -98,33 +98,25 @@ export const Accordion = ({
   }
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      justifyContent="center"
-      sx={{ width: '100%' }}
-    >
+    <Box display="flex" flexDirection="column" justifyContent="center">
       <ChackraAccordion
         allowToggle
         width="100%"
         marginTop={0}
         defaultIndex={defaultIndex}
         {...accordionProps}
-        style={{ width: '100%' }}
       >
         {items.map((item) => {
           return (
             <AccordionItem
               isDisabled={item?.isDisabled ?? false}
-              width="100%"
               key={item?.id}
               {...accordionItemProps}
             >
               {({ isExpanded }) => (
-                <Box sx={{ width: '100%' }}>
-                  <h2 style={{ width: '100%' }}>
+                <>
+                  <h2>
                     <AccordionButton
-                      width="100%"
                       height={DefaultStyles[size].height}
                       {...accordionButtonProps}
                     >
@@ -134,7 +126,6 @@ export const Accordion = ({
                         flex="1"
                         textAlign="left"
                         textStyle={'Desktop/Default'}
-                        sx={{ width: '100%' }}
                       >
                         {item?.label ?? ''}
                       </Box>
@@ -146,15 +137,13 @@ export const Accordion = ({
                     </AccordionButton>
                   </h2>
                   <AccordionPanel
-                    width="100%"
                     pb={4}
                     textStyle={'Desktop/Body-S'}
                     {...accordionPanelProps}
-                    sx={{ width: '100%' }}
                   >
                     {item?.content ?? ''}
                   </AccordionPanel>
-                </Box>
+                </>
               )}
             </AccordionItem>
           )

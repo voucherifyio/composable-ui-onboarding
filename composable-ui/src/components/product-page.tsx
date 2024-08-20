@@ -159,7 +159,7 @@ export const ProductPage = () => {
             accordionItemProps={{ border: 'none' }}
             accordionPanelProps={{ px: 0 }}
             accordionButtonProps={{
-              px: 2,
+              px: 0,
               borderBottomWidth: '1px',
             }}
           />

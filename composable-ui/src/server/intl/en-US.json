@@ -231,8 +231,6 @@
 
   "noMatchPage.description": "We are sorry but the page you were looking for was not found.",
   "noMatchPage.title": "Page not found",
-  "walletPage.description": "Bellow you will find your loyalty cards and referral codes",
-  "walletPage.title": "Customer wallet",
 
   "category.breadcrumb.home": "Home",
   "category.search.shop": "Shop {query}",
