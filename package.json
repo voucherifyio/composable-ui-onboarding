@@ -21,6 +21,9 @@
       "pre-commit": "pnpm lint-staged"
     }
   },
+  "dependencies": {
+    "lodash": "4.17.21"
+  },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "husky": "^7.0.4",

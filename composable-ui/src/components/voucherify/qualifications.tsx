@@ -43,7 +43,11 @@ export const Qualifications = ({
   const { channel } = useChannel()
   const { data: session } = useSession()
 
-  if (channel && product && session) {
+  if (!session) {
+    return null
+  }
+
+  if (channel && product) {
     return (
       <QualificationsProduct
         product={product}
@@ -54,7 +58,7 @@ export const Qualifications = ({
     )
   }
 
-  if (channel && cart && !cart?.isEmpty && !cart?.isLoading && session) {
+  if (channel && cart && !cart?.isEmpty && !cart?.isLoading) {
     return (
       <QualificationsCart
         cart={cart as Cart}
@@ -179,7 +183,7 @@ export const QualificationsCart = ({
       accordionItemProps={{ border: 'none' }}
       accordionPanelProps={{ px: 0 }}
       accordionButtonProps={{
-        px: 0,
+        px: 2,
         borderBottomWidth: '1px',
       }}
     />
@@ -263,13 +267,14 @@ export const QualificationsProduct = ({
         }),
       ]}
       accordionProps={{
+        textAlign: 'start',
         allowToggle: false,
         allowMultiple: true,
       }}
       accordionItemProps={{ border: 'none' }}
       accordionPanelProps={{ px: 0 }}
       accordionButtonProps={{
-        px: 0,
+        px: 2,
         borderBottomWidth: '1px',
       }}
     />
@@ -279,15 +284,24 @@ export const QualificationsProduct = ({
 export const SimpleAlertBox = ({
   description,
   title,
+  children,
+  colorLight,
+  colorDark,
 }: {
   title: ReactNode
   description?: ReactNode
+  children?: ReactNode
+  colorLight?: string
+  colorDark?: string
 }) => {
-  const bgValue = useColorModeValue('info.100', 'info.700')
+  const bgValue = useColorModeValue(
+    colorLight || 'info.100',
+    colorDark || 'info.700'
+  )
 
   return (
-    <Alert status="info" bg={bgValue}>
-      <Box>
+    <Alert status="info" bg={bgValue} sx={{ width: '100%' }}>
+      <Box sx={{ textAlign: 'start', width: '100%' }}>
         <AlertTitle sx={{ lineHeight: 1.2 }}>{title}</AlertTitle>
         {(description && (
           <AlertDescription textStyle={'Body-S'} color={'text'}>
@@ -295,6 +309,7 @@ export const SimpleAlertBox = ({
           </AlertDescription>
         )) ||
           undefined}
+        {(children && <Box>{children}</Box>) || undefined}
       </Box>
     </Alert>
   )

@@ -9,6 +9,7 @@ export const updateCartItem = protectedProcedure
       productId: z.string(),
       quantity: z.number(),
       channel: z.string(),
+      dontApplyCodes: z.string().array().optional(),
     })
   )
   .mutation(async ({ input, ctx }) => {

@@ -11,6 +11,7 @@ import {
 import { cartToVoucherifyOrder } from './cart-to-voucherify-order'
 import { userSessionToVoucherifyCustomer } from './user-session-to-voucherify-customer'
 import { addChannelToOrder } from './add-channel-to-voucherify-order'
+import * as _ from 'lodash'
 
 type ValidateDiscountsParam = {
   cart: Cart
@@ -18,6 +19,7 @@ type ValidateDiscountsParam = {
   voucherify: ReturnType<typeof VoucherifyServerSide>
   user?: UserSession
   channel?: string
+  dontApplyCodes?: string[]
 }
 
 export type ValidateCouponsAndPromotionsResponse = {
@@ -32,7 +34,7 @@ export type ValidateStackableResult =
 export const validateCouponsAndPromotions = async (
   params: ValidateDiscountsParam
 ): Promise<ValidateCouponsAndPromotionsResponse> => {
-  const { cart, code, voucherify, user, channel } = params
+  const { cart, code, voucherify, user, channel, dontApplyCodes } = params
 
   const appliedCodes =
     cart.vouchersApplied?.map((voucher) => voucher.code) || []
@@ -44,7 +46,6 @@ export const validateCouponsAndPromotions = async (
     ),
     channel
   )
-  const codes = code ? [...appliedCodes, code] : appliedCodes
 
   const qualificationsResult = await voucherify.qualifications.checkEligibility(
     {
@@ -54,21 +55,36 @@ export const validateCouponsAndPromotions = async (
       mode: 'BASIC',
       options: {
         sorting_rule: 'BEST_DEAL',
-        filters: { resource_type: { conditions: { $is: ['promotion_tier'] } } },
+        filters: {
+          resource_type: { conditions: { $in: ['promotion_tier', 'voucher'] } },
+        },
         expand: ['redeemable'],
       },
     }
   )
-  const promotions = qualificationsResult.redeemables.data
+  const vouchers = qualificationsResult.redeemables.data.filter(
+    (redeemable) => redeemable.object === 'voucher'
+  )
+  const autoApplyCoupons = vouchers
+    .filter((voucher) => voucher.metadata?.autoApply === true)
+    .map((voucher) => voucher.id)
+  const promotions = qualificationsResult.redeemables.data.filter(
+    (redeemable) => redeemable.object === 'promotion_tier'
+  )
+  const codes = _.difference(
+    _.uniq(_.compact([...autoApplyCoupons, ...appliedCodes, code])).filter(
+      (code) => !(dontApplyCodes || []).includes(code)
+    )
+  )
+
   if (!codes.length && !promotions?.length) {
     return { promotionsResult: promotions, validationResult: false }
   }
 
   const validationResult = await voucherify.validations.validateStackable({
     redeemables: [
-      ...getRedeemablesForValidation(codes.slice(0, -1)),
       ...getRedeemablesForValidationFromPromotions(promotions.slice(0, 1)),
-      ...getRedeemablesForValidation(codes.slice(-1)),
+      ...getRedeemablesForValidation(codes),
     ],
     order,
     customer: user ? userSessionToVoucherifyCustomer(user) : undefined,

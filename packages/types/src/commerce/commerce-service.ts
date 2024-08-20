@@ -9,6 +9,20 @@ import {
   SitemapField,
   UserSession,
 } from './index'
+import {
+  LoyaltiesRedeemRewardResponse,
+  Reward,
+  RewardAssignment,
+} from '@voucherify/sdk'
+import { CustomerRedeemablesListItemResponse } from '@voucherify/sdk/dist/types/Customers'
+
+export type ExtendedRedeemable = CustomerRedeemablesListItemResponse & {
+  rewards?: {
+    reward: Reward
+    assignment: RewardAssignment
+    object: 'loyalty_reward'
+  }[]
+}
 
 type VoucherifyOrderListItem = {
   id: string
@@ -156,6 +170,7 @@ export interface CommerceService {
     quantity: number
     user?: UserSession
     channel?: string
+    dontApplyCodes?: string[]
   }): Promise<Cart>
 
   createCart(): Promise<Cart>
@@ -165,12 +180,14 @@ export interface CommerceService {
     productId: string
     user?: UserSession
     channel?: string
+    dontApplyCodes?: string[]
   }): Promise<Cart>
 
   getCart(params: {
     cartId: string
     user?: UserSession
     channel?: string
+    dontApplyCodes?: string[]
   }): Promise<Cart | null>
 
   updateCartItem(params: {
@@ -179,6 +196,7 @@ export interface CommerceService {
     quantity: number
     user?: UserSession
     channel?: string
+    dontApplyCodes?: string[]
   }): Promise<Cart>
 
   addVoucher(params: {
@@ -186,6 +204,7 @@ export interface CommerceService {
     code: string
     user?: UserSession
     channel?: string
+    dontApplyCodes?: string[]
   }): Promise<{
     cart: Cart
     success: boolean
@@ -197,6 +216,7 @@ export interface CommerceService {
     code: string
     user?: UserSession
     channel?: string
+    dontApplyCodes?: string[]
   }): Promise<Cart>
 
   /**
@@ -248,28 +268,22 @@ export interface CommerceService {
 
   resetPassword(params: { email: string }): Promise<void>
 
-  // getOrdersList(params: {
-  //   user?: UserSession
-  // }): Promise<VoucherifyOrderListItem[]>
-  //
-  // getCustomerRedeemables(params: {
-  //   user?: UserSession
-  //   cartId: string
-  //   localisation?: string
-  // }): Promise<{
-  //   redeemables: Redeemable[]
-  //   hasMore: boolean
-  //   moreStartingAfter: string
-  // }>
-  //
-  // updateCustomerRedeemables(params: {
-  //   user?: UserSession
-  //   cartId: string
-  //   localisation?: string
-  //   startingAfter: string
-  // }): Promise<{
-  //   redeemables: Redeemable[]
-  //   hasMore: boolean
-  //   moreStartingAfter: string
-  // }>
+  wallet({
+    user,
+  }: {
+    user?: UserSession
+  }): Promise<{ redeemables: ExtendedRedeemable[] }>
+
+  redeemReward({
+    user,
+    reward,
+  }: {
+    user?: UserSession
+    reward: {
+      campaignId: string
+      voucherId: string
+      rewardId: string
+      points?: number
+    }
+  }): Promise<LoyaltiesRedeemRewardResponse | undefined>
 }
