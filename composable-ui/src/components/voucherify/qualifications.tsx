@@ -1,33 +1,25 @@
 import { CartData, useCart } from '../../hooks'
 import { AlgoliaProduct, Cart, Product, UserSession } from '@composable/types'
 import { useSession } from 'next-auth/react'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import {
   addChannelToOrder,
   cartToVoucherifyOrder,
   itemToVoucherifyItem,
   userSessionToVoucherifyCustomer,
 } from '@composable/voucherify'
-import { QualificationsCheckEligibilityResponseBody } from '@voucherify/sdk'
 import { generateCartItem } from '@composable/commerce-generic/src/data/generate-cart-data'
 import { getVoucherifyClientSide } from './client-side-voucherify-config'
-import {
-  QualificationsRedeemable,
-  QualificationsRedeemableList,
-} from '@voucherify/sdk/dist/types/Qualifications'
-import { Accordion, AccordionSize } from '@composable/ui'
+import { QualificationsRedeemable } from '@voucherify/sdk/dist/types/Qualifications'
+import { Accordion } from '@composable/ui'
 import {
   Alert,
   AlertDescription,
-  AlertIcon,
   AlertTitle,
   Box,
-  CloseButton,
   Text,
   useColorModeValue,
-  useDisclosure,
 } from '@chakra-ui/react'
-import { lineHeights } from '@composable/ui/src/chakra/theme/foundations/typography'
 import { useQuery } from '@tanstack/react-query'
 import { useChannel } from '../../hooks/use-channel'
 
@@ -37,13 +29,25 @@ export const Qualifications = ({
   options,
 }: {
   product?: Product
-  options?: { onlyPromotionCount: boolean }
+  options?: {
+    onlyPromotionCount?: boolean
+    scenario?:
+      | 'CUSTOMER_WALLET'
+      | 'AUDIENCE_ONLY'
+      | 'PRODUCTS'
+      | 'PRODUCTS_DISCOUNT'
+    title?: string
+  }
   cart?: CartData
 }) => {
   const { channel } = useChannel()
   const { data: session } = useSession()
 
-  if (channel && product && session) {
+  if (!session) {
+    return null
+  }
+
+  if (channel && product) {
     return (
       <QualificationsProduct
         product={product}
@@ -54,7 +58,7 @@ export const Qualifications = ({
     )
   }
 
-  if (channel && cart && !cart?.isEmpty && !cart?.isLoading && session) {
+  if (channel && cart && !cart?.isEmpty && !cart?.isLoading) {
     return (
       <QualificationsCart
         cart={cart as Cart}
@@ -121,7 +125,14 @@ export const QualificationsCart = ({
 }: {
   cart: Cart
   user: UserSession | undefined
-  options?: {}
+  options?: {
+    scenario?:
+      | 'CUSTOMER_WALLET'
+      | 'AUDIENCE_ONLY'
+      | 'PRODUCTS'
+      | 'PRODUCTS_DISCOUNT'
+    title?: string
+  }
   channel: string
 }) => {
   const { data: qualificationsRedeemables } = useQuery(
@@ -138,7 +149,7 @@ export const QualificationsCart = ({
           await voucherify.qualifications({
             order: voucherifyOrder,
             customer,
-            scenario: 'ALL',
+            scenario: options?.scenario || 'ALL',
             mode: 'BASIC',
             options: {
               sorting_rule: 'BEST_DEAL',
@@ -169,7 +180,9 @@ export const QualificationsCart = ({
         getAccordionItem({
           qualificationsRedeemables,
           key: 'cart',
-          title: 'Applicable vouchers and promotions sorted by best deal',
+          title:
+            options?.title ||
+            'Applicable vouchers and promotions sorted by best deal',
         }),
       ]}
       accordionProps={{
@@ -179,7 +192,7 @@ export const QualificationsCart = ({
       accordionItemProps={{ border: 'none' }}
       accordionPanelProps={{ px: 0 }}
       accordionButtonProps={{
-        px: 0,
+        px: 2,
         borderBottomWidth: '1px',
       }}
     />
@@ -194,7 +207,7 @@ export const QualificationsProduct = ({
 }: {
   product: Product | AlgoliaProduct
   user: UserSession | undefined
-  options?: { onlyPromotionCount: boolean }
+  options?: { onlyPromotionCount?: boolean; title?: string }
   channel: string
 }) => {
   const { data: qualificationsRedeemables } = useQuery(
@@ -259,17 +272,18 @@ export const QualificationsProduct = ({
         getAccordionItem({
           qualificationsRedeemables,
           key: product.id,
-          title: 'Discounts related to the product',
+          title: options?.title || 'Discounts related to the product',
         }),
       ]}
       accordionProps={{
+        textAlign: 'start',
         allowToggle: false,
         allowMultiple: true,
       }}
       accordionItemProps={{ border: 'none' }}
       accordionPanelProps={{ px: 0 }}
       accordionButtonProps={{
-        px: 0,
+        px: 2,
         borderBottomWidth: '1px',
       }}
     />
@@ -279,15 +293,24 @@ export const QualificationsProduct = ({
 export const SimpleAlertBox = ({
   description,
   title,
+  children,
+  colorLight,
+  colorDark,
 }: {
   title: ReactNode
   description?: ReactNode
+  children?: ReactNode
+  colorLight?: string
+  colorDark?: string
 }) => {
-  const bgValue = useColorModeValue('info.100', 'info.700')
+  const bgValue = useColorModeValue(
+    colorLight || 'info.100',
+    colorDark || 'info.700'
+  )
 
   return (
-    <Alert status="info" bg={bgValue}>
-      <Box>
+    <Alert status="info" bg={bgValue} sx={{ width: '100%' }}>
+      <Box sx={{ textAlign: 'start', width: '100%' }}>
         <AlertTitle sx={{ lineHeight: 1.2 }}>{title}</AlertTitle>
         {(description && (
           <AlertDescription textStyle={'Body-S'} color={'text'}>
@@ -295,6 +318,7 @@ export const SimpleAlertBox = ({
           </AlertDescription>
         )) ||
           undefined}
+        {(children && <Box>{children}</Box>) || undefined}
       </Box>
     </Alert>
   )

@@ -248,6 +248,8 @@ export interface CommerceService {
 
   resetPassword(params: { email: string }): Promise<void>
 
+  wallet({ user }: { user?: UserSession }): Promise<any> //fixme
+
   // getOrdersList(params: {
   //   user?: UserSession
   // }): Promise<VoucherifyOrderListItem[]>
