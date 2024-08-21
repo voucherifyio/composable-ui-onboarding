@@ -77,9 +77,9 @@ export const Layout = ({ children }: Props) => {
         {SeoConfig}
 
         <Header />
-        <Flex flexGrow="1" role="main">
+        <Box flexGrow="1" role="main">
           {children}
-        </Flex>
+        </Box>
 
         <Box ref={footerRef}>
           {footerVisible && (

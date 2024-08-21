@@ -5,6 +5,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { getCRSFCookieInfo } from 'server/auth-utils'
 import { upsertVoucherifyCustomer } from '@composable/voucherify'
 import Analitycs from '@segment/analytics-node'
+import { randomUUID } from 'crypto'
 
 const getAnalytics = () => {
   if (!process.env.SEGMENTIO_SOURCE_WRITE_KEY) {
@@ -27,6 +28,20 @@ export const rawAuthOptions: NextAuthOptions = {
           access_type: 'offline',
           response_type: 'code',
         },
+      },
+    }),
+    CredentialsProvider({
+      id: 'anon',
+      name: 'Anonymous',
+      credentials: {},
+      async authorize() {
+        const anonymousUser = {
+          id: randomUUID(),
+          name: `anonymous_user`,
+          email: `anonymous_user`,
+        }
+        //anyone can do an anonymous login
+        return anonymousUser
       },
     }),
     CredentialsProvider({
