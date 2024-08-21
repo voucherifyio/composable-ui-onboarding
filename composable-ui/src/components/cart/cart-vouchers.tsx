@@ -53,12 +53,15 @@ export const CartVouchers = () => {
               }
             />
           </Tag>
-          <Box>
-            <Price
-              rootProps={{ textStyle: 'Body-S', color: 'green' }}
-              price={`-${voucher.discountAmount}`}
-            />
-          </Box>
+          {(voucher.discountAmount && (
+            <Box>
+              <Price
+                rootProps={{ textStyle: 'Body-S', color: 'green' }}
+                price={`-${voucher.discountAmount}`}
+              />
+            </Box>
+          )) ||
+            undefined}
         </Flex>
       ))}
     </>

@@ -15,6 +15,8 @@ export const cartWithDiscount = (
   if (!validationResponse || !validationResponse.redeemables) {
     return {
       ...cart,
+      vouchersApplied: [],
+      promotionsApplied: [],
       summary: { ...cart.summary, totalDiscountAmount: undefined },
     }
   }
@@ -32,9 +34,7 @@ export const cartWithDiscount = (
 
   const totalDiscountAmount =
     validationResponse.order?.total_applied_discount_amount || 0
-  const totalPrice =
-    validationResponse.order?.total_amount ||
-    (cart.summary.totalPrice || 0) * 100
+  const totalPrice = validationResponse.order?.total_amount || 0
 
   const redeemables = validationResponse.redeemables.filter(
     (redeemable) => redeemable.status === 'APPLICABLE'

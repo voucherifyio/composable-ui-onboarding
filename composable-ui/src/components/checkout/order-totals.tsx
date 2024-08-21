@@ -12,7 +12,7 @@ interface OrderTotalsProps {
   totalDiscountAmountTitle?: string
   totalDiscountAmount?: string
   totalTitle?: string
-  total?: string
+  total: string
 }
 
 export const OrderTotals = ({
@@ -36,10 +36,10 @@ export const OrderTotals = ({
           label={intl.formatMessage({ id: 'cart.summary.subtotal' })}
           value={subtotal}
         />
-        <CartSummaryItem
-          label={intl.formatMessage({ id: 'cart.summary.tax' })}
-          value={tax}
-        />
+        {/*<CartSummaryItem*/}
+        {/*  label={intl.formatMessage({ id: 'cart.summary.tax' })}*/}
+        {/*  value={tax}*/}
+        {/*/>*/}
         <CartSummaryItem
           label={
             deliveryTitle ||
@@ -50,11 +50,14 @@ export const OrderTotals = ({
           value={delivery}
         />
         <Divider />
-        <CartSummaryItem
-          label={priceBeforeDiscountTitle ?? ''}
-          value={priceBeforeDiscount}
-        />
-        {totalDiscountAmount && (
+        {(priceBeforeDiscount && (
+          <CartSummaryItem
+            label={priceBeforeDiscountTitle ?? ''}
+            value={priceBeforeDiscount}
+          />
+        )) ||
+          undefined}
+        {totalDiscountAmount && totalDiscountAmount !== '$0.00' && (
           <CartSummaryItem
             label={totalDiscountAmountTitle ?? ''}
             value={totalDiscountAmount}
@@ -63,16 +66,14 @@ export const OrderTotals = ({
           />
         )}
         <Divider />
-        {total && (
-          <CartSummaryItem
-            label={totalTitle ?? ''}
-            value={total}
-            textProps={{
-              fontSize: 'base',
-              fontWeight: 'extrabold',
-            }}
-          />
-        )}
+        <CartSummaryItem
+          label={totalTitle ?? ''}
+          value={total}
+          textProps={{
+            fontSize: 'base',
+            fontWeight: 'extrabold',
+          }}
+        />
       </Stack>
     </Stack>
   )

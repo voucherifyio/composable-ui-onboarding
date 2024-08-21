@@ -35,12 +35,15 @@ export const CartPromotions = ({ promotions }: CartPromotionsProps) => {
             <TagLeftIcon boxSize="12px" as={MdShoppingCart} />
             <TagLabel>{redeemable.label}</TagLabel>
           </Tag>
-          <Box>
-            <Price
-              rootProps={{ textStyle: 'Body-S', color: 'green' }}
-              price={`-${redeemable.discountAmount}`}
-            />
-          </Box>
+          {(redeemable.discountAmount && (
+            <Box>
+              <Price
+                rootProps={{ textStyle: 'Body-S', color: 'green' }}
+                price={`-${redeemable.discountAmount}`}
+              />
+            </Box>
+          )) ||
+            undefined}
         </Flex>
       ))}
     </>

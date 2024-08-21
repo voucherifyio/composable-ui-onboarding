@@ -8,6 +8,9 @@ import Analitycs from '@segment/analytics-node'
 
 const getAnalitycs = () => {
   if (!process.env.SEGMENTIO_SOURCE_WRITE_KEY) {
+    if (process.env.NODE_ENV !== 'production') {
+      return
+    }
     throw new Error('SEGMENTIO_SOURCE_WRITE_KEY not defined in env variables')
   }
 
@@ -21,7 +24,7 @@ const generateOrderFromCart = (
   return {
     id: randomUUID(),
     status: 'complete',
-    payment: 'unpaid',
+    payment: 'paid',
     shipping: 'unfulfilled',
     customer: {
       email: checkoutInput.customer.email,
@@ -65,19 +68,20 @@ export const createOrder: CommerceService['createOrder'] = async ({
   /* Redemptions using Voucherify should only be performed when we receive information that the payment was successful.
     In this situation, the ‘payment’ property is always set as 'unpaid' (in 'generateOrderFromCart'),
     so to simulate the correct behavior, the ‘payment’ value was changed here to 'paid' and the ‘orderPaid’ function was called to trigger the redemptions process.*/
-  updatedOrder.payment = 'paid'
   const voucherifyOrderId = await orderPaid(updatedOrder, user, channel)
 
   if (user?.email) {
     const analitycs = getAnalitycs()
-    analitycs.track({
-      userId: user.email,
-      event: 'Order placed',
-      properties: {
-        voucherifyOrderId,
-        channel,
-      },
-    })
+    if (analitycs) {
+      analitycs.track({
+        userId: user.email,
+        event: 'Order placed',
+        properties: {
+          voucherifyOrderId,
+          channel,
+        },
+      })
+    }
   }
 
   // return await saveOrder(updatedOrder)
