@@ -1,5 +1,6 @@
 import { BannerSplit as BannerSplitTemplate } from '@composable/ui'
 import { BannerSplitProps } from '@composable/types'
+import { Text } from '@chakra-ui/react'
 export const BannerSplit = ({
   imageDesktop,
   imageMobile,
@@ -19,11 +20,11 @@ export const BannerSplit = ({
       isLazy={isLazy}
       image={{
         imageDesktop: {
-          src: imageDesktop?.url ?? '',
+          src: '/img/embol-template.png',
           alt: imageDesktop?.title ?? '',
         },
         imageMobile: {
-          src: imageMobile?.url ?? '',
+          src: '/img/embol-template.png',
           alt: imageMobile?.title ?? '',
         },
       }}
@@ -32,10 +33,15 @@ export const BannerSplit = ({
           children: eyebrow,
         },
         title: {
-          children: title,
+          children: (
+            <Text>
+              Welcome to <br /> Embol x Voucherify PoC
+            </Text>
+          ),
         },
         body: {
-          children: content ?? undefined,
+          children:
+            'Start your shopping. Create an account and check your wallet. After making your first order go to your order history.',
         },
         ctaButtonPrimary: {
           children: ctaAlphaLabel,

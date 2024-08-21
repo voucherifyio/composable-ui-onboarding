@@ -158,6 +158,13 @@ export type ProductListResponse = {
   }
 }
 
+export type CustomerActivitiesListResponse = {
+  object: 'list'
+  total: number
+  data_ref: 'data'
+  data: Record<string, any>[]
+}
+
 export interface CommerceService {
   /**
    * Cart methods
@@ -268,6 +275,13 @@ export interface CommerceService {
 
   resetPassword(params: { email: string }): Promise<void>
 
+  getOrderHistory(params: {
+    customerSourceId: string
+    channel?: string
+    user?: UserSession
+  }): Promise<Record<string, any>[] | null>
+
+  wallet({ user }: { user?: UserSession }): Promise<any>
   wallet({
     user,
   }: {

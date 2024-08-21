@@ -44,6 +44,8 @@ export const ThankYou = ({
             color={'white'}
             onClick={() => router.push('/')}
             width={{ base: '100%', sm: 'initial' }}
+            backgroundColor={'#000'}
+            _hover={{ bg: '#000' }}
           >
             {intl.formatMessage({ id: 'action.continueShopping' })}
           </Button>

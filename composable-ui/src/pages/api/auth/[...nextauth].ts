@@ -1,4 +1,3 @@
-import { randomUUID } from 'crypto'
 import NextAuth, { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import GoogleProvider from 'next-auth/providers/google'
@@ -6,6 +5,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import { getCRSFCookieInfo } from 'server/auth-utils'
 import { upsertVoucherifyCustomer } from '@composable/voucherify'
 import Analitycs from '@segment/analytics-node'
+import { randomUUID } from 'crypto'
 
 const getAnalytics = () => {
   if (!process.env.SEGMENTIO_SOURCE_WRITE_KEY) {

@@ -13,7 +13,6 @@ import { PageItem } from '@composable/types'
 import { useOnScreen } from 'hooks'
 import React, { useState, useEffect, useContext } from 'react'
 import { LAZY_LOAD_BATCH_SIZE } from 'utils/constants'
-import * as braze from '@braze/web-sdk'
 import { MainAppContext } from 'app-context/app-context'
 import BrazePermissionModal from './braze-permission-modal'
 import { useSession } from 'next-auth/react'
@@ -22,12 +21,12 @@ const renderItem = (item: PageItem) => {
   switch (item?.__typename) {
     case 'BannerSplit':
       return <BannerSplit {...item} />
-    case 'BannerFull':
-      return <BannerFull {...item} />
-    case 'BannerTextOnly':
-      return <BannerTextOnly {...item} />
-    case 'Grid':
-      return <Grid {...item} />
+    // case 'BannerFull':
+    //   return <BannerFull {...item} />
+    // case 'BannerTextOnly':
+    //   return <BannerTextOnly {...item} />
+    // case 'Grid':
+    //   return <Grid {...item} />
     case 'CommerceConnector':
       return <CommerceConnector {...item} />
     default:
@@ -83,6 +82,7 @@ export const HomePage = () => {
               marginTop={item?.containerMarginTop}
             >
               {renderItem(item)}
+              {/* <CommerceConnector {...item} /> */}
             </UiContainer>
           )
         })}

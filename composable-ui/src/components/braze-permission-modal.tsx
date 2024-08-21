@@ -1,8 +1,9 @@
 import { Box, Button, Text } from '@chakra-ui/react'
+import { BrazeInstance } from 'hooks'
 import { FC, useState } from 'react'
 
 type BrazePermissionModalProps = {
-  braze: typeof import('@braze/web-sdk') | undefined
+  braze: BrazeInstance | undefined
 }
 
 const BrazePermissionModal: FC<BrazePermissionModalProps> = ({ braze }) => {
@@ -20,6 +21,8 @@ const BrazePermissionModal: FC<BrazePermissionModalProps> = ({ braze }) => {
           zIndex: 999,
           padding: '20px',
           boxShadow: '0px 0px 30px 10px rgba(191, 189, 189, 1)',
+          width: '90%',
+          maxWidth: '400px',
         }}
       >
         <Text style={{ fontWeight: 700 }}>
@@ -35,6 +38,8 @@ const BrazePermissionModal: FC<BrazePermissionModalProps> = ({ braze }) => {
           }}
         >
           <Button
+            backgroundColor={'green'}
+            _hover={{ bg: 'green' }}
             onClick={() => {
               braze?.requestPushPermission()
               braze?.openSession()
@@ -44,6 +49,8 @@ const BrazePermissionModal: FC<BrazePermissionModalProps> = ({ braze }) => {
             Allow
           </Button>
           <Button
+            backgroundColor={'#000'}
+            _hover={{ bg: '#000' }}
             onClick={() => {
               localStorage.setItem('notifications', 'denied')
               setIsOpen(false)

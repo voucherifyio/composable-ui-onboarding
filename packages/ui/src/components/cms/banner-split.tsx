@@ -64,7 +64,9 @@ export const BannerSplit = ({
           ...text?.body,
         }}
         ctaButtonPrimary={{
-          variant: 'outline',
+          variant: 'solid',
+          backgroundColor: '#000',
+          _hover: { bg: '#000' },
           width: ['100%', '100%', null, 'auto'],
           ...text?.ctaButtonPrimary,
         }}

@@ -1,6 +1,7 @@
 import { Button, Container, Flex, HStack, Text } from '@chakra-ui/react'
 import { ProductCard } from '@composable/ui'
 import { useRouter } from 'next/router'
+import staticProducts from '../../../../packages/commerce-generic/src/data/products.json'
 
 export interface GenericConnectorProps {
   sectionTitle?: string
@@ -71,7 +72,7 @@ export const CommerceConnector = (props: GenericConnectorProps) => {
           justifyContent={'space-evenly'}
           gap={4}
         >
-          {products?.map((product, idx: number) => (
+          {staticProducts?.map((product, idx: number) => (
             <ProductCard
               key={`${product.slug}-${idx}`}
               brand={{
@@ -85,13 +86,13 @@ export const CommerceConnector = (props: GenericConnectorProps) => {
                 ),
               }}
               image={{
-                src: product.img?.url || '',
-                alt: product.img?.alt,
+                src: product.images[0].url || '',
+                alt: product.images[0].alt || '',
                 ratio: 3 / 4,
               }}
               href={`product/${product.slug}`}
               price={{
-                children: product.price && <Price {...product.price} />,
+                children: `$${product.price}`,
               }}
               root={{
                 minWidth: ctaMinWidth || '150px',

@@ -12,6 +12,7 @@ import { Header } from './header'
 import { Logo } from '../logo'
 import { useComposable } from 'hooks'
 import { useOnScreen } from '../../hooks'
+import LogoEmbol from 'components/embol-logo'
 
 const DynamicCartDrawer = dynamic(() =>
   import('components/cart').then((_module) => _module.CartDrawer)
@@ -72,7 +73,7 @@ export const Layout = ({ children }: Props) => {
   // @ts-ignore
   return (
     <>
-      <Flex direction="column" minHeight="100vh">
+      <Flex direction="column" minHeight="100vh" width="100%">
         {SeoConfig}
 
         <Header />
@@ -83,12 +84,12 @@ export const Layout = ({ children }: Props) => {
         <Box ref={footerRef}>
           {footerVisible && (
             <DynamicFooter
-              brandLogo={<Logo h={6} />}
+              brandLogo={<LogoEmbol />}
               copyrightText={APP_CONFIG.COPYRIGHT}
               homeUrl={'/'}
-              tagline={APP_CONFIG.TAG_LINE}
-              message={<FooterMessage />}
-              parentMenuItems={cmsFooterLinks}
+              // tagline={APP_CONFIG.TAG_LINE}
+              // message={<FooterMessage />}
+              // parentMenuItems={cmsFooterLinks}
             />
           )}
         </Box>
@@ -101,21 +102,21 @@ export const Layout = ({ children }: Props) => {
   )
 }
 
-const FooterMessage = () => {
-  return (
-    <Box pt={8}>
-      <Text textStyle={'Desktop/Body-XL'}>
-        {APP_CONFIG.FOOTER_MESSAGE + ' '}
-        <Link
-          as={NextLink}
-          href={APP_CONFIG.URL}
-          target="_blank"
-          textDecor={'underline'}
-          prefetch={false}
-        >
-          {APP_CONFIG.URL_TEXT}
-        </Link>
-      </Text>
-    </Box>
-  )
-}
+// const FooterMessage = () => {
+//   return (
+//     <Box pt={8}>
+//       <Text textStyle={'Desktop/Body-XL'}>
+//         {APP_CONFIG.FOOTER_MESSAGE + ' '}
+//         <Link
+//           as={NextLink}
+//           href={APP_CONFIG.URL}
+//           target="_blank"
+//           textDecor={'underline'}
+//           prefetch={false}
+//         >
+//           {APP_CONFIG.URL_TEXT}
+//         </Link>
+//       </Text>
+//     </Box>
+//   )
+// }

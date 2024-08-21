@@ -57,6 +57,8 @@ export const CartDrawerFooter = () => {
             }}
             variant={'solid'}
             size={{ base: 'sm', md: 'lg' }}
+            backgroundColor={'#000'}
+            _hover={{ bg: '#000' }}
           >
             {intl.formatMessage({ id: 'action.checkout' })}
           </Button>

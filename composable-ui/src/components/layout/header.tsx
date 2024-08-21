@@ -26,7 +26,12 @@ export const Header = () => {
   } = useRouter()
 
   return (
-    <Box as="header" borderBottomWidth="1px" height={'4rem'}>
+    <Box
+      as="header"
+      borderBottomWidth="1px"
+      height={'4rem'}
+      backgroundColor="#f40008"
+    >
       <Container maxW="container.xl">
         <Grid
           templateColumns={'repeat(3, 1fr)'}
@@ -46,7 +51,7 @@ export const Header = () => {
                     : menuDrawer.onOpen()
                 }
               >
-                <HamburgerIcon width={'26px'} height={'26px'} />
+                <HamburgerIcon width={'26px'} height={'26px'} color="#FFF" />
               </Button>
             </Center>
           </Box>
@@ -79,19 +84,10 @@ export const Header = () => {
             display="flex"
             alignItems={'center'}
             justifyContent="flex-end"
-            gap={3}
+            gap={2}
           >
             <Channel />
-            <Box
-              display={{
-                base: 'none',
-                md: 'flex',
-                gap: '10px',
-                display: 'flex',
-              }}
-            >
-              <LoginAction />
-            </Box>
+            <LoginAction />
             <Button
               variant="unstyled"
               aria-label={`${cart.quantity} items in your shopping cart`}
@@ -101,6 +97,7 @@ export const Header = () => {
               mr={2}
               aria-expanded={cartDrawer.isOpen}
               onClick={() => cartDrawer.onOpen()}
+              color="#FFF"
             >
               <CartIcon cartQuantity={cart.quantity} />
             </Button>
