@@ -1,6 +1,7 @@
 import { getVoucherify } from './voucherify-config'
 import { UserSession } from '@composable/types'
 import { CustomerRedeemablesListItemResponse } from '@voucherify/sdk/dist/types/Customers'
+import { injectContentfulContentToRedeemablesVouchers } from './contentful'
 
 export const getCustomerWallet = async ({ user }: { user: UserSession }) => {
   const customerId = user?.voucherifyId || user?.sourceId
@@ -19,8 +20,11 @@ export const getCustomerWallet = async ({ user }: { user: UserSession }) => {
       redeemable.redeemable.voucher.active !== false
   )
 
+  const contentfulRedeemables =
+    await injectContentfulContentToRedeemablesVouchers(redeemables)
+
   const redeemablesExtended = await asyncMap(
-    redeemables,
+    contentfulRedeemables,
     async (redeemable: CustomerRedeemablesListItemResponse) => {
       if (
         redeemable.voucher_type !== 'LOYALTY_CARD' ||

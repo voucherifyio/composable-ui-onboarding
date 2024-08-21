@@ -44,6 +44,7 @@ export const useCustomer = () => {
       setWallet({ ...wallet, status: WalletStatus.ERRORED })
       return
     }
+
     const redeemablesByCampaignType = {} as RedeemablesByCampaignType
     response.redeemables.forEach((redeemable: ExtendedRedeemable) => {
       const campaignType = redeemable.campaign_type

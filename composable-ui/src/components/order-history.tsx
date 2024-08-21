@@ -60,7 +60,6 @@ export const OrderHistory = () => {
   if (status === 'unauthenticated' || !session?.loggedIn) {
     return (
       <Flex
-        maxW="container.xl"
         justify="center"
         alignItems="center"
         py={{ base: '4', md: '8' }}
@@ -79,7 +78,6 @@ export const OrderHistory = () => {
       <Flex
         justify="center"
         alignItems="center"
-        maxW="container.xl"
         py={{ base: '4', md: '8' }}
         px={{ base: '2' }}
         width="100%"

@@ -30,6 +30,7 @@ import {
 import { lineHeights } from '@composable/ui/src/chakra/theme/foundations/typography'
 import { useQuery } from '@tanstack/react-query'
 import { useChannel } from '../../hooks/use-channel'
+import { injectContentfulContent } from '../../../../packages/voucherify/src/contentful'
 
 export const Qualifications = ({
   cart,
@@ -137,7 +138,7 @@ export const QualificationsCart = ({
         cartToVoucherifyOrder(cart, customer),
         channel
       )
-      return (
+      const res =
         (
           await voucherify.qualifications({
             order: voucherifyOrder,
@@ -155,13 +156,14 @@ export const QualificationsCart = ({
             },
           })
         )?.redeemables?.data || []
-      )
+      return injectContentfulContent(res)
     },
     {
       retry: false,
       keepPreviousData: false,
     }
   )
+
   if (!qualificationsRedeemables?.length) {
     return null
   }
@@ -209,7 +211,7 @@ export const QualificationsProduct = ({
         itemToVoucherifyItem(generateCartItem(product.id, 1, product)),
       ]
       const customer = user ? userSessionToVoucherifyCustomer(user) : undefined
-      return (
+      const res =
         (
           await voucherify.qualifications({
             order: addChannelToOrder(
@@ -234,13 +236,14 @@ export const QualificationsProduct = ({
             },
           })
         )?.redeemables?.data || []
-      )
+      return injectContentfulContent(res)
     },
     {
       retry: false,
       keepPreviousData: false,
     }
   )
+
   if (!qualificationsRedeemables?.length) {
     return null
   }

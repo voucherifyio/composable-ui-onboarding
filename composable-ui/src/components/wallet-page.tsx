@@ -19,7 +19,6 @@ import { ExtendedRedeemable } from '@composable/voucherify'
 import { Accordion } from '@composable/ui'
 import { undefined } from 'zod'
 import { api } from '../utils/api'
-import { LoyaltiesRedeemRewardResponse } from '@voucherify/sdk'
 
 export const WalletPage = () => {
   const intl = useIntl()
@@ -33,7 +32,6 @@ export const WalletPage = () => {
   } = useCustomer()
   const toast = useToast()
   const { client } = api.useContext()
-
   const redeemRewardCallback = async (
     campaignId: string,
     voucherId: string,
@@ -270,7 +268,8 @@ const getExtendedRedeemableAccordionItem = ({
             key={redeemable.id}
             title={
               <>
-                {redeemable.redeemable?.voucher?.campaign}
+                {redeemable.redeemable?.voucher?.metadata?.voucherName ||
+                  redeemable.redeemable?.voucher?.campaign}
                 {(redeemable.redeemable?.voucher?.code &&
                   redeemable.redeemable.voucher.type !== 'LOYALTY_CARD' && (
                     <>

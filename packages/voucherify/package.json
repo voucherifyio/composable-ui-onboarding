@@ -12,6 +12,7 @@
   "dependencies": {
     "@composable/types": "workspace:*",
     "@voucherify/sdk": "2.7.3",
+    "contentful": "^10.15.0",
     "lodash": "4.17.21"
   },
   "devDependencies": {

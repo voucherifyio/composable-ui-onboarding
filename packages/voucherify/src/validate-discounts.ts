@@ -12,6 +12,7 @@ import { cartToVoucherifyOrder } from './cart-to-voucherify-order'
 import { userSessionToVoucherifyCustomer } from './user-session-to-voucherify-customer'
 import { addChannelToOrder } from './add-channel-to-voucherify-order'
 import * as _ from 'lodash'
+import { injectContentfulContent } from './contentful'
 
 type ValidateDiscountsParam = {
   cart: Cart
@@ -62,6 +63,7 @@ export const validateCouponsAndPromotions = async (
       },
     }
   )
+
   const vouchers = qualificationsResult.redeemables.data.filter(
     (redeemable) => redeemable.object === 'voucher'
   )
@@ -71,19 +73,24 @@ export const validateCouponsAndPromotions = async (
   const promotions = qualificationsResult.redeemables.data.filter(
     (redeemable) => redeemable.object === 'promotion_tier'
   )
+
+  const contentfulPromotions = await injectContentfulContent(promotions)
+
   const codes = _.difference(
     _.uniq(_.compact([...autoApplyCoupons, ...appliedCodes, code])).filter(
       (code) => !(dontApplyCodes || []).includes(code)
     )
   )
 
-  if (!codes.length && !promotions?.length) {
-    return { promotionsResult: promotions, validationResult: false }
+  if (!codes.length && !contentfulPromotions?.length) {
+    return { promotionsResult: contentfulPromotions, validationResult: false }
   }
 
   const validationResult = await voucherify.validations.validateStackable({
     redeemables: [
-      ...getRedeemablesForValidationFromPromotions(promotions.slice(0, 1)),
+      ...getRedeemablesForValidationFromPromotions(
+        contentfulPromotions.slice(0, 1)
+      ),
       ...getRedeemablesForValidation(codes),
     ],
     order,
@@ -91,5 +98,5 @@ export const validateCouponsAndPromotions = async (
     options: { expand: ['order'] },
   })
 
-  return { promotionsResult: promotions, validationResult }
+  return { promotionsResult: contentfulPromotions, validationResult }
 }
