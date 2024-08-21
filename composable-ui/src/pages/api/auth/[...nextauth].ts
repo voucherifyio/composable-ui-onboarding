@@ -8,14 +8,11 @@ import { upsertVoucherifyCustomer } from '@composable/voucherify'
 import Analitycs from '@segment/analytics-node'
 
 const getAnalytics = () => {
-  if (
-    !process.env.SEGMENTIO_SOURCE_WRITE_KEY &&
-    process.env.NODE_ENV === 'production'
-  ) {
-    throw new Error('SEGMENTIO_SOURCE_WRITE_KEY not defined in env variables')
-  }
   if (!process.env.SEGMENTIO_SOURCE_WRITE_KEY) {
-    return null
+    if (process.env.NODE_ENV !== 'production') {
+      return
+    }
+    throw new Error('SEGMENTIO_SOURCE_WRITE_KEY not defined in env variables')
   }
 
   return new Analitycs({ writeKey: process.env.SEGMENTIO_SOURCE_WRITE_KEY })

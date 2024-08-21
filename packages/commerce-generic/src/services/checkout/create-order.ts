@@ -8,6 +8,9 @@ import Analitycs from '@segment/analytics-node'
 
 const getAnalitycs = () => {
   if (!process.env.SEGMENTIO_SOURCE_WRITE_KEY) {
+    if (process.env.NODE_ENV !== 'production') {
+      return
+    }
     throw new Error('SEGMENTIO_SOURCE_WRITE_KEY not defined in env variables')
   }
 
@@ -70,14 +73,16 @@ export const createOrder: CommerceService['createOrder'] = async ({
 
   if (user?.email) {
     const analitycs = getAnalitycs()
-    analitycs.track({
-      userId: user.email,
-      event: 'Order placed',
-      properties: {
-        voucherifyOrderId,
-        channel,
-      },
-    })
+    if (analitycs) {
+      analitycs.track({
+        userId: user.email,
+        event: 'Order placed',
+        properties: {
+          voucherifyOrderId,
+          channel,
+        },
+      })
+    }
   }
 
   // return await saveOrder(updatedOrder)
