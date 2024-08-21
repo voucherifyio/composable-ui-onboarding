@@ -110,22 +110,19 @@ export const CartSummary = ({
             </CartSummaryItem>
           )}
 
-          {_cartData.summary?.totalPrice && (
-            <>
-              <Divider />
-              <Flex
-                justify="space-between"
-                textStyle={{ base: 'Mobile/S', md: 'Desktop/S' }}
-              >
-                <Text>
-                  {intl.formatMessage({ id: 'cart.summary.orderTotal' })}
-                </Text>
-                <Box>
-                  <Price price={_cartData.summary.totalPrice} />
-                </Box>
-              </Flex>
-            </>
-          )}
+          <Divider />
+          <Flex
+            justify="space-between"
+            textStyle={{ base: 'Mobile/S', md: 'Desktop/S' }}
+          >
+            <Text>{intl.formatMessage({ id: 'cart.summary.orderTotal' })}</Text>
+            <Box>
+              <Price
+                price={_cartData.summary?.totalPrice || 0}
+                displayAlways={true}
+              />
+            </Box>
+          </Flex>
         </Stack>
       </Stack>
 
