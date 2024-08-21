@@ -57,7 +57,7 @@ export const OrderTotals = ({
           />
         )) ||
           undefined}
-        {totalDiscountAmount && (
+        {totalDiscountAmount && totalDiscountAmount !== '$0.00' && (
           <CartSummaryItem
             label={totalDiscountAmountTitle ?? ''}
             value={totalDiscountAmount}
