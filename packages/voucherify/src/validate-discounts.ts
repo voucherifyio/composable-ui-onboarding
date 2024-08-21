@@ -71,11 +71,9 @@ export const validateCouponsAndPromotions = async (
   const promotions = qualificationsResult.redeemables.data.filter(
     (redeemable) => redeemable.object === 'promotion_tier'
   )
-  const codes = _.difference(
-    _.uniq(_.compact([...autoApplyCoupons, ...appliedCodes, code])).filter(
-      (code) => !(dontApplyCodes || []).includes(code)
-    )
-  )
+  const codes = _.uniq(
+    _.compact([...autoApplyCoupons, ...appliedCodes, code])
+  ).filter((code) => !(dontApplyCodes || []).includes(code))
 
   if (!codes.length && !promotions?.length) {
     return { promotionsResult: promotions, validationResult: false }

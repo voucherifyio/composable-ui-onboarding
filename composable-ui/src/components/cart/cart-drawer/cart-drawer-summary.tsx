@@ -25,17 +25,17 @@ export const CartDrawerSummary = () => {
           />
         </CartDrawerSummaryItem>
       )}
-      {(cart.summary?.taxes && (
-        <CartDrawerSummaryItem
-          label={intl.formatMessage({ id: 'cart.summary.taxes' })}
-        >
-          <Price
-            rootProps={{ textStyle: 'Mobile/Body-S' }}
-            price={cart.summary.taxes}
-          />
-        </CartDrawerSummaryItem>
-      )) ||
-        undefined}
+      {/*{(cart.summary?.taxes && (*/}
+      {/*  <CartDrawerSummaryItem*/}
+      {/*    label={intl.formatMessage({ id: 'cart.summary.taxes' })}*/}
+      {/*  >*/}
+      {/*    <Price*/}
+      {/*      rootProps={{ textStyle: 'Mobile/Body-S' }}*/}
+      {/*      price={cart.summary.taxes}*/}
+      {/*    />*/}
+      {/*  </CartDrawerSummaryItem>*/}
+      {/*)) ||*/}
+      {/*  undefined}*/}
 
       {cart.summary?.shipping && (
         <CartDrawerSummaryItem

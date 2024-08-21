@@ -290,7 +290,9 @@ export const useCart = (options?: UseCartOptions) => {
         cartId: variables.cartId,
         code: variables.code,
         channel,
-        dontApplyCodes: getDontApplyCodes(),
+        dontApplyCodes: getDontApplyCodes().filter(
+          (code_) => code_ !== variables.code
+        ),
       }
 
       const response = await client.commerce.addVoucher.mutate(params)
@@ -351,7 +353,7 @@ export const useCart = (options?: UseCartOptions) => {
         cartId: variables.cartId,
         code: variables.code,
         channel,
-        dontApplyCodes: getDontApplyCodes(),
+        dontApplyCodes: [...getDontApplyCodes(), variables.code],
       }
 
       const response = await client.commerce.deleteVoucher.mutate(params)

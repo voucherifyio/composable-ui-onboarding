@@ -15,6 +15,8 @@ export const cartWithDiscount = (
   if (!validationResponse || !validationResponse.redeemables) {
     return {
       ...cart,
+      vouchersApplied: [],
+      promotionsApplied: [],
       summary: { ...cart.summary, totalDiscountAmount: undefined },
     }
   }
