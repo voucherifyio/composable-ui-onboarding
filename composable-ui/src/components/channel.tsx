@@ -10,6 +10,8 @@ const Channel = () => {
         size={'sm'}
         width={'150px'}
         onChange={(e) => updateChannel(e.target.value)}
+        color='#000'
+        backgroundColor='#FFF'
       >
         {CHANNELS.map((channel) => (
           <option key={channel} value={channel}>

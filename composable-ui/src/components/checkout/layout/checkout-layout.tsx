@@ -17,6 +17,7 @@ import { Footer } from '../../layout/footer'
 import { Logo } from '../../logo'
 import { APP_CONFIG } from '../../../utils/constants'
 import { cmsFooterLinks } from '../../layout/_data'
+import LogoEmbol from 'components/embol-logo'
 
 interface CheckoutLayoutProps {
   children: React.ReactElement
@@ -81,7 +82,7 @@ export const CheckoutLayout = ({ children }: CheckoutLayoutProps) => {
       </Container>
       <Divider />
       <Footer
-        brandLogo={<Logo h="21px" />}
+        brandLogo={<LogoEmbol />}
         copyrightText={APP_CONFIG.COPYRIGHT}
         homeUrl={'/'}
         tagline={APP_CONFIG.TAG_LINE}

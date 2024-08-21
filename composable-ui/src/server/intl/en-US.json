@@ -234,6 +234,10 @@
   "walletPage.description": "Bellow you will find your loyalty cards and referral codes",
   "walletPage.title": "Customer wallet",
 
+  "orderHistory.title": "Order history",
+  "orderHistory.loggedOut": "You are not logged in. Please login to see your order history.",
+  "orderHistory.noData": "Your order history is empty. Place an order to view your order history.",
+
   "category.breadcrumb.home": "Home",
   "category.search.shop": "Shop {query}",
 

@@ -49,7 +49,7 @@ export const menuItems = [
   //   intlId: 'account.dashboard.menu.wishlist',
   // },
   {
-    path: 'orders',
+    path: 'order-history',
     icon: <IoTimeOutline size={'24px'} />,
     label: 'Order History',
     intlId: 'account.dashboard.menu.orderHistory',

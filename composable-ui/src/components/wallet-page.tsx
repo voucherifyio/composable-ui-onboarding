@@ -125,7 +125,9 @@ export const WalletPage = () => {
         flexDirection="column"
         justifyContent="center"
       >
-        <Heading mb={3}>{title}</Heading>
+        <Heading size="md" mb={3}>
+          {title}
+        </Heading>
         <Text sx={{ mb: 4 }}>
           {intl.formatMessage({ id: 'walletPage.description' })}
         </Text>

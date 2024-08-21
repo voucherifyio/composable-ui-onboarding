@@ -138,6 +138,8 @@ export const CartSummary = ({
           maxW={{ base: 'full' }}
           variant={'solid'}
           size={'lg'}
+          backgroundColor={'#000'}
+          _hover={{ bg: '#000' }}
         >
           {intl.formatMessage({ id: 'action.proceedToCheckout' })}
         </Button>
