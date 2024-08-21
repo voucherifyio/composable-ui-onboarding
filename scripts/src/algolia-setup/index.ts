@@ -6,7 +6,7 @@ import {
   PRIMARY_INDEX_SETTINGS,
   REPLICAS,
 } from './config'
-import products from '../../../packages/commerce-generic/src/data/products.json'
+import products from '@composable/data/src/products.json'
 
 const ALGOLIA_KEYS = [ALGOLIA_APP_ID, ALGOLIA_API_ADMIN_KEY, ALGOLIA_INDEX_NAME]
 const algoliaKeysMissing = ALGOLIA_KEYS.some((key) => !key)

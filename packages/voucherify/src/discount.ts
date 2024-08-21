@@ -37,15 +37,25 @@ export const updateCartDiscount = async (
   channel?: string,
   dontApplyCodes?: string[]
 ): Promise<Cart> => {
-  const { validationResult, promotionsResult } =
-    await validateCouponsAndPromotions({
-      cart,
-      voucherify: getVoucherify(),
-      user,
-      channel,
-      dontApplyCodes,
-    })
-  return cartWithDiscount(cart, validationResult, promotionsResult)
+  const {
+    validationResult,
+    promotionsResult,
+    unitsToAdd,
+    minimumProductUnits,
+  } = await validateCouponsAndPromotions({
+    cart,
+    voucherify: getVoucherify(),
+    user,
+    channel,
+    dontApplyCodes,
+  })
+  return cartWithDiscount(
+    cart,
+    validationResult,
+    promotionsResult,
+    unitsToAdd,
+    minimumProductUnits
+  )
 }
 
 export const addVoucherToCart = async (
@@ -62,15 +72,19 @@ export const addVoucherToCart = async (
       errorMessage: 'Voucher is already applied',
     }
   }
-  const { validationResult, promotionsResult } =
-    await validateCouponsAndPromotions({
-      cart,
-      code,
-      voucherify: getVoucherify(),
-      user,
-      channel,
-      dontApplyCodes,
-    })
+  const {
+    validationResult,
+    promotionsResult,
+    unitsToAdd,
+    minimumProductUnits,
+  } = await validateCouponsAndPromotions({
+    cart,
+    newCode: code,
+    voucherify: getVoucherify(),
+    user,
+    channel,
+    dontApplyCodes,
+  })
 
   const { isApplicable, error } = isRedeemableApplicable(code, validationResult)
 
@@ -78,7 +92,9 @@ export const addVoucherToCart = async (
     const updatedCart = cartWithDiscount(
       cart,
       validationResult,
-      promotionsResult
+      promotionsResult,
+      unitsToAdd,
+      minimumProductUnits
     )
     return {
       cart: updatedCart,

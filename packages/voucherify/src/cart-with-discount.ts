@@ -1,4 +1,11 @@
-import { Cart, Promotion, Voucher } from '@composable/types'
+import {
+  AlgoliaProduct,
+  Cart,
+  CartItem,
+  Product,
+  Promotion,
+  Voucher,
+} from '@composable/types'
 import {
   PromotionsValidateResponse,
   QualificationsRedeemable,
@@ -6,15 +13,48 @@ import {
   ValidationValidateStackableResponse,
 } from '@voucherify/sdk'
 import { centToString, toCent } from './to-cent'
+import { StackableRedeemableResultDiscountUnit } from '@voucherify/sdk/dist/types/Stackable'
+import products from '@composable/data/src/products.json'
+import * as _ from 'lodash'
+
+const findProductById = (id: string) => {
+  return products.find((product) => product.id === id) ?? products[0]
+}
+
+const generateCartItem = (
+  productId: string | undefined,
+  quantity: number,
+  product?:
+    | Omit<Product, 'updatedAt' | 'images'>
+    | Omit<AlgoliaProduct, 'images'>
+): CartItem => {
+  const _product: any = product || findProductById(productId || '')
+  return {
+    brand: _product.brand,
+    category: _product.category,
+    id: _product.id,
+    image: _product.images[0],
+    name: _product.name,
+    price: _product.price,
+    tax: _product.price * 0, //0.07
+    quantity: quantity ?? 1,
+    sku: _product.sku,
+    slug: _product.slug,
+    type: _product.type,
+  }
+}
 
 export const cartWithDiscount = (
   cart: Cart,
   validationResponse: ValidationValidateStackableResponse | false,
-  promotions: QualificationsRedeemable[] | false
+  promotions: QualificationsRedeemable[] | false,
+  unitsToAdd?: StackableRedeemableResultDiscountUnit[],
+  minimumProductUnits?: StackableRedeemableResultDiscountUnit[]
 ): Cart => {
   if (!validationResponse || !validationResponse.redeemables) {
     return {
       ...cart,
+      items: cart.items.map((item) => ({ ...item, discount: 0 })),
       vouchersApplied: [],
       promotionsApplied: [],
       summary: { ...cart.summary, totalDiscountAmount: undefined },
@@ -36,10 +76,72 @@ export const cartWithDiscount = (
     validationResponse.order?.total_applied_discount_amount || 0
   const totalPrice = validationResponse.order?.total_amount || 0
 
+  const getItemBySku = (
+    sku: string,
+    quantity: number
+  ): CartItem | undefined => {
+    const product = products.find((el) => el.sku === sku)
+    if (!product) {
+      console.log('no product')
+      return
+    }
+    return generateCartItem(undefined, quantity, product)
+  }
   const redeemables = validationResponse.redeemables.filter(
     (redeemable) => redeemable.status === 'APPLICABLE'
   )
-  const cartItems = cart.items
+
+  const mergeItems = (items: CartItem[]): CartItem[] =>
+    Object.values(
+      _.groupBy(
+        items.filter((item) => item.sku),
+        'sku'
+      )
+    ).map((sameItems: CartItem[]) =>
+      sameItems.reduce((acc: undefined | CartItem, item: CartItem) => {
+        if (!acc) {
+          return item
+        }
+        acc.quantity += item.quantity
+        return acc
+      })
+    )
+
+  const unitsToItems = (
+    units: StackableRedeemableResultDiscountUnit[] | undefined
+  ): CartItem[] =>
+    _.compact(
+      units?.map((unit) =>
+        unit.sku?.sku ? getItemBySku(unit.sku?.sku, unit.unit_off) : undefined
+      )
+    ) || []
+
+  //cartItems with unitsToAdd
+  const itemsAlreadyInCartAndNewItems = mergeItems([
+    ...cart.items,
+    ...unitsToItems(unitsToAdd),
+  ])
+
+  //check minimumProductUnits
+  const itemsRequiredToBeInCart = mergeItems(unitsToItems(minimumProductUnits))
+
+  const cartItems = [
+    ...itemsRequiredToBeInCart.map((item) => {
+      const itemInCart = itemsAlreadyInCartAndNewItems.find(
+        (_item) => _item.sku === item.sku
+      )
+      if (!itemInCart || itemInCart.quantity < item.quantity) {
+        return item
+      }
+      return itemInCart
+    }),
+    ...itemsAlreadyInCartAndNewItems.filter(
+      (item) =>
+        !itemsRequiredToBeInCart.find(
+          (minCartItem) => minCartItem.sku === item.sku
+        )
+    ),
+  ]
 
   const discounts: { targetSku?: string; money: number }[] = []
   redeemables.forEach((coupon) => {

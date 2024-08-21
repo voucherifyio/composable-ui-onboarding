@@ -14,6 +14,8 @@ export const getVoucherify = () => {
     secretKey: process.env.VOUCHERIFY_SECRET_KEY,
     exposeErrorCause: true,
     apiUrl: process.env.NEXT_PUBLIC_VOUCHERIFY_API_URL,
-    channel: 'ComposableUI',
+    channel: `ComposableUI${
+      process.env.NODE_ENV !== 'production' ? ' - dev' : ''
+    }`,
   })
 }

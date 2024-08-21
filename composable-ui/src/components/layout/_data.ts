@@ -1,4 +1,4 @@
-import products from '../../../../packages/commerce-generic/src/data/products.json'
+import products from '@composable/data/src/products.json'
 import slugify from 'slugify'
 
 export const cmsNavLinks = [...new Set(products.map((p) => p.category))].map(

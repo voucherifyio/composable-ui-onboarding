@@ -26,6 +26,7 @@
     "@composable/types": "workspace:*",
     "@composable/ui": "workspace:*",
     "@composable/voucherify": "workspace:*",
+    "@composable/data": "workspace:*",
     "@emotion/react": "^11.9.3",
     "@emotion/styled": "^11.9.3",
     "@hookform/resolvers": "^2.9.7",

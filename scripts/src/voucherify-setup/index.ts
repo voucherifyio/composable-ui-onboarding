@@ -5,8 +5,7 @@ import {
   VOUCHERIFY_SECRET_KEY,
 } from './config'
 import _ from 'lodash'
-
-import products from '../../../packages/commerce-generic/src/data/products.json'
+import products from '../../../packages/data/src/products.json'
 
 const VOUCHERIFY_KEYS = [
   NEXT_PUBLIC_VOUCHERIFY_API_URL,

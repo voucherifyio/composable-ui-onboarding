@@ -1,5 +1,5 @@
 import { AlgoliaProduct, Cart, CartItem, Product } from '@composable/types'
-import products from './products.json'
+import products from '@composable/data/src/products.json'
 import { randomUUID } from 'crypto'
 
 const findProductById = (id: string) => {
@@ -15,13 +15,13 @@ export const generateEmptyCart = (cartId?: string): Cart => ({
 })
 
 export const generateCartItem = (
-  productId: string,
+  productId: string | undefined,
   quantity: number,
   product?:
     | Omit<Product, 'updatedAt' | 'images'>
     | Omit<AlgoliaProduct, 'images'>
 ): CartItem => {
-  const _product: any = product || findProductById(productId)
+  const _product: any = product || findProductById(productId || '')
   return {
     brand: _product.brand,
     category: _product.category,
