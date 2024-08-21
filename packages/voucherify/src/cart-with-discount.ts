@@ -1,4 +1,4 @@
-import { Cart, Promotion, Voucher } from '@composable/types'
+import { Cart, CartItem, Promotion, Voucher } from '@composable/types'
 import {
   PromotionsValidateResponse,
   QualificationsRedeemable,
@@ -6,15 +6,22 @@ import {
   ValidationValidateStackableResponse,
 } from '@voucherify/sdk'
 import { centToString, toCent } from './to-cent'
+import { StackableRedeemableResultDiscountUnit } from '@voucherify/sdk/dist/types/Stackable'
+import products from '@composable/commerce-generic/src/data/products.json'
+import * as _ from 'lodash'
+import { generateCartItem } from '@composable/commerce-generic/src/data/generate-cart-data'
 
 export const cartWithDiscount = (
   cart: Cart,
   validationResponse: ValidationValidateStackableResponse | false,
-  promotions: QualificationsRedeemable[] | false
+  promotions: QualificationsRedeemable[] | false,
+  unitsToAdd?: StackableRedeemableResultDiscountUnit[],
+  minimumProductUnits?: StackableRedeemableResultDiscountUnit[]
 ): Cart => {
   if (!validationResponse || !validationResponse.redeemables) {
     return {
       ...cart,
+      items: cart.items.map((item) => ({ ...item, discount: 0 })),
       vouchersApplied: [],
       promotionsApplied: [],
       summary: { ...cart.summary, totalDiscountAmount: undefined },
@@ -36,10 +43,72 @@ export const cartWithDiscount = (
     validationResponse.order?.total_applied_discount_amount || 0
   const totalPrice = validationResponse.order?.total_amount || 0
 
+  const getItemBySku = (
+    sku: string,
+    quantity: number
+  ): CartItem | undefined => {
+    const product = products.find((el) => el.sku === sku)
+    if (!product) {
+      console.log('no product')
+      return
+    }
+    return generateCartItem(undefined, quantity, product)
+  }
   const redeemables = validationResponse.redeemables.filter(
     (redeemable) => redeemable.status === 'APPLICABLE'
   )
-  const cartItems = cart.items
+
+  const mergeItems = (items: CartItem[]): CartItem[] =>
+    Object.values(
+      _.groupBy(
+        items.filter((item) => item.sku),
+        'sku'
+      )
+    ).map((sameItems: CartItem[]) =>
+      sameItems.reduce((acc: undefined | CartItem, item: CartItem) => {
+        if (!acc) {
+          return item
+        }
+        acc.quantity += item.quantity
+        return acc
+      })
+    )
+
+  const unitsToItems = (
+    units: StackableRedeemableResultDiscountUnit[] | undefined
+  ): CartItem[] =>
+    _.compact(
+      units?.map((unit) =>
+        unit.sku?.sku ? getItemBySku(unit.sku?.sku, unit.unit_off) : undefined
+      )
+    ) || []
+
+  //cartItems with unitsToAdd
+  const itemsAlreadyInCartAndNewItems = mergeItems([
+    ...cart.items,
+    ...unitsToItems(unitsToAdd),
+  ])
+
+  //check minimumProductUnits
+  const itemsRequiredToBeInCart = mergeItems(unitsToItems(minimumProductUnits))
+
+  const cartItems = [
+    ...itemsRequiredToBeInCart.map((item) => {
+      const itemInCart = itemsAlreadyInCartAndNewItems.find(
+        (_item) => _item.sku === item.sku
+      )
+      if (!itemInCart || itemInCart.quantity < item.quantity) {
+        return item
+      }
+      return itemInCart
+    }),
+    ...itemsAlreadyInCartAndNewItems.filter(
+      (item) =>
+        !itemsRequiredToBeInCart.find(
+          (minCartItem) => minCartItem.sku === item.sku
+        )
+    ),
+  ]
 
   const discounts: { targetSku?: string; money: number }[] = []
   redeemables.forEach((coupon) => {

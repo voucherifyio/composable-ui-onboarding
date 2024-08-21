@@ -12,10 +12,11 @@ import { cartToVoucherifyOrder } from './cart-to-voucherify-order'
 import { userSessionToVoucherifyCustomer } from './user-session-to-voucherify-customer'
 import { addChannelToOrder } from './add-channel-to-voucherify-order'
 import * as _ from 'lodash'
+import { StackableRedeemableResultDiscountUnit } from '@voucherify/sdk/dist/types/Stackable'
 
 type ValidateDiscountsParam = {
   cart: Cart
-  code?: string
+  newCode?: string
   voucherify: ReturnType<typeof VoucherifyServerSide>
   user?: UserSession
   channel?: string
@@ -33,12 +34,18 @@ export type ValidateStackableResult =
 
 export const validateCouponsAndPromotions = async (
   params: ValidateDiscountsParam
-): Promise<ValidateCouponsAndPromotionsResponse> => {
-  const { cart, code, voucherify, user, channel, dontApplyCodes } = params
+): Promise<{
+  promotionsResult: QualificationsRedeemable[]
+  validationResult: ValidationValidateStackableResponse | false
+  unitsToAdd?: StackableRedeemableResultDiscountUnit[]
+  minimumProductUnits?: StackableRedeemableResultDiscountUnit[]
+}> => {
+  const { cart, newCode, voucherify, user, channel, dontApplyCodes } = params
 
+  const appliedPromotionsIds =
+    cart.promotionsApplied?.map((promotion) => promotion.id) || []
   const appliedCodes =
     cart.vouchersApplied?.map((voucher) => voucher.code) || []
-
   const order = addChannelToOrder(
     cartToVoucherifyOrder(
       cart,
@@ -72,12 +79,22 @@ export const validateCouponsAndPromotions = async (
     (redeemable) => redeemable.object === 'promotion_tier'
   )
   const codes = _.uniq(
-    _.compact([...autoApplyCoupons, ...appliedCodes, code])
+    _.compact([...autoApplyCoupons, ...appliedCodes, newCode])
   ).filter((code) => !(dontApplyCodes || []).includes(code))
 
+  const newCoupons = _.compact([
+    ...autoApplyCoupons.filter((code) => codes.includes(code)),
+    newCode,
+  ])
   if (!codes.length && !promotions?.length) {
     return { promotionsResult: promotions, validationResult: false }
   }
+  const potentiallyNewPromotions = getRedeemablesForValidationFromPromotions(
+    promotions.slice(0, 1)
+  ).map((promotion) => promotion.id)
+  const newPromotionsIds = potentiallyNewPromotions.filter(
+    (promotionId) => !appliedPromotionsIds.includes(promotionId)
+  )
 
   const validationResult = await voucherify.validations.validateStackable({
     redeemables: [
@@ -89,5 +106,58 @@ export const validateCouponsAndPromotions = async (
     options: { expand: ['order'] },
   })
 
-  return { promotionsResult: promotions, validationResult }
+  const defaultUnitTypeRedeemablesResult: {
+    unitsToAdd: StackableRedeemableResultDiscountUnit[]
+    minimumProductUnits: StackableRedeemableResultDiscountUnit[]
+  } = {
+    unitsToAdd: [],
+    minimumProductUnits: [],
+  }
+
+  const getUnitOff = (
+    unit: StackableRedeemableResultDiscountUnit
+  ): StackableRedeemableResultDiscountUnit => {
+    return _.pick(unit, ['effect', 'unit_off', 'unit_type', 'sku', 'product'])
+  }
+
+  const {
+    unitsToAdd,
+    minimumProductUnits,
+  }: {
+    unitsToAdd: StackableRedeemableResultDiscountUnit[]
+    minimumProductUnits: StackableRedeemableResultDiscountUnit[]
+  } =
+    validationResult?.redeemables
+      ?.filter((redeemable) => redeemable.status === 'APPLICABLE')
+      ?.reduce((acc, redeemable) => {
+        const isNew =
+          redeemable.object === 'voucher'
+            ? newCoupons.includes(redeemable.id)
+            : newPromotionsIds.includes(redeemable.id)
+        if (redeemable.result?.discount?.type !== 'UNIT') {
+          return acc
+        }
+        const units = redeemable.result.discount.units
+          ? redeemable.result.discount.units.map(getUnitOff)
+          : [
+              getUnitOff(
+                redeemable.result
+                  .discount as StackableRedeemableResultDiscountUnit
+              ),
+            ]
+        if (isNew) {
+          acc.unitsToAdd.push(
+            ...units.filter((unit) => unit.effect === 'ADD_NEW_ITEMS')
+          )
+        }
+        acc.minimumProductUnits.push(...units)
+        return acc
+      }, defaultUnitTypeRedeemablesResult) || defaultUnitTypeRedeemablesResult
+
+  return {
+    promotionsResult: promotions,
+    validationResult,
+    unitsToAdd,
+    minimumProductUnits,
+  }
 }
