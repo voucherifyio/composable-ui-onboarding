@@ -179,13 +179,7 @@ export const CartPage = () => {
                     </Box>
                   )
                 })}
-                <Qualifications
-                  cart={cart}
-                  options={{
-                    scenario: 'PRODUCTS_DISCOUNT',
-                    title: 'Discounts related to products',
-                  }}
-                />
+                <Qualifications cart={cart} />
               </Stack>
             </Box>
             <Flex

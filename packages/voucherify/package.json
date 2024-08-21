@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@composable/types": "workspace:*",
-    "@voucherify/sdk": "2.7.3"
+    "@voucherify/sdk": "2.7.3",
+    "lodash": "4.17.21"
   },
   "devDependencies": {
+    "@types/lodash": "4.17.7",
     "@types/node": "^18.6.3",
     "eslint-config-custom": "workspace:*",
     "ts-node": "^10.9.1",

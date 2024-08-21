@@ -13,24 +13,107 @@ import {
   CreateToastFnReturn,
 } from '@chakra-ui/react'
 import { SimpleAlertBox } from './voucherify/qualifications'
-import { useCart, useToast } from '../hooks'
+import { useToast } from '../hooks'
 import { useCustomer, WalletStatus } from '../hooks/use-customer'
 import { ExtendedRedeemable } from '@composable/voucherify'
 import { Accordion } from '@composable/ui'
 import { undefined } from 'zod'
+import { api } from '../utils/api'
+import { LoyaltiesRedeemRewardResponse } from '@voucherify/sdk'
 
 export const WalletPage = () => {
   const intl = useIntl()
-  const router = useRouter()
   const title = intl.formatMessage({ id: 'walletPage.title' })
-  const { cart } = useCart()
   const {
     redeemablesByCampaignType,
     refereeRedeemables,
     refererRedeemables,
     status: walletStatus,
+    setWallet,
   } = useCustomer()
   const toast = useToast()
+  const { client } = api.useContext()
+
+  const redeemRewardCallback = async (
+    campaignId: string,
+    voucherId: string,
+    rewardId: string,
+    points?: number
+  ) => {
+    const response = await client.commerce.redeemReward.mutate({
+      campaignId,
+      voucherId,
+      rewardId,
+      points,
+    })
+    if (!response || response.result !== 'SUCCESS') {
+      toast({
+        status: 'error',
+        title: 'Reward not redeemed',
+      })
+      return
+    }
+    const newBalance = response.voucher.loyalty_card?.balance
+    const rewardVoucher: any =
+      'voucher' in response.reward ? response.reward?.voucher : undefined
+    const newRedeemable: any = rewardVoucher
+      ? {
+          campaign_id: rewardVoucher.campaign_id,
+          campaign_type: rewardVoucher.campaign_type,
+          created_at: '2024-08-19T13:47:32.816Z',
+          holder_role: 'OWNER',
+          redeemable: {
+            status: 'ACTIVE',
+            type: 'voucher',
+            voucher: rewardVoucher,
+          },
+        }
+      : undefined
+
+    setWallet((wallet: any) => ({
+      ...wallet,
+      redeemablesByCampaignType: {
+        ...wallet.redeemablesByCampaignType,
+        LOYALTY_PROGRAM: wallet.redeemablesByCampaignType.LOYALTY_PROGRAM.map(
+          (redeemable: ExtendedRedeemable) => {
+            if (
+              !redeemable.redeemable.voucher ||
+              redeemable.redeemable.voucher.code !== voucherId
+            ) {
+              return redeemable
+            }
+            if (
+              redeemable.redeemable.voucher.loyalty_card &&
+              typeof newBalance === 'number'
+            ) {
+              redeemable.redeemable.voucher.loyalty_card.balance = newBalance
+            }
+            return redeemable
+          }
+        ),
+        DISCOUNT_COUPONS:
+          newRedeemable &&
+          newRedeemable.redeemable.voucher?.type === 'DISCOUNT_VOUCHER'
+            ? [
+                newRedeemable,
+                ...(wallet.redeemablesByCampaignType.DISCOUNT_COUPONS || []),
+              ]
+            : wallet.redeemablesByCampaignType.DISCOUNT_COUPONS,
+        GIFT_VOUCHERS:
+          newRedeemable &&
+          newRedeemable.redeemable.voucher?.type === 'GIFT_VOUCHER'
+            ? [
+                newRedeemable,
+                ...(wallet.redeemablesByCampaignType.GIFT_VOUCHERS || []),
+              ]
+            : wallet.redeemablesByCampaignType.GIFT_VOUCHERS,
+      },
+    }))
+    toast({
+      status: 'success',
+      title: 'Reward was redeemed',
+    })
+  }
 
   return (
     <Container maxW="container.xl" py={{ base: '4', md: '8' }}>
@@ -64,6 +147,7 @@ export const WalletPage = () => {
                 extendedRedeemables={redeemablesByCampaignType?.LOYALTY_PROGRAM}
                 title={'Loyalty cards'}
                 toast={toast}
+                redeemRewardCallback={redeemRewardCallback}
               />
             )}
             {(refereeRedeemables.length > 0 && (
@@ -111,10 +195,17 @@ export const PrintRedeemables = ({
   extendedRedeemables,
   title,
   toast,
+  redeemRewardCallback,
 }: {
   extendedRedeemables: ExtendedRedeemable[]
   title: string
   toast: CreateToastFnReturn
+  redeemRewardCallback?: (
+    campaignId: string,
+    voucherId: string,
+    rewardId: string,
+    points?: number
+  ) => Promise<void>
 }) => {
   return (
     <Accordion
@@ -125,6 +216,7 @@ export const PrintRedeemables = ({
           key: title,
           title,
           toast,
+          redeemRewardCallback,
         }),
       ]}
       accordionProps={{
@@ -153,11 +245,18 @@ const getExtendedRedeemableAccordionItem = ({
   key,
   title,
   toast,
+  redeemRewardCallback,
 }: {
   extendedRedeemables: ExtendedRedeemable[]
   key: string
   title: string
   toast: CreateToastFnReturn
+  redeemRewardCallback?: (
+    campaignId: string,
+    voucherId: string,
+    rewardId: string,
+    points?: number
+  ) => Promise<void>
 }) => {
   return {
     defaultOpen: true,
@@ -172,27 +271,30 @@ const getExtendedRedeemableAccordionItem = ({
             title={
               <>
                 {redeemable.redeemable?.voucher?.campaign}
-                {(redeemable.redeemable?.voucher?.code && (
-                  <>
-                    <br />
-                    code: {redeemable.redeemable?.voucher?.code}
-                    <Button
-                      size={'xs'}
-                      sx={{ ml: 2 }}
-                      onClick={() => {
-                        navigator.clipboard.writeText(
-                          redeemable.redeemable?.voucher?.code || ''
-                        )
-                        toast({
-                          status: 'success',
-                          title: 'Voucher was copied to clipboard',
-                        })
-                      }}
-                    >
-                      Copy
-                    </Button>
-                  </>
-                )) ||
+                {(redeemable.redeemable?.voucher?.code &&
+                  redeemable.redeemable.voucher.type !== 'LOYALTY_CARD' && (
+                    <>
+                      <br />
+                      code: {redeemable.redeemable?.voucher?.code}
+                      {
+                        <Button
+                          size={'xs'}
+                          sx={{ ml: 2 }}
+                          onClick={() => {
+                            navigator.clipboard.writeText(
+                              redeemable.redeemable?.voucher?.code || ''
+                            )
+                            toast({
+                              status: 'success',
+                              title: 'Voucher was copied to clipboard',
+                            })
+                          }}
+                        >
+                          Copy
+                        </Button>
+                      }
+                    </>
+                  )) ||
                   undefined}
               </>
             }
@@ -219,7 +321,21 @@ const getExtendedRedeemableAccordionItem = ({
                 undefined}
               {(redeemable?.rewards?.length && (
                 <Box sx={{ mt: 2 }}>
-                  <PrintRewards extendedRedeemable={redeemable} toast={toast} />
+                  <PrintRewards
+                    redeemRewardCallback={async (
+                      rewardId: string,
+                      points?: number
+                    ) =>
+                      await redeemRewardCallback?.(
+                        redeemable.campaign_id,
+                        redeemable.redeemable.voucher!.code,
+                        rewardId,
+                        points
+                      )
+                    }
+                    extendedRedeemable={redeemable}
+                    toast={toast}
+                  />
                 </Box>
               )) ||
                 null}
@@ -236,10 +352,12 @@ export const PrintRewards = ({
   extendedRedeemable,
   title = 'Rewards',
   toast,
+  redeemRewardCallback,
 }: {
   extendedRedeemable: ExtendedRedeemable
   title?: string
   toast: CreateToastFnReturn
+  redeemRewardCallback?: (rewardId: string, points?: number) => Promise<void>
 }) => {
   return (
     <Accordion
@@ -250,6 +368,7 @@ export const PrintRewards = ({
           key: title,
           title,
           toast,
+          redeemRewardCallback,
         }),
       ]}
       accordionProps={{
@@ -284,11 +403,13 @@ const getExtendedRedeemableRewardsAccordionItem = ({
   key,
   title,
   toast,
+  redeemRewardCallback,
 }: {
   extendedRedeemable: ExtendedRedeemable
   key: string
   title: string
   toast: CreateToastFnReturn
+  redeemRewardCallback?: (rewardId: string, points?: number) => Promise<void>
 }) => {
   return {
     defaultOpen: true,
@@ -297,84 +418,69 @@ const getExtendedRedeemableRewardsAccordionItem = ({
       <Box
         sx={{ display: 'flex', flexDirection: 'column', gap: 2, width: '100%' }}
       >
-        {extendedRedeemable.rewards?.map(({ reward, assignment }) => (
-          <SimpleAlertBox
-            colorLight={'secondary.100'}
-            colorDark={'secondary.700'}
-            key={reward.id}
-            title={reward.name}
-            description={
+        {extendedRedeemable.rewards
+          ?.filter(
+            (extendedRedeemable) => extendedRedeemable?.reward?.type !== 'COIN'
+          )
+          .map(({ reward, assignment }) => (
+            <SimpleAlertBox
+              colorLight={'secondary.100'}
+              colorDark={'secondary.700'}
+              key={reward.id}
+              title={reward.name}
+              description={
+                <Box sx={{ display: 'flex' }}>
+                  Cost:{' '}
+                  {('parameters' in assignment &&
+                    assignment.parameters?.loyalty?.points) ||
+                    null}
+                  {(typeof extendedRedeemable.redeemable.voucher?.loyalty_card
+                    ?.balance === 'number' &&
+                    'parameters' in assignment &&
+                    typeof assignment?.parameters?.loyalty?.points ===
+                      'number' && (
+                      <Box sx={{ display: 'flex' }}>
+                        {extendedRedeemable.redeemable.voucher.loyalty_card
+                          ?.balance >
+                        (('parameters' in assignment &&
+                          assignment?.parameters?.loyalty?.points) ||
+                          0) ? (
+                          <Button
+                            size={'xs'}
+                            sx={{ ml: 2 }}
+                            onClick={async () => {
+                              await redeemRewardCallback?.(assignment.reward_id)
+                            }}
+                          >
+                            Redeem
+                          </Button>
+                        ) : null}
+                      </Box>
+                    )) ||
+                    null}
+                </Box>
+              }
+            >
               <>
-                {reward.type === 'COIN' ? (
-                  <>
-                    Pay with points, {reward.parameters.coin.points_ratio}{' '}
-                    points for {reward.parameters.coin.exchange_ratio}$
-                  </>
-                ) : (
-                  //@ts-ignore
-                  <>Cost: {assignment.parameters?.loyalty?.points}</>
-                )}
+                {(typeof extendedRedeemable.redeemable.voucher?.loyalty_card
+                  ?.balance === 'number' &&
+                  'parameters' in assignment &&
+                  typeof assignment?.parameters?.loyalty?.points ===
+                    'number' && (
+                    <Box sx={{ display: 'flex' }}>
+                      {extendedRedeemable.redeemable.voucher.loyalty_card
+                        ?.balance >
+                      (('parameters' in assignment &&
+                        assignment?.parameters?.loyalty?.points) ||
+                        0)
+                        ? null
+                        : 'Not enough points'}
+                    </Box>
+                  )) ||
+                  null}
               </>
-            }
-          >
-            <>
-              {(typeof extendedRedeemable.redeemable.voucher?.loyalty_card
-                ?.balance === 'number' &&
-                //@ts-ignore
-                typeof assignment?.parameters?.loyalty?.points === 'number' && (
-                  <>
-                    {extendedRedeemable.redeemable.voucher.loyalty_card
-                      ?.balance >
-                    //@ts-ignore
-                    assignment?.parameters?.loyalty?.points ? (
-                      <Button
-                        size={'xs'}
-                        sx={{ ml: 2 }}
-                        onClick={() => {
-                          toast({
-                            status: 'success',
-                            title: 'Reward redeemed',
-                          })
-                        }}
-                      >
-                        Redeem
-                      </Button>
-                    ) : (
-                      'Not enough points'
-                    )}
-                  </>
-                )) ||
-                undefined}
-              {(typeof extendedRedeemable.redeemable.voucher?.loyalty_card
-                ?.balance === 'number' &&
-                //@ts-ignore
-                typeof reward?.parameters?.coin?.points_ratio === 'number' && (
-                  <>
-                    {extendedRedeemable.redeemable.voucher.loyalty_card
-                      ?.balance >
-                    //@ts-ignore
-                    reward.parameters.coin.points_ratio ? (
-                      <Button
-                        size={'xs'}
-                        sx={{ ml: 2 }}
-                        onClick={() => {
-                          toast({
-                            status: 'success',
-                            title: 'Reward redeemed',
-                          })
-                        }}
-                      >
-                        Redeem
-                      </Button>
-                    ) : (
-                      'Not enough points'
-                    )}
-                  </>
-                )) ||
-                undefined}
-            </>
-          </SimpleAlertBox>
-        ))}
+            </SimpleAlertBox>
+          ))}
       </Box>
     ),
     id: key,

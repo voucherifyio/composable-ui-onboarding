@@ -28,13 +28,14 @@ export const getCustomerWallet = async ({ user }: { user: UserSession }) => {
       ) {
         return redeemable
       }
-      const rewards =
+      const rewards = (
         (
           await getVoucherify().loyalties.listMemberRewards(
             redeemable.redeemable?.voucher?.id,
             { limit: 100 }
           )
         )?.data || []
+      ).filter((reward) => reward.reward.type === 'CAMPAIGN')
       return { ...redeemable, rewards }
     }
   )

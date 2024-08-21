@@ -66,5 +66,5 @@ export const useCustomer = () => {
     })
   })
 
-  return wallet
+  return { ...wallet, setWallet }
 }

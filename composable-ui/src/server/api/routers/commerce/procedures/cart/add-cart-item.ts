@@ -11,6 +11,7 @@ export const addCartItem = protectedProcedure
       variantId: z.string().optional(),
       quantity: z.number(),
       channel: z.string(),
+      dontApplyCodes: z.string().array().optional(),
     })
   )
   .mutation(async ({ input, ctx }) => {

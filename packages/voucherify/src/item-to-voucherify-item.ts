@@ -6,4 +6,5 @@ export const itemToVoucherifyItem = (item: CartItem): OrdersItem => ({
   product_id: item.id,
   sku_id: item.sku,
   price: (item.price + item.tax) * 100,
+  amount: (item.price + item.tax) * 100 * item.quantity,
 })

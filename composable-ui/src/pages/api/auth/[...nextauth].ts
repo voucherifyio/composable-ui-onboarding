@@ -8,8 +8,14 @@ import Analitycs from '@segment/analytics-node'
 import { randomUUID } from 'crypto'
 
 const getAnalytics = () => {
-  if (!process.env.SEGMENTIO_SOURCE_WRITE_KEY) {
+  if (
+    !process.env.SEGMENTIO_SOURCE_WRITE_KEY &&
+    process.env.NODE_ENV === 'production'
+  ) {
     throw new Error('SEGMENTIO_SOURCE_WRITE_KEY not defined in env variables')
+  }
+  if (!process.env.SEGMENTIO_SOURCE_WRITE_KEY) {
+    return null
   }
 
   return new Analitycs({ writeKey: process.env.SEGMENTIO_SOURCE_WRITE_KEY })
@@ -60,12 +66,14 @@ export const rawAuthOptions: NextAuthOptions = {
         )
 
         const analitycs = getAnalytics()
-        analitycs.identify({
-          userId: credentials.email,
-          traits: {
-            email: credentials.email,
-          },
-        })
+        if (analitycs) {
+          analitycs.identify({
+            userId: credentials.email,
+            traits: {
+              email: credentials.email,
+            },
+          })
+        }
 
         if (!voucherifyCustomer) {
           return null
