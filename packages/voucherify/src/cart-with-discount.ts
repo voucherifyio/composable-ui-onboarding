@@ -1,4 +1,11 @@
-import { Cart, CartItem, Promotion, Voucher } from '@composable/types'
+import {
+  AlgoliaProduct,
+  Cart,
+  CartItem,
+  Product,
+  Promotion,
+  Voucher,
+} from '@composable/types'
 import {
   PromotionsValidateResponse,
   QualificationsRedeemable,
@@ -7,9 +14,35 @@ import {
 } from '@voucherify/sdk'
 import { centToString, toCent } from './to-cent'
 import { StackableRedeemableResultDiscountUnit } from '@voucherify/sdk/dist/types/Stackable'
-import products from '@composable/commerce-generic/src/data/products.json'
+import products from '@composable/data/src/products.json'
 import * as _ from 'lodash'
-import { generateCartItem } from '@composable/commerce-generic/src/data/generate-cart-data'
+
+const findProductById = (id: string) => {
+  return products.find((product) => product.id === id) ?? products[0]
+}
+
+const generateCartItem = (
+  productId: string | undefined,
+  quantity: number,
+  product?:
+    | Omit<Product, 'updatedAt' | 'images'>
+    | Omit<AlgoliaProduct, 'images'>
+): CartItem => {
+  const _product: any = product || findProductById(productId || '')
+  return {
+    brand: _product.brand,
+    category: _product.category,
+    id: _product.id,
+    image: _product.images[0],
+    name: _product.name,
+    price: _product.price,
+    tax: _product.price * 0, //0.07
+    quantity: quantity ?? 1,
+    sku: _product.sku,
+    slug: _product.slug,
+    type: _product.type,
+  }
+}
 
 export const cartWithDiscount = (
   cart: Cart,

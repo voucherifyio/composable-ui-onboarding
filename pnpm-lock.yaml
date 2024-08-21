@@ -48,6 +48,9 @@ importers:
       '@composable/commerce-generic':
         specifier: workspace:*
         version: link:../packages/commerce-generic
+      '@composable/data':
+        specifier: workspace:*
+        version: link:../packages/data
       '@composable/stripe':
         specifier: workspace:*
         version: link:../packages/stripe
@@ -224,6 +227,9 @@ importers:
 
   packages/commerce-generic:
     dependencies:
+      '@composable/data':
+        specifier: workspace:*
+        version: link:../data
       '@composable/types':
         specifier: workspace:*
         version: link:../types
@@ -249,6 +255,8 @@ importers:
       typescript:
         specifier: ^4.5.5
         version: 4.9.5
+
+  packages/data: {}
 
   packages/eslint-config-custom:
     dependencies:
@@ -361,6 +369,9 @@ importers:
       '@chakra-ui/styled-system':
         specifier: ^2.5.1
         version: 2.7.0
+      '@composable/data':
+        specifier: workspace:*
+        version: link:../data
       eslint-config-custom:
         specifier: workspace:*
         version: link:../eslint-config-custom
@@ -373,9 +384,9 @@ importers:
 
   packages/voucherify:
     dependencies:
-      '@composable/commerce-generic':
+      '@composable/data':
         specifier: workspace:*
-        version: link:../commerce-generic
+        version: link:../data
       '@composable/types':
         specifier: workspace:*
         version: link:../types

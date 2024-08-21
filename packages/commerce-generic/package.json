@@ -12,6 +12,7 @@
   "dependencies": {
     "@composable/types": "workspace:*",
     "@composable/voucherify": "workspace:*",
+    "@composable/data": "workspace:*",
     "@segment/analytics-node": "^2.1.2",
     "@types/node-persist": "^3.1.5",
     "node-persist": "^3.1.3"

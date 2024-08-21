@@ -1,5 +1,5 @@
 import { CommerceService, SitemapField } from '@composable/types'
-import products from '../../data/products.json'
+import products from '@composable/data/src/products.json'
 
 export const getProductSitemap: CommerceService['getProductSitemap'] = async ({
   siteUrl,

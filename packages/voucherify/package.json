@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@composable/types": "workspace:*",
-    "@composable/commerce-generic": "workspace:*",
+    "@composable/data": "workspace:*",
     "@voucherify/sdk": "2.7.3",
     "lodash": "4.17.21"
   },
