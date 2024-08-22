@@ -1,7 +1,12 @@
 import { getVoucherify } from './voucherify-config'
-import { UserSession } from '@composable/types'
+import { ExtendedRedeemable, UserSession } from '@composable/types'
 import { CustomerRedeemablesListItemResponse } from '@voucherify/sdk/dist/types/Customers'
-import { injectContentfulContentToRedeemablesVouchers } from './contentful'
+import {
+  injectContentfulContentToRedeemablesVouchers,
+  injectContentfulContentToVoucher,
+} from './contentful'
+import { LoyaltiesListMemberRewardsResponseBody } from '@voucherify/sdk'
+import { Reward, RewardAssignment } from '@voucherify/sdk/dist/types/Rewards'
 
 export const getCustomerWallet = async ({ user }: { user: UserSession }) => {
   const customerId = user?.voucherifyId || user?.sourceId
@@ -23,7 +28,7 @@ export const getCustomerWallet = async ({ user }: { user: UserSession }) => {
   const contentfulRedeemables =
     await injectContentfulContentToRedeemablesVouchers(redeemables)
 
-  const redeemablesExtended = await asyncMap(
+  const redeemablesExtended: ExtendedRedeemable[] = await asyncMap(
     contentfulRedeemables,
     async (redeemable: CustomerRedeemablesListItemResponse) => {
       if (
@@ -32,14 +37,29 @@ export const getCustomerWallet = async ({ user }: { user: UserSession }) => {
       ) {
         return redeemable
       }
-      const rewards = (
-        (
-          await getVoucherify().loyalties.listMemberRewards(
-            redeemable.redeemable?.voucher?.id,
-            { limit: 100 }
-          )
-        )?.data || []
-      ).filter((reward) => reward.reward.type === 'CAMPAIGN')
+      const rewards: LoyaltiesListMemberRewardsResponseBody['data'] =
+        await asyncMap(
+          (
+            (
+              await getVoucherify().loyalties.listMemberRewards(
+                redeemable.redeemable?.voucher?.id,
+                { limit: 100 }
+              )
+            )?.data || []
+          ).filter((reward) => reward.reward.type === 'CAMPAIGN'),
+          async (reward: {
+            reward: Reward
+            assignment: RewardAssignment
+            object: 'loyalty_reward'
+          }) => {
+            if ('voucher' in reward.reward && reward.reward.voucher) {
+              reward.reward.voucher = await injectContentfulContentToVoucher(
+                reward.reward.voucher
+              )
+            }
+            return reward
+          }
+        )
       return { ...redeemable, rewards }
     }
   )

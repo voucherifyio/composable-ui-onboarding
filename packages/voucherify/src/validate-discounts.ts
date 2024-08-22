@@ -12,7 +12,7 @@ import { cartToVoucherifyOrder } from './cart-to-voucherify-order'
 import { userSessionToVoucherifyCustomer } from './user-session-to-voucherify-customer'
 import { addChannelToOrder } from './add-channel-to-voucherify-order'
 import * as _ from 'lodash'
-import { injectContentfulContent } from './contentful'
+import { injectContentfulContentToQualificationsRedeemables } from './contentful'
 
 type ValidateDiscountsParam = {
   cart: Cart
@@ -74,7 +74,8 @@ export const validateCouponsAndPromotions = async (
     (redeemable) => redeemable.object === 'promotion_tier'
   )
 
-  const contentfulPromotions = await injectContentfulContent(promotions)
+  const contentfulPromotions =
+    await injectContentfulContentToQualificationsRedeemables(promotions)
 
   const codes = _.difference(
     _.uniq(_.compact([...autoApplyCoupons, ...appliedCodes, code])).filter(

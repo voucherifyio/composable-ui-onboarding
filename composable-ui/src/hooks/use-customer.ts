@@ -35,37 +35,46 @@ export const useCustomer = () => {
     status: WalletStatus.IS_LOADING,
   })
 
-  useQuery([USE_CUSTOMER_KEY, session], async () => {
-    if (session.status === 'loading') {
-      return
-    }
-    const response = await client.commerce.wallet.mutate()
-    if (!Array.isArray(response.redeemables)) {
-      setWallet({ ...wallet, status: WalletStatus.ERRORED })
-      return
-    }
-
-    const redeemablesByCampaignType = {} as RedeemablesByCampaignType
-    response.redeemables.forEach((redeemable: ExtendedRedeemable) => {
-      const campaignType = redeemable.campaign_type
-      if (redeemablesByCampaignType[campaignType]) {
-        redeemablesByCampaignType[campaignType]?.push(redeemable)
-      } else {
-        redeemablesByCampaignType[campaignType] = [redeemable]
+  useQuery(
+    [USE_CUSTOMER_KEY, session],
+    async () => {
+      if (session.status === 'loading') {
+        return
       }
-    })
-    setWallet({
-      redeemablesByCampaignType,
-      refereeRedeemables: response.redeemables.filter(
-        (redeemable: ExtendedRedeemable) => redeemable.holder_role === 'REFEREE'
-      ),
-      refererRedeemables: response.redeemables.filter(
-        (redeemable: ExtendedRedeemable) =>
-          redeemable.holder_role === 'REFERRER'
-      ),
-      status: WalletStatus.LOADED,
-    })
-  })
+      const response = await client.commerce.wallet.mutate()
+      if (!Array.isArray(response.redeemables)) {
+        setWallet({ ...wallet, status: WalletStatus.ERRORED })
+        return
+      }
+
+      const redeemablesByCampaignType = {} as RedeemablesByCampaignType
+      response.redeemables.forEach((redeemable: ExtendedRedeemable) => {
+        const campaignType = redeemable.campaign_type
+        if (redeemablesByCampaignType[campaignType]) {
+          redeemablesByCampaignType[campaignType]?.push(redeemable)
+        } else {
+          redeemablesByCampaignType[campaignType] = [redeemable]
+        }
+      })
+      const value = {
+        redeemablesByCampaignType,
+        refereeRedeemables: response.redeemables.filter(
+          (redeemable: ExtendedRedeemable) =>
+            redeemable.holder_role === 'REFEREE'
+        ),
+        refererRedeemables: response.redeemables.filter(
+          (redeemable: ExtendedRedeemable) =>
+            redeemable.holder_role === 'REFERRER'
+        ),
+        status: WalletStatus.LOADED,
+      }
+      setWallet(value)
+      return value
+    },
+    {
+      cacheTime: 1000,
+    }
+  )
 
   return { ...wallet, setWallet }
 }

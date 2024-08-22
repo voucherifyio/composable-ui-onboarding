@@ -5,13 +5,39 @@ import {
 import { createClient, Entry, EntrySkeletonType } from 'contentful'
 import { asyncMap } from './get-customer-wallet'
 
-const client = createClient({
-  accessToken: '3vqEdIOi1GowrIiqQRmXKKVvVvSsB9LwLQtmofq4E1s',
-  space: 'ifzkoiigahwu',
-})
+const getContentfulClient = (env?: { apiKey?: string; spaceId?: string }) => {
+  if (
+    (env?.apiKey || process.env.NEXT_PUBLIC_CONTENTFUL_UNPUBLISHED_API_KEY) &&
+    (env?.spaceId || process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID)
+  ) {
+    return createClient({
+      accessToken:
+        env?.apiKey ||
+        (process.env.NEXT_PUBLIC_CONTENTFUL_UNPUBLISHED_API_KEY as string),
+      space:
+        env?.spaceId || (process.env.NEXT_PUBLIC_CONTENTFUL_SPACE_ID as string),
+    })
+  }
+  console.log('No contentful client was provided')
+  return undefined
+}
 
-export const injectContentfulContent = async (
-  data: QualificationsRedeemable[]
+export const injectContentfulContentToVoucher = async (voucher: any) => {
+  const entry = await getContentfulEntry(voucher.metadata)
+
+  if (!entry) {
+    return voucher
+  }
+
+  return modifyToContentfulVoucher(voucher, entry)
+}
+
+export const injectContentfulContentToQualificationsRedeemables = async (
+  data: QualificationsRedeemable[],
+  env?: {
+    apiKey?: string
+    spaceId?: string
+  }
 ): Promise<QualificationsRedeemable[]> =>
   await asyncMap(
     data,
@@ -22,7 +48,7 @@ export const injectContentfulContent = async (
         }
       }
     ) => {
-      const entry = await getContentfulEntry(redeemable.metadata)
+      const entry = await getContentfulEntry(redeemable.metadata, env)
 
       if (!entry) {
         return redeemable
@@ -41,13 +67,18 @@ export const injectContentfulContent = async (
   )
 
 export const injectContentfulContentToRedeemablesVouchers = async (
-  data: CustomerRedeemablesListItemResponse[]
+  data: CustomerRedeemablesListItemResponse[],
+  env?: {
+    apiKey?: string
+    spaceId?: string
+  }
 ): Promise<CustomerRedeemablesListItemResponse[]> =>
   await asyncMap(
     data,
     async (redeemable: CustomerRedeemablesListItemResponse) => {
       const entry = await getContentfulEntry(
-        redeemable.redeemable.voucher?.metadata
+        redeemable.redeemable.voucher?.metadata,
+        env
       )
 
       if (!entry) {
@@ -70,19 +101,27 @@ const getContentfulEntry = async (
     | {
         contentfulEntities?: { id: string; contentType: string }[]
       }
-    | undefined
+    | undefined,
+  env?: {
+    apiKey?: string
+    spaceId?: string
+  }
 ) => {
   const contentfulEntityId = metadata?.contentfulEntities?.[0].id || null
   if (!contentfulEntityId) {
-    return null
+    return
   }
 
-  const entry = await client.getEntry(contentfulEntityId).catch((err) => {
+  const contentFulClient = getContentfulClient(env)
+  if (!contentFulClient) {
+    return
+  }
+  return await contentFulClient.getEntry(contentfulEntityId).catch((err) => {
+    console.log(err)
     if (err instanceof Error) {
       console.error('voucherify/src/contentful [GET ENTRY]', err.message)
     }
   })
-  return entry
 }
 
 const modifyToContentfulPromotionTier = (
@@ -90,7 +129,10 @@ const modifyToContentfulPromotionTier = (
   entry: Entry<EntrySkeletonType, undefined, string>
 ) => ({
   ...redeemable,
-  banner: entry.fields.description || redeemable?.banner || '',
+  banner: entry.fields.name,
+  metadata: redeemable.metadata
+    ? { description: entry.fields.description }
+    : redeemable.metadata,
 })
 
 const modifyToContentfulVoucher = (
@@ -99,7 +141,7 @@ const modifyToContentfulVoucher = (
 ) => ({
   ...redeemable,
   metadata: redeemable.metadata
-    ? { banner: entry.fields.promotionName || '' }
+    ? { banner: entry.fields.name || '', description: entry.fields.description }
     : redeemable.metadata,
 })
 
@@ -107,18 +149,13 @@ const modifyToContentfulRedeemabledVoucher = (
   redeemable: CustomerRedeemablesListItemResponse,
   entry: Entry<EntrySkeletonType, undefined, string>
 ) => {
-  const voucherMetadata = redeemable.redeemable.voucher?.metadata
-  const modifiedMetadata = voucherMetadata
-    ? { ...voucherMetadata, voucherName: entry.fields.promotionName }
-    : {}
   return {
     ...redeemable,
     redeemable: {
       ...redeemable.redeemable,
-      voucher: {
-        ...redeemable.redeemable.voucher,
-        metadata: modifiedMetadata,
-      },
+      voucher: redeemable.redeemable.voucher
+        ? modifyToContentfulVoucher(redeemable.redeemable.voucher as any, entry)
+        : undefined,
     },
   }
 }

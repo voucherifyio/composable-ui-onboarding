@@ -1,36 +1,32 @@
-import { CartData, useCart } from '../../hooks'
+import { CartData } from '../../hooks'
 import { AlgoliaProduct, Cart, Product, UserSession } from '@composable/types'
 import { useSession } from 'next-auth/react'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import {
   addChannelToOrder,
   cartToVoucherifyOrder,
   itemToVoucherifyItem,
   userSessionToVoucherifyCustomer,
 } from '@composable/voucherify'
-import { QualificationsCheckEligibilityResponseBody } from '@voucherify/sdk'
 import { generateCartItem } from '@composable/commerce-generic/src/data/generate-cart-data'
 import { getVoucherifyClientSide } from './client-side-voucherify-config'
-import {
-  QualificationsRedeemable,
-  QualificationsRedeemableList,
-} from '@voucherify/sdk/dist/types/Qualifications'
-import { Accordion, AccordionSize } from '@composable/ui'
+import { QualificationsRedeemable } from '@voucherify/sdk/dist/types/Qualifications'
+import { Accordion } from '@composable/ui'
 import {
   Alert,
   AlertDescription,
-  AlertIcon,
   AlertTitle,
   Box,
-  CloseButton,
   Text,
   useColorModeValue,
-  useDisclosure,
 } from '@chakra-ui/react'
-import { lineHeights } from '@composable/ui/src/chakra/theme/foundations/typography'
 import { useQuery } from '@tanstack/react-query'
 import { useChannel } from '../../hooks/use-channel'
-import { injectContentfulContent } from '../../../../packages/voucherify/src/contentful'
+import { injectContentfulContentToQualificationsRedeemables } from '../../../../packages/voucherify/src/contentful'
+import {
+  NEXT_PUBLIC_CONTENTFUL_ONLY_PUBLISHED_API_KEY,
+  NEXT_PUBLIC_CONTENTFUL_SPACE_ID,
+} from '../../utils/constants'
 
 export const Qualifications = ({
   cart,
@@ -104,11 +100,20 @@ const getAccordionItem = ({
               </>
             }
             description={
-              !redeemable.banner && !redeemable.metadata?.banner
-                ? undefined
-                : typeof redeemable.metadata?.banner === 'string'
-                ? redeemable.metadata?.banner
-                : redeemable.banner
+              <>
+                {!redeemable.banner && !redeemable.metadata?.banner
+                  ? undefined
+                  : typeof redeemable.metadata?.banner === 'string'
+                  ? redeemable.metadata?.banner
+                  : redeemable.banner}
+                {typeof redeemable.metadata?.description !==
+                'string' ? undefined : (
+                  <>
+                    <br />
+                    {redeemable.metadata?.description}
+                  </>
+                )}
+              </>
             }
           />
         ))}
@@ -156,7 +161,10 @@ export const QualificationsCart = ({
             },
           })
         )?.redeemables?.data || []
-      return injectContentfulContent(res)
+      return injectContentfulContentToQualificationsRedeemables(res, {
+        apiKey: NEXT_PUBLIC_CONTENTFUL_ONLY_PUBLISHED_API_KEY,
+        spaceId: NEXT_PUBLIC_CONTENTFUL_SPACE_ID,
+      })
     },
     {
       retry: false,
@@ -236,7 +244,10 @@ export const QualificationsProduct = ({
             },
           })
         )?.redeemables?.data || []
-      return injectContentfulContent(res)
+      return injectContentfulContentToQualificationsRedeemables(res, {
+        apiKey: NEXT_PUBLIC_CONTENTFUL_ONLY_PUBLISHED_API_KEY,
+        spaceId: NEXT_PUBLIC_CONTENTFUL_SPACE_ID,
+      })
     },
     {
       retry: false,
