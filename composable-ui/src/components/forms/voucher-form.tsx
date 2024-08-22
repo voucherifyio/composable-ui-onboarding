@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { useCart } from '../../hooks'
+import { NEXT_PUBLIC_MAX_NUMBER_OF_COUPONS } from '../../utils/constants'
 export const VoucherForm = () => {
   const intl = useIntl()
   const {
@@ -75,14 +76,47 @@ export const VoucherForm = () => {
             fontSize: 'sm',
             placeholder: content.input.voucher.placeholder,
             ...register('voucher'),
+            isDisabled:
+              (cart?.vouchersApplied?.length || 0) >=
+              NEXT_PUBLIC_MAX_NUMBER_OF_COUPONS,
           }}
           error={errors.voucher}
           label={''}
         />
-        <Button mt={2} type="submit" size="sm" variant={'outline'}>
+        <Button
+          mt={2}
+          type="submit"
+          size="sm"
+          variant={'outline'}
+          isDisabled={
+            (cart?.vouchersApplied?.length || 0) >=
+            NEXT_PUBLIC_MAX_NUMBER_OF_COUPONS
+          }
+        >
           Apply
         </Button>
       </Box>
+      {((cart?.vouchersApplied?.length || 0) >=
+        NEXT_PUBLIC_MAX_NUMBER_OF_COUPONS && (
+        <Alert
+          mt={1}
+          status="info"
+          borderRadius={'6px'}
+          p={'0.4rem'}
+          m={'0'}
+          fontSize={'13px'}
+        >
+          <AlertIcon alignSelf={'flex-center'} />
+          Maximum number of vouchers have been applied
+          <CloseButton
+            position="absolute"
+            right="8px"
+            top="2px"
+            onClick={() => setShowAlert(false)}
+          />
+        </Alert>
+      )) ||
+        undefined}
       {showAlert && errorMessage && (
         <Alert
           mt={1}

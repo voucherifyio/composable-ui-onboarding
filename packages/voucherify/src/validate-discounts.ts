@@ -81,27 +81,40 @@ export const validateCouponsAndPromotions = async (
     (redeemable) => redeemable.object === 'promotion_tier'
   )
   const codes = _.uniq(
-    _.compact([...autoApplyCoupons, ...appliedCodes, newCode])
+    _.compact([...appliedCodes, newCode, ...autoApplyCoupons])
   ).filter((code) => !(dontApplyCodes || []).includes(code))
 
   const newCoupons = _.compact([
-    ...autoApplyCoupons.filter((code) => codes.includes(code)),
     newCode,
+    ...autoApplyCoupons.filter((code) => codes.includes(code)),
   ])
   if (!codes.length && !promotions?.length) {
     return { promotionsResult: promotions, validationResult: false }
   }
-  const potentiallyNewPromotions = getRedeemablesForValidationFromPromotions(
-    (await injectContentfulContentToQualificationsRedeemables(promotions)).slice(0, 1)
-  ).map((promotion) => promotion.id)
-  const newPromotionsIds = potentiallyNewPromotions.filter(
-    (promotionId) => !appliedPromotionsIds.includes(promotionId)
+  const potentiallyNewPromotions = (
+    await injectContentfulContentToQualificationsRedeemables(promotions)
+  ).slice(
+    0,
+    isNaN(parseInt(process.env.NEXT_PUBLIC_MAX_NUMBER_OF_PROMOTIONS || ''))
+      ? 30
+      : parseInt(process.env.NEXT_PUBLIC_MAX_NUMBER_OF_PROMOTIONS || '')
   )
+
+  const newPromotionsIds = potentiallyNewPromotions
+    .filter((promotion) => !appliedPromotionsIds.includes(promotion.id))
+    .map((promotion) => promotion.id)
 
   const validationResult = await voucherify.validations.validateStackable({
     redeemables: [
-      ...getRedeemablesForValidationFromPromotions(promotions.slice(0, 1)),
-      ...getRedeemablesForValidation(codes),
+      ...getRedeemablesForValidationFromPromotions(potentiallyNewPromotions),
+      ...getRedeemablesForValidation(
+        codes.slice(
+          0,
+          isNaN(parseInt(process.env.NEXT_PUBLIC_MAX_NUMBER_OF_COUPONS || ''))
+            ? 30
+            : parseInt(process.env.NEXT_PUBLIC_MAX_NUMBER_OF_COUPONS || '')
+        )
+      ),
     ],
     order,
     customer: user ? userSessionToVoucherifyCustomer(user) : undefined,
