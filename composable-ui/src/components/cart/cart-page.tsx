@@ -21,20 +21,23 @@ export const CartPage = () => {
   const router = useRouter()
   const intl = useIntl()
   const toast = useToast()
-  const { cart, updateCartItem, deleteCartItem } = useCart({
-    onCartItemUpdateError: () => {
-      toast({
-        status: 'error',
-        description: intl.formatMessage({ id: 'app.failure' }),
-      })
+  const { cart, updateCartItem, deleteCartItem } = useCart(
+    {
+      onCartItemUpdateError: () => {
+        toast({
+          status: 'error',
+          description: intl.formatMessage({ id: 'app.failure' }),
+        })
+      },
+      onCartItemDeleteError: () => {
+        toast({
+          status: 'error',
+          description: intl.formatMessage({ id: 'app.failure' }),
+        })
+      },
     },
-    onCartItemDeleteError: () => {
-      toast({
-        status: 'error',
-        description: intl.formatMessage({ id: 'app.failure' }),
-      })
-    },
-  })
+    toast
+  )
 
   const { isLoading, isEmpty, quantity } = cart
   const title = intl.formatMessage({ id: 'cart.title' })

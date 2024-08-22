@@ -14,6 +14,7 @@ export interface Cart {
     totalPrice?: number
     shipping?: number | string
   }
+  error?: string
 }
 
 export interface Promotion {

@@ -58,6 +58,7 @@ export const cartWithDiscount = (
       vouchersApplied: [],
       promotionsApplied: [],
       summary: { ...cart.summary, totalDiscountAmount: undefined },
+      error: undefined,
     }
   }
 
@@ -125,12 +126,14 @@ export const cartWithDiscount = (
   //check minimumProductUnits
   const itemsRequiredToBeInCart = mergeItems(unitsToItems(minimumProductUnits))
 
+  let freeItemWasRemoved = false
   const cartItems = [
     ...itemsRequiredToBeInCart.map((item) => {
       const itemInCart = itemsAlreadyInCartAndNewItems.find(
         (_item) => _item.sku === item.sku
       )
       if (!itemInCart || itemInCart.quantity < item.quantity) {
+        freeItemWasRemoved = true
         return item
       }
       return itemInCart
@@ -195,6 +198,7 @@ export const cartWithDiscount = (
     },
     vouchersApplied: vouchers,
     promotionsApplied,
+    error: freeItemWasRemoved ? 'Free item cannot be removed' : undefined,
   }
 }
 

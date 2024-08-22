@@ -29,14 +29,17 @@ export const CartDrawer = () => {
   const router = useRouter()
   const { cartDrawer } = useComposable()
 
-  const { cart, deleteCartItem, updateCartItem } = useCart({
-    onCartItemDeleteError: () => {
-      toast({
-        status: 'error',
-        description: intl.formatMessage({ id: 'app.failure' }),
-      })
+  const { cart, deleteCartItem, updateCartItem } = useCart(
+    {
+      onCartItemDeleteError: () => {
+        toast({
+          status: 'error',
+          description: intl.formatMessage({ id: 'app.failure' }),
+        })
+      },
     },
-  })
+    toast
+  )
 
   const title = intl.formatMessage(
     { id: 'cart.drawer.titleCount' },
@@ -127,14 +130,18 @@ export const CartDrawer = () => {
                         }}
                         quantity={item.quantity}
                         price={intl.formatNumber(
-                          item.price*item.quantity+item.tax*item.quantity,
+                          item.price * item.quantity + item.tax * item.quantity,
                           currencyFormatConfig
                         )}
                         priceAfterDiscount={
-                          item.discount ? intl.formatNumber(
-                            (item.price*item.quantity+item.tax*item.quantity)-item.discount,
-                            currencyFormatConfig
-                          ) : undefined
+                          item.discount
+                            ? intl.formatNumber(
+                                item.price * item.quantity +
+                                  item.tax * item.quantity -
+                                  item.discount,
+                                currencyFormatConfig
+                              )
+                            : undefined
                         }
                         onAddToWishlist={() => null}
                         onRemove={() => {
