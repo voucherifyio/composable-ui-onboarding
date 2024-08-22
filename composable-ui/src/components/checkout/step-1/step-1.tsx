@@ -130,6 +130,8 @@ export const Step1 = ({ onSubmit }: Step1Props) => {
           variant="solid"
           onClick={() => handleSubmit()}
           isDisabled={!shippingOptions.selected}
+          backgroundColor={'#000'}
+          _hover={{ bg: '#000' }}
         >
           <Text>{intl.formatMessage({ id: 'action.continuePayment' })}</Text>
         </Button>

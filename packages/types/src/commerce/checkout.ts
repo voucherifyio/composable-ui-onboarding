@@ -1,9 +1,6 @@
 export interface CheckoutInput {
   cartId: string
-  customer: {
-    id?: string
-    email: string
-  }
+  customer: any
   billing_address: {
     full_name: string
     address_line_1: string

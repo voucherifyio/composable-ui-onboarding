@@ -4,15 +4,15 @@ export interface Cart {
   promotionsApplied?: Promotion[]
   vouchersApplied?: Voucher[]
   summary: {
-    subtotalPrice?: string
-    taxes?: string
-    totalDiscountAmount?: string
-    priceBeforeDiscount?: string
+    subtotalPrice?: number
+    taxes?: number
+    totalDiscountAmount?: number
+    priceBeforeDiscount?: number
     /**
      * Order amount after applying all the discounts.
      */
-    totalPrice?: string
-    shipping?: string
+    totalPrice?: number
+    shipping?: number | string
   }
 }
 
@@ -25,7 +25,7 @@ export interface Promotion {
 export interface Voucher {
   code: string
   label: string
-  discountAmount: string
+  discountAmount: number
 }
 
 export interface CartItem {
@@ -36,6 +36,7 @@ export interface CartItem {
   image: { url: string; alt: string }
   name: string
   price: number
+  discount?: number
   tax: number
   quantity: number
   sku: string

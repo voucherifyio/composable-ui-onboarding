@@ -4,6 +4,15 @@ import { getCart } from '../../data/mock-storage'
 import { saveOrder } from '../../data/mock-storage'
 import shippingMethods from '../../data/shipping-methods.json'
 import { randomUUID } from 'crypto'
+import Analitycs from '@segment/analytics-node'
+
+const getAnalitycs = () => {
+  if (!process.env.SEGMENTIO_SOURCE_WRITE_KEY) {
+    throw new Error('SEGMENTIO_SOURCE_WRITE_KEY not defined in env variables')
+  }
+
+  return new Analitycs({ writeKey: process.env.SEGMENTIO_SOURCE_WRITE_KEY })
+}
 
 const generateOrderFromCart = (
   cart: Cart,
@@ -38,6 +47,8 @@ const generateOrderFromCart = (
 
 export const createOrder: CommerceService['createOrder'] = async ({
   checkout,
+  user,
+  channel,
 }) => {
   const cart = await getCart(checkout.cartId)
 
@@ -51,8 +62,24 @@ export const createOrder: CommerceService['createOrder'] = async ({
   /* Redemptions using Voucherify should only be performed when we receive information that the payment was successful.
     In this situation, the ‘payment’ property is always set as 'unpaid' (in 'generateOrderFromCart'),
     so to simulate the correct behavior, the ‘payment’ value was changed here to 'paid' and the ‘orderPaid’ function was called to trigger the redemptions process.*/
+  /* Redemptions using Voucherify should only be performed when we receive information that the payment was successful.
+    In this situation, the ‘payment’ property is always set as 'unpaid' (in 'generateOrderFromCart'),
+    so to simulate the correct behavior, the ‘payment’ value was changed here to 'paid' and the ‘orderPaid’ function was called to trigger the redemptions process.*/
   updatedOrder.payment = 'paid'
-  await orderPaid(updatedOrder)
+  const voucherifyOrderId = await orderPaid(updatedOrder, user, channel)
 
-  return await saveOrder(updatedOrder)
+  if (user?.email) {
+    const analitycs = getAnalitycs()
+    analitycs.track({
+      userId: user.email,
+      event: 'Order placed',
+      properties: {
+        voucherifyOrderId,
+        channel,
+      },
+    })
+  }
+
+  // return await saveOrder(updatedOrder)
+  return { ...(await saveOrder(updatedOrder)), voucherifyOrderId }
 }

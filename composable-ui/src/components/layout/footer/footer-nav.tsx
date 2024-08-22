@@ -3,6 +3,7 @@ import {
   Box,
   Container,
   Divider,
+  Flex,
   Link,
   SimpleGrid,
   Stack,
@@ -52,24 +53,29 @@ export const Footer = ({
 }: FooterProps) => {
   return (
     <Box borderTopWidth="1px">
-      <Container as="footer" role="contentinfo" maxW="container.xl">
+      <Container
+        as="footer"
+        role="contentinfo"
+        maxW="container.xl"
+        backgroundColor="#f40008"
+      >
         <Stack
-          justify="space-around"
-          align="start"
+          justify="center"
+          // align="start"
           direction={{ base: 'column', md: 'row' }}
-          py={{ base: '12', md: '16' }}
+          py={{ base: '4', md: '16' }}
         >
-          <Stack spacing={{ base: '4' }} align="start" paddingBottom="md">
+          <Flex justifyContent={'center'}>
             {brandLogo && (
               <Link as={NextLink} href={homeUrl}>
                 {brandLogo}
               </Link>
             )}
-            {tagline && <Text textStyle={'Desktop/Body-S'}>{tagline}</Text>}
+            {/* {tagline && <Text textStyle={'Desktop/Body-S'}>{tagline}</Text>} */}
             {message}
-          </Stack>
+          </Flex>
 
-          {parentMenuItems?.items.map((item, idx) => (
+          {/* {parentMenuItems?.items.map((item, idx) => (
             <Fragment key={`${item.label}`}>
               <AccordionStack
                 item={item}
@@ -79,9 +85,9 @@ export const Footer = ({
                 <LinkStack item={item} level={1} />
               </SimpleGrid>
             </Fragment>
-          ))}
+          ))} */}
         </Stack>
-        <Divider />
+        {/* <Divider /> */}
         <CopyrightFooter copyrightText={copyrightText} />
       </Container>
     </Box>

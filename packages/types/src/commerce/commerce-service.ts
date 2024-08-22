@@ -7,7 +7,163 @@ import {
   User,
   Product,
   SitemapField,
+  UserSession,
 } from './index'
+import {
+  LoyaltiesRedeemRewardResponse,
+  Reward,
+  RewardAssignment,
+} from '@voucherify/sdk'
+import { CustomerRedeemablesListItemResponse } from '@voucherify/sdk/dist/types/Customers'
+
+export type ExtendedRedeemable = CustomerRedeemablesListItemResponse & {
+  rewards?: {
+    reward: Reward
+    assignment: RewardAssignment
+    object: 'loyalty_reward'
+  }[]
+}
+
+type VoucherifyOrderListItem = {
+  id: string
+  created_at: string
+  status: string
+  location: string
+  amount: number
+}
+
+export type VoucherifyOrder = {
+  id?: string
+  source_id?: string | null
+  created_at?: string
+  updated_at?: string | null
+  status?: 'CREATED' | 'PAID' | 'CANCELED' | 'FULFILLED'
+  amount?: number
+  initial_amount?: number
+  discount_amount?: number
+  items_discount_amount?: number
+  total_discount_amount?: number
+  total_amount?: number
+  applied_discount_amount?: number
+  items_applied_discount_amount?: number
+  total_applied_discount_amount?: number
+  items?: VoucherifyOrdersItem[]
+  metadata: Record<string, unknown>
+  customer?: VoucherifyCustomer
+  customer_id: string | null
+  // referrer?: ReferrerId | ReferrerWithSummaryLoyaltyReferrals;
+  referrer_id: string | null
+  object: 'order'
+  redemptions?: Record<string, OrderRedemptions>
+}
+type OrderRedemptions = {
+  date?: string
+  rollback_id?: string
+  rollback_date?: string
+  related_object_type?: string
+  related_object_id?: string
+  related_object_parent_id?: string
+  stacked?: string[]
+  rollback_stacked?: string[]
+}
+type VoucherifyOrdersItem = {
+  sku_id?: string
+  product_id?: string
+  related_object?: 'product' | 'sku'
+  source_id?: string
+  quantity?: number
+  discount_quantity?: number
+  initial_quantity?: number
+  amount?: number
+  discount_amount?: number
+  initial_amount?: number
+  total_applied_discount_amount?: number
+  price?: number
+  subtotal_amount?: number
+  product?: {
+    id?: string
+    source_id?: string
+    override?: boolean
+    name?: string
+    metadata?: Record<string, any>
+    price?: number
+  }
+  sku?: {
+    id?: string
+    source_id?: string
+    override?: boolean
+    sku?: string
+    price?: number
+  }
+  object: 'order_item'
+  metadata?: Record<string, any>
+}
+
+type VoucherifyCustomer = {
+  id?: string
+  source_id?: string
+  name?: string
+  description?: string
+  email?: string
+  phone?: string
+  birthday?: string
+  birthdate?: string
+  address?: {
+    city?: string
+    state?: string
+    line_1?: string
+    line_2?: string
+    country?: string
+    postal_code?: string
+  }
+  metadata?: Record<string, any>
+}
+
+export type Redeemable = {
+  id: string
+  object: 'campaign' | 'voucher' | 'promotion_tier' | 'promotion_stack'
+  campaign_name?: string
+  barcodeUrl: string | boolean | undefined
+  created_at: string
+  result?: {
+    loyalty_card?: unknown
+  }
+}
+
+export type ProductListResponse = {
+  id: string
+  source_id?: string
+  object: 'product'
+  name?: string
+  price?: number
+  attributes?: string[]
+  created_at: string
+  image_url?: string | null
+  metadata?: Record<string, any>
+  skus?: {
+    object: 'list'
+    total: number
+    data?: {
+      id: string
+      source_id?: string
+      sku?: string
+      price?: number
+      attributes?: Record<string, string>
+      metadata?: Record<string, any>
+      updated_at?: string
+      currency?: string
+      created_at: string
+      object: 'sku'
+    }[]
+  }
+}
+
+export type CustomerActivitiesListResponse = {
+  object: 'list'
+  total: number
+  data_ref: 'data'
+  data: Record<string, any>[]
+}
 
 export interface CommerceService {
   /**
@@ -19,27 +175,56 @@ export interface CommerceService {
     productId: string
     variantId?: string
     quantity: number
+    user?: UserSession
+    channel?: string
+    dontApplyCodes?: string[]
   }): Promise<Cart>
 
   createCart(): Promise<Cart>
 
-  deleteCartItem(params: { cartId: string; productId: string }): Promise<Cart>
+  deleteCartItem(params: {
+    cartId: string
+    productId: string
+    user?: UserSession
+    channel?: string
+    dontApplyCodes?: string[]
+  }): Promise<Cart>
 
-  getCart(params: { cartId: string }): Promise<Cart | null>
+  getCart(params: {
+    cartId: string
+    user?: UserSession
+    channel?: string
+    dontApplyCodes?: string[]
+  }): Promise<Cart | null>
 
   updateCartItem(params: {
     cartId: string
     productId: string
     quantity: number
+    user?: UserSession
+    channel?: string
+    dontApplyCodes?: string[]
   }): Promise<Cart>
 
-  addVoucher(params: { cartId: string; code: string }): Promise<{
+  addVoucher(params: {
+    cartId: string
+    code: string
+    user?: UserSession
+    channel?: string
+    dontApplyCodes?: string[]
+  }): Promise<{
     cart: Cart
     success: boolean
     errorMessage?: string
   }>
 
-  deleteVoucher(params: { cartId: string; code: string }): Promise<Cart>
+  deleteVoucher(params: {
+    cartId: string
+    code: string
+    user?: UserSession
+    channel?: string
+    dontApplyCodes?: string[]
+  }): Promise<Cart>
 
   /**
    * Catalog methods
@@ -67,7 +252,11 @@ export interface CommerceService {
    * Checkout methods
    */
 
-  createOrder(params: { checkout: CheckoutInput }): Promise<Order | null>
+  createOrder(params: {
+    checkout: CheckoutInput
+    user?: UserSession
+    channel?: string
+  }): Promise<Order | null>
 
   getOrder(params: { orderId: string }): Promise<Order | null>
 
@@ -85,4 +274,29 @@ export interface CommerceService {
   }): Promise<User | null>
 
   resetPassword(params: { email: string }): Promise<void>
+
+  getOrderHistory(params: {
+    customerSourceId: string
+    channel?: string
+    user?: UserSession
+  }): Promise<Record<string, any>[] | null>
+
+  wallet({
+    user,
+  }: {
+    user?: UserSession
+  }): Promise<{ redeemables: ExtendedRedeemable[] }>
+
+  redeemReward({
+    user,
+    reward,
+  }: {
+    user?: UserSession
+    reward: {
+      campaignId: string
+      voucherId: string
+      rewardId: string
+      points?: number
+    }
+  }): Promise<LoyaltiesRedeemRewardResponse | undefined>
 }

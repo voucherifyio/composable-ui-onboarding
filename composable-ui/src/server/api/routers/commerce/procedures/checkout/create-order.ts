@@ -1,10 +1,12 @@
 import { z } from 'zod'
 import { protectedProcedure } from 'server/api/trpc'
 import { commerce } from 'server/data-source'
+import { channel } from 'diagnostics_channel'
 
 export const createOrder = protectedProcedure
   .input(
     z.object({
+      channel: z.string(),
       checkout: z.object({
         cartId: z.string(),
         customer: z.object({
@@ -32,6 +34,7 @@ export const createOrder = protectedProcedure
       }),
     })
   )
-  .mutation(async ({ input }) => {
-    return await commerce.createOrder({ ...input })
+  .mutation(async ({ input, ctx }) => {
+    const user = ctx.session?.user
+    return await commerce.createOrder({ ...input, user })
   })

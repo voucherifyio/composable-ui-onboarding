@@ -34,6 +34,8 @@ export const PlaceOrderButton = (props: ButtonProps) => {
       disabled={isLoading}
       isLoading={isLoading}
       {...props}
+      backgroundColor={'#000'}
+      _hover={{ bg: '#000' }}
     >
       {intl.formatMessage({ id: 'action.placeOrder' })}
     </Button>

@@ -33,7 +33,9 @@ export const CartDrawerFooter = () => {
           <Box>
             <Price
               rootProps={{ textStyle: { base: 'Mobile/XS', md: 'Desktop/M' } }}
-              price={cart.summary?.totalPrice ?? ''}
+              price={
+                cart.summary?.totalPrice || cart.summary?.priceBeforeDiscount
+              }
             />
           </Box>
         </VStack>
@@ -56,6 +58,8 @@ export const CartDrawerFooter = () => {
             }}
             variant={'solid'}
             size={{ base: 'sm', md: 'lg' }}
+            backgroundColor={'#000'}
+            _hover={{ bg: '#000' }}
           >
             {intl.formatMessage({ id: 'action.checkout' })}
           </Button>

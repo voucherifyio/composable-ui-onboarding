@@ -40,6 +40,8 @@ export const CartDrawerEmptyState = ({
         variant={'ghost'}
         color={'text'}
         fontSize={{ base: '12px !important', md: '16px !important' }}
+        backgroundColor={'#000'}
+        _hover={{ bg: '#000' }}
         onClick={async () => {
           await router.push('/category/accessories')
           onClose && onClose()

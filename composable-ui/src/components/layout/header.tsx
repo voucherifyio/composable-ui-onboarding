@@ -16,6 +16,7 @@ import { HamburgerIcon } from '@chakra-ui/icons'
 import { useRouter } from 'next/router'
 import { MenuItem } from 'components/menu/menu-item'
 import NextLink from 'next/link'
+import Channel from 'components/channel'
 
 export const Header = () => {
   const { cart } = useCart()
@@ -25,7 +26,12 @@ export const Header = () => {
   } = useRouter()
 
   return (
-    <Box as="header" borderBottomWidth="1px" height={'4rem'}>
+    <Box
+      as="header"
+      borderBottomWidth="1px"
+      height={'4rem'}
+      backgroundColor="#f40008"
+    >
       <Container maxW="container.xl">
         <Grid
           templateColumns={'repeat(3, 1fr)'}
@@ -45,7 +51,7 @@ export const Header = () => {
                     : menuDrawer.onOpen()
                 }
               >
-                <HamburgerIcon width={'26px'} height={'26px'} />
+                <HamburgerIcon width={'26px'} height={'26px'} color="#FFF" />
               </Button>
             </Center>
           </Box>
@@ -53,9 +59,7 @@ export const Header = () => {
             alignItems={'center'}
             justifyContent={{ base: 'center', md: 'left' }}
           >
-            <Link as={NextLink} href="/">
-              <Logo h="21px" />
-            </Link>
+            {/* {HERE LOGO CAN BE INCLUDED} */}
           </Flex>
           <Box
             as="nav"
@@ -80,11 +84,10 @@ export const Header = () => {
             display="flex"
             alignItems={'center'}
             justifyContent="flex-end"
-            gap={3}
+            gap={2}
           >
-            <Box display={{ base: 'none', md: 'flex' }}>
-              <LoginAction />
-            </Box>
+            <Channel />
+            <LoginAction />
             <Button
               variant="unstyled"
               aria-label={`${cart.quantity} items in your shopping cart`}
@@ -94,6 +97,7 @@ export const Header = () => {
               mr={2}
               aria-expanded={cartDrawer.isOpen}
               onClick={() => cartDrawer.onOpen()}
+              color="#FFF"
             >
               <CartIcon cartQuantity={cart.quantity} />
             </Button>

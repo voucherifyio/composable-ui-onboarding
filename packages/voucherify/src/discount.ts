@@ -1,13 +1,17 @@
-import { Cart, Order } from '@composable/types'
+import { Cart, Order, UserSession } from '@composable/types'
 import { validateCouponsAndPromotions } from './validate-discounts'
 import { isRedeemableApplicable } from './is-redeemable-applicable'
 import { cartWithDiscount } from './cart-with-discount'
-import { voucherify } from './voucherify-config'
+import { getVoucherify } from './voucherify-config'
 import { orderToVoucherifyOrder } from './order-to-voucherify-order'
+import { addChannelToOrder } from './add-channel-to-voucherify-order'
 
 export const deleteVoucherFromCart = async (
   cart: Cart,
-  code: string
+  code: string,
+  user?: UserSession,
+  channel?: string,
+  dontApplyCodes?: string[]
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
   const cartAfterDeletion: Cart = {
     ...cart,
@@ -15,25 +19,41 @@ export const deleteVoucherFromCart = async (
       (voucher) => voucher.code !== code
     ),
   }
-  const updatedCart = await updateCartDiscount(cartAfterDeletion)
+  const updatedCart = await updateCartDiscount(
+    cartAfterDeletion,
+    user,
+    channel,
+    dontApplyCodes
+  )
   return {
     cart: updatedCart,
     success: true,
   }
 }
 
-export const updateCartDiscount = async (cart: Cart): Promise<Cart> => {
+export const updateCartDiscount = async (
+  cart: Cart,
+  user?: UserSession,
+  channel?: string,
+  dontApplyCodes?: string[]
+): Promise<Cart> => {
   const { validationResult, promotionsResult } =
     await validateCouponsAndPromotions({
       cart,
-      voucherify,
+      voucherify: getVoucherify(),
+      user,
+      channel,
+      dontApplyCodes,
     })
   return cartWithDiscount(cart, validationResult, promotionsResult)
 }
 
 export const addVoucherToCart = async (
   cart: Cart,
-  code: string
+  code: string,
+  user?: UserSession,
+  channel?: string,
+  dontApplyCodes?: string[]
 ): Promise<{ cart: Cart; success: boolean; errorMessage?: string }> => {
   if (cart.vouchersApplied?.some((voucher) => voucher.code === code)) {
     return {
@@ -46,7 +66,10 @@ export const addVoucherToCart = async (
     await validateCouponsAndPromotions({
       cart,
       code,
-      voucherify,
+      voucherify: getVoucherify(),
+      user,
+      channel,
+      dontApplyCodes,
     })
 
   const { isApplicable, error } = isRedeemableApplicable(code, validationResult)
@@ -70,8 +93,15 @@ export const addVoucherToCart = async (
   }
 }
 
-export const orderPaid = async (order: Order) => {
-  const voucherifyOrder = orderToVoucherifyOrder(order)
+export const orderPaid = async (
+  order: Order,
+  user?: UserSession,
+  channel?: string
+) => {
+  const voucherifyOrder = addChannelToOrder(
+    orderToVoucherifyOrder(order, user),
+    channel
+  )
 
   const vouchers = order.vouchers_applied?.map((voucher) => ({
     id: voucher.code,
@@ -81,10 +111,15 @@ export const orderPaid = async (order: Order) => {
     id: promotion.id,
     object: 'promotion_tier' as const,
   }))
+  const redeemables = [...(vouchers || []), ...(promotions || [])]
+  if (redeemables.length === 0) {
+    return await getVoucherify().orders.create(voucherifyOrder)
+  }
 
-  return await voucherify.redemptions.redeemStackable({
-    redeemables: [...(vouchers || []), ...(promotions || [])],
+  return await getVoucherify().redemptions.redeemStackable({
+    redeemables,
     order: voucherifyOrder,
+    customer: voucherifyOrder.customer,
     options: { expand: ['order'] },
   })
 }

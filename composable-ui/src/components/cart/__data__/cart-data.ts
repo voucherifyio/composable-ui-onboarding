@@ -21,8 +21,8 @@ export const cartData: CartData = {
     },
   ],
   summary: {
-    taxes: '2.45',
-    totalPrice: '35.00',
+    taxes: 2.45,
+    totalPrice: 35.0,
     shipping: 'Free',
   },
   isLoading: false,

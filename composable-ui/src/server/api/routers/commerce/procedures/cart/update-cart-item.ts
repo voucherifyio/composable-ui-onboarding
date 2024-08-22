@@ -8,8 +8,14 @@ export const updateCartItem = protectedProcedure
       cartId: z.string(),
       productId: z.string(),
       quantity: z.number(),
+      channel: z.string(),
+      dontApplyCodes: z.string().array().optional(),
     })
   )
-  .mutation(async ({ input }) => {
-    return await commerce.updateCartItem({ ...input })
+  .mutation(async ({ input, ctx }) => {
+    const user = ctx.session?.user
+    return await commerce.updateCartItem({
+      ...input,
+      user,
+    })
   })

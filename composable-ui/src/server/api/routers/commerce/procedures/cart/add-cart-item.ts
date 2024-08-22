@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import { protectedProcedure } from 'server/api/trpc'
 import { commerce } from 'server/data-source'
+import { ProductListResponse } from '@composable/types'
 
 export const addCartItem = protectedProcedure
   .input(
@@ -9,8 +10,11 @@ export const addCartItem = protectedProcedure
       productId: z.string(),
       variantId: z.string().optional(),
       quantity: z.number(),
+      channel: z.string(),
+      dontApplyCodes: z.string().array().optional(),
     })
   )
-  .mutation(async ({ input }) => {
-    return await commerce.addCartItem({ ...input })
+  .mutation(async ({ input, ctx }) => {
+    const user = ctx.session?.user
+    return await commerce.addCartItem({ ...input, user })
   })

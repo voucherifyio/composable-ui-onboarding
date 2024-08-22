@@ -50,7 +50,7 @@ If you have gone through all the above steps, you are ready to deploy the Compos
 ## Deploy Composable UI to Vercel
 Below, there is a button that will redirect you to a page where you can enter the values or credentials you noted down earlier.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvoucherifyio%2Fcomposable-ui-onboarding&root-directory=composable-ui&project-name=composable-ui&repository-name=composable-ui&demo-title=Composable%20UI&demo-description=Open%20Source%20React%20Storefront%20for%20Composable%20Commerce&demo-url=https%3A%2F%2Fstorefront.composable.com%2F&demo-image=https%3A%2F%2Fstorefront.composable.com%2Fimg%2Fdemo_image.png&env=NEXTAUTH_SECRET&envLink=https%3A%2F%2Fnext-auth.js.org%2Fconfiguration%2Foptions%23nextauth_secret&env=NEXT_PUBLIC_ALGOLIA_APP_ID&env=NEXT_PUBLIC_ALGOLIA_API_SEARCH_KEY&env=NEXT_PUBLIC_ALGOLIA_INDEX_NAME&env=ALGOLIA_API_ADMIN_KEY&env=VOUCHERIFY_API_URL&env=VOUCHERIFY_APPLICATION_ID&env=VOUCHERIFY_SECRET_KEY)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvoucherifyio%2Fcomposable-ui-onboarding&root-directory=composable-ui&project-name=composable-ui&repository-name=composable-ui&demo-title=Composable%20UI&demo-description=Open%20Source%20React%20Storefront%20for%20Composable%20Commerce&demo-url=https%3A%2F%2Fstorefront.composable.com%2F&demo-image=https%3A%2F%2Fstorefront.composable.com%2Fimg%2Fdemo_image.png&env=NEXTAUTH_SECRET&envLink=https%3A%2F%2Fnext-auth.js.org%2Fconfiguration%2Foptions%23nextauth_secret&env=NEXT_PUBLIC_ALGOLIA_APP_ID&env=NEXT_PUBLIC_ALGOLIA_API_SEARCH_KEY&env=NEXT_PUBLIC_ALGOLIA_INDEX_NAME&env=ALGOLIA_API_ADMIN_KEY&env=NEXT_PUBLIC_VOUCHERIFY_API_URL&env=VOUCHERIFY_APPLICATION_ID&env=VOUCHERIFY_SECRET_KEY)
 
 Once you are redirected to the Vercel website, you will be asked where you want to create your Git repository, needed for deployment.
 - Once you are redirected to the Vercel website, you will be asked to complete a form with the required environment variables.
@@ -64,7 +64,7 @@ Once you are redirected to the Vercel website, you will be asked where you want 
 | NEXT_PUBLIC_ALGOLIA_API_SEARCH_KEY | The value of `Search API Key` you noted in Step 1. |
 | NEXT_PUBLIC_ALGOLIA_INDEX_NAME     | Here you should enter `products` value.            |
 | ALGOLIA_API_ADMIN_KEY              | The value of `Admin API Key` you noted in Step 1.  |
-| VOUCHERIFY_API_URL                 | Your API Endpoint you noted in Step 3.             |
+| NEXT_PUBLIC_VOUCHERIFY_API_URL                 | Your API Endpoint you noted in Step 3.             |
 | VOUCHERIFY_APPLICATION_ID          | The value of `Application ID` you noted in Step 3. |
 | VOUCHERIFY_SECRET_KEY              | The value of `Secret Key` you noted in Step 3.     |
 

@@ -1,15 +1,18 @@
 import { Cart } from '@composable/types'
-import { OrdersCreate } from '@voucherify/sdk'
-import { toCent } from './to-cent'
+import { CustomerRequest, OrdersCreate } from '@voucherify/sdk'
+import { itemToVoucherifyItem } from './item-to-voucherify-item'
 
-export const cartToVoucherifyOrder = (cart: Cart): OrdersCreate => {
+export const cartToVoucherifyOrder = (
+  cart: Cart,
+  customer?: CustomerRequest
+): OrdersCreate => {
   return {
-    amount: toCent(cart.summary.priceBeforeDiscount),
-    items: cart.items.map((item) => ({
-      quantity: item.quantity,
-      product_id: item.id,
-      sku_id: item.sku,
-      price: (item.price + item.tax) * 100,
-    })),
+    amount: cart.summary.priceBeforeDiscount
+      ? cart.summary.priceBeforeDiscount * 100
+      : cart.summary.totalPrice
+      ? cart.summary.totalPrice * 100
+      : undefined,
+    items: cart.items.map(itemToVoucherifyItem),
+    customer: customer,
   }
 }

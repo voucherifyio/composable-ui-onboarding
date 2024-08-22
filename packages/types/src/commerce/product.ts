@@ -6,9 +6,9 @@ export interface Product {
   brand: string
   price: number
   description: string
-  materialAndCare: string
+  // materialAndCare: string
   images: Array<{ url: string; alt: string }>
   sku: string
   slug: string
-  updatedAt: number
+  updatedAt?: number
 }

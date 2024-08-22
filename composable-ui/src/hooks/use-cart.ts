@@ -10,8 +10,11 @@ import {
   LOCAL_STORAGE_CART_ID,
   LOCAL_STORAGE_CART_UPDATED_AT,
 } from 'utils/constants'
-import { Cart } from '@composable/types'
+import { Cart, ProductListResponse, UserSession } from '@composable/types'
 import { useSession } from 'next-auth/react'
+import { undefined } from 'zod'
+import { useChannel } from './use-channel'
+import { useDontApplyCodes } from './use-dont-apply-codes'
 
 const USE_CART_KEY = 'useCartKey'
 
@@ -60,6 +63,13 @@ export const useCart = (options?: UseCartOptions) => {
   const { client } = api.useContext()
   const [cartId] = useLocalStorage(LOCAL_STORAGE_CART_ID, '')
   const [updatedAt] = useLocalStorage(LOCAL_STORAGE_CART_UPDATED_AT, Date.now())
+  const { channel } = useChannel()
+  const {
+    dontApplyCodesAsString,
+    getDontApplyCodes,
+    removeDontApplyCode,
+    addToDontApplyCodes,
+  } = useDontApplyCodes()
   const optionsRef = useRef(options)
   optionsRef.current = options
 
@@ -67,9 +77,13 @@ export const useCart = (options?: UseCartOptions) => {
    * Fetch Cart
    */
   const { data: cart, status } = useQuery(
-    [USE_CART_KEY, cartId, updatedAt],
+    [USE_CART_KEY, cartId, updatedAt, channel],
     async () => {
-      const response = await client.commerce.getCart.query({ cartId })
+      const response = await client.commerce.getCart.query({
+        cartId,
+        channel,
+        dontApplyCodes: getDontApplyCodes(),
+      })
       return response
     },
     {
@@ -105,13 +119,21 @@ export const useCart = (options?: UseCartOptions) => {
         productId: variables.productId,
         variantId: variables.variantId,
         quantity: variables.quantity,
+        channel,
+        dontApplyCodes: getDontApplyCodes(),
       }
 
       const response = await client.commerce.addCartItem.mutate(params)
       const updatedAt = Date.now()
 
       queryClient.setQueryData(
-        [USE_CART_KEY, variables.cartId, updatedAt],
+        [
+          USE_CART_KEY,
+          variables.cartId,
+          updatedAt,
+          channel,
+          dontApplyCodesAsString,
+        ],
         response
       )
 
@@ -159,13 +181,21 @@ export const useCart = (options?: UseCartOptions) => {
         cartId: variables.cartId,
         productId: variables.itemId,
         quantity: variables.quantity,
+        channel,
+        dontApplyCodes: getDontApplyCodes(),
       }
 
       const response = await client.commerce.updateCartItem.mutate(params)
       const updatedAt = Date.now()
 
       queryClient.setQueryData(
-        [USE_CART_KEY, variables.cartId, updatedAt],
+        [
+          USE_CART_KEY,
+          variables.cartId,
+          updatedAt,
+          channel,
+          dontApplyCodesAsString,
+        ],
         response
       )
 
@@ -205,13 +235,21 @@ export const useCart = (options?: UseCartOptions) => {
       const params = {
         cartId: variables.cartId,
         productId: variables.itemId,
+        channel,
+        dontApplyCodes: getDontApplyCodes(),
       }
 
       const response = await client.commerce.deleteCartItem.mutate(params)
       const updatedAt = Date.now()
 
       queryClient.setQueryData(
-        [USE_CART_KEY, variables.cartId, updatedAt],
+        [
+          USE_CART_KEY,
+          variables.cartId,
+          updatedAt,
+          channel,
+          dontApplyCodesAsString,
+        ],
         response
       )
 
@@ -247,15 +285,24 @@ export const useCart = (options?: UseCartOptions) => {
   const cartVoucherAdd = useMutation(
     ['cartVoucherAdd'],
     async (variables: { cartId: string; code: string }) => {
+      removeDontApplyCode(variables.code)
       const params = {
         cartId: variables.cartId,
         code: variables.code,
+        channel,
+        dontApplyCodes: getDontApplyCodes(),
       }
 
       const response = await client.commerce.addVoucher.mutate(params)
       const updatedAt = Date.now()
       queryClient.setQueryData(
-        [USE_CART_KEY, variables.cartId, updatedAt],
+        [
+          USE_CART_KEY,
+          variables.cartId,
+          updatedAt,
+          channel,
+          dontApplyCodesAsString,
+        ],
         response.cart
       )
 
@@ -299,16 +346,25 @@ export const useCart = (options?: UseCartOptions) => {
   const cartVoucherDelete = useMutation(
     ['cartVoucherDelete'],
     async (variables: { cartId: string; code: string }) => {
+      addToDontApplyCodes(variables.code)
       const params = {
         cartId: variables.cartId,
         code: variables.code,
+        channel,
+        dontApplyCodes: getDontApplyCodes(),
       }
 
       const response = await client.commerce.deleteVoucher.mutate(params)
       const updatedAt = Date.now()
 
       queryClient.setQueryData(
-        [USE_CART_KEY, variables.cartId, updatedAt],
+        [
+          USE_CART_KEY,
+          variables.cartId,
+          updatedAt,
+          channel,
+          dontApplyCodesAsString,
+        ],
         response
       )
 

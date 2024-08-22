@@ -48,7 +48,7 @@ export const BagSummaryMobile = ({ accordionProps }: BagSummaryMobileProps) => {
           </Text>
           <Text textStyle={'Desktop/S'}>
             {intl.formatNumber(
-              parseFloat(_cart?.summary?.totalPrice || '0'),
+              _cart?.summary?.totalPrice || 0,
               currencyFormatConfig
             )}
           </Text>
@@ -70,7 +70,7 @@ export const BagSummaryMobile = ({ accordionProps }: BagSummaryMobileProps) => {
 
               <OrderTotals
                 subtotal={intl.formatNumber(
-                  parseFloat(_cart?.summary?.subtotalPrice ?? '0'),
+                  _cart?.summary?.subtotalPrice || 0,
                   currencyFormatConfig
                 )}
                 deliveryTitle={intl.formatMessage({
@@ -80,28 +80,28 @@ export const BagSummaryMobile = ({ accordionProps }: BagSummaryMobileProps) => {
                   id: 'cart.summary.shipping.free',
                 })}
                 tax={intl.formatNumber(
-                  parseFloat(_cart?.summary?.taxes ?? '0'),
+                  _cart?.summary?.taxes || 0,
                   currencyFormatConfig
                 )}
                 priceBeforeDiscountTitle={intl.formatMessage({
                   id: 'cart.summary.priceBeforeDiscount',
                 })}
                 priceBeforeDiscount={intl.formatNumber(
-                  parseFloat(_cart?.summary?.priceBeforeDiscount ?? '0'),
+                  _cart?.summary?.priceBeforeDiscount || 0,
                   currencyFormatConfig
                 )}
                 totalDiscountAmountTitle={intl.formatMessage({
                   id: 'cart.summary.totalDiscountAmount',
                 })}
                 totalDiscountAmount={intl.formatNumber(
-                  parseFloat(_cart?.summary?.totalDiscountAmount ?? '0'),
+                  _cart?.summary?.totalDiscountAmount || 0,
                   currencyFormatConfig
                 )}
                 totalTitle={intl.formatMessage({
                   id: 'checkout.orderSummary.orderTotal',
                 })}
                 total={intl.formatNumber(
-                  parseFloat(_cart?.summary?.totalPrice ?? '0'),
+                  _cart?.summary?.totalPrice || 0,
                   currencyFormatConfig
                 )}
               />

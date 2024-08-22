@@ -13,6 +13,7 @@ import { Price } from './price'
 import { QuantityPicker } from './quantity-picker'
 import { Breadcrumb } from './product'
 import { pdpAccordionData } from './product/__data__/product-accordion-data'
+import { Qualifications } from './voucherify/qualifications'
 
 const DynamicNoMatchPage = dynamic(() =>
   import('./no-match-page').then((_module) => _module.NoMatchPage)
@@ -76,15 +77,7 @@ export const ProductPage = () => {
     return <DynamicNoMatchPage />
   }
 
-  const phpAccordion = [
-    {
-      defaultOpen: false,
-      label: 'Material & Care',
-      content: product.materialAndCare,
-      id: 'b3ac576d-c527-4818-9540-fbc3933b5fb7',
-    },
-    ...pdpAccordionData,
-  ]
+  const phpAccordion = [...pdpAccordionData]
 
   return (
     <PdpLayout
@@ -111,7 +104,7 @@ export const ProductPage = () => {
         height: 'fit-content',
         top: '12',
       }}
-      price={<Price price={product.price.toString()} />}
+      price={<Price price={product.price} />}
       main={
         <>
           <HStack
@@ -135,6 +128,8 @@ export const ProductPage = () => {
               <Button
                 size={'lg'}
                 width={'full'}
+                backgroundColor="#000"
+                _hover={{ bg: '#000' }}
                 onClick={() => handleAddToCart()}
                 isLoading={addCartItem.isLoading}
               >
@@ -154,21 +149,24 @@ export const ProductPage = () => {
         </>
       }
       accordion={
-        <Accordion
-          size="medium"
-          items={phpAccordion}
-          accordionProps={{
-            mt: 8,
-            allowToggle: false,
-            allowMultiple: true,
-          }}
-          accordionItemProps={{ border: 'none' }}
-          accordionPanelProps={{ px: 0 }}
-          accordionButtonProps={{
-            px: 0,
-            borderBottomWidth: '1px',
-          }}
-        />
+        <>
+          <Accordion
+            size="medium"
+            items={phpAccordion}
+            accordionProps={{
+              mt: 8,
+              allowToggle: false,
+              allowMultiple: true,
+            }}
+            accordionItemProps={{ border: 'none' }}
+            accordionPanelProps={{ px: 0 }}
+            accordionButtonProps={{
+              px: 2,
+              borderBottomWidth: '1px',
+            }}
+          />
+          <Qualifications product={product} />
+        </>
       }
       aside={
         <Gallery

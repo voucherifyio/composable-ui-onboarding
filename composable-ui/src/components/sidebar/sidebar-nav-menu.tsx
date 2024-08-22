@@ -25,31 +25,31 @@ export type MenuItem = {
 
 export const menuItems = [
   {
-    path: 'profile',
+    path: 'wallet',
     icon: <IoPersonOutline size={'24px'} />,
-    label: 'Profile & Preferences',
-    intlId: 'account.dashboard.menu.profileAndPreferences',
+    label: 'My wallet',
+    intlId: 'account.dashboard.menu.myWallet',
   },
+  // {
+  //   path: 'address',
+  //   icon: <IoHomeOutline size={'24px'} />,
+  //   label: 'Saved Addresses',
+  //   intlId: 'account.dashboard.menu.savedAddresses',
+  // },
+  // {
+  //   path: 'payment',
+  //   icon: <IoCardOutline size={'24px'} />,
+  //   label: 'Payment Methods',
+  //   intlId: 'account.dashboard.menu.paymentMethod',
+  // },
+  // {
+  //   path: 'wishlist',
+  //   icon: <IoHeartOutline size={'24px'} />,
+  //   label: 'Wishlist',
+  //   intlId: 'account.dashboard.menu.wishlist',
+  // },
   {
-    path: 'address',
-    icon: <IoHomeOutline size={'24px'} />,
-    label: 'Saved Addresses',
-    intlId: 'account.dashboard.menu.savedAddresses',
-  },
-  {
-    path: 'payment',
-    icon: <IoCardOutline size={'24px'} />,
-    label: 'Payment Methods',
-    intlId: 'account.dashboard.menu.paymentMethod',
-  },
-  {
-    path: 'wishlist',
-    icon: <IoHeartOutline size={'24px'} />,
-    label: 'Wishlist',
-    intlId: 'account.dashboard.menu.wishlist',
-  },
-  {
-    path: 'order',
+    path: 'order-history',
     icon: <IoTimeOutline size={'24px'} />,
     label: 'Order History',
     intlId: 'account.dashboard.menu.orderHistory',
@@ -79,7 +79,7 @@ export const SideBarNavMenu = ({ activeItem }: SideBarNavMenuProps) => {
         <SidebarItem
           key={`${item.path}`}
           label={intl.formatMessage({ id: item.intlId })}
-          href={'/#'}
+          href={`/${item.path}`}
           state={item.path === activeItem?.path ? 'Active' : 'Default'}
           rootProps={{
             leftIcon: item.icon,

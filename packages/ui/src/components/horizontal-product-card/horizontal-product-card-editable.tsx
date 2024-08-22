@@ -183,8 +183,8 @@ export const HorizontalProductCardEditable = (
     brand,
     name,
     details = [],
-    regularPrice,
-    salePrice,
+    price,
+    priceAfterDiscount,
     totalPrice,
     quantity,
     metaText,
@@ -281,15 +281,15 @@ export const HorizontalProductCardEditable = (
           <Text
             as={priceOptions?.display === 'block' ? 'p' : 'span'}
             mr={priceOptions?.display !== 'block' ? 1 : undefined}
-            textDecoration={salePrice ? 'line-through' : undefined}
+            textDecoration={priceAfterDiscount ? 'line-through' : undefined}
           >
-            {regularPrice}
+            {price}
           </Text>
           <Text
             as={priceOptions?.display === 'block' ? 'p' : 'span'}
             color="danger-med"
           >
-            {salePrice}
+            {priceAfterDiscount}
           </Text>
         </GridItem>
         <GridItem

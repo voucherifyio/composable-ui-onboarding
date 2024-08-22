@@ -1,6 +1,7 @@
 {
   "account.dashboard.title": "My Account",
   "account.dashboard.account": "Account",
+  "account.dashboard.menu.myWallet": "My wallet",
   "account.dashboard.menu.profileAndPreferences": "Profile & Preferences",
   "account.dashboard.menu.savedAddresses": "Saved Addresses",
   "account.dashboard.menu.paymentMethod": "Payment Methods",
@@ -113,7 +114,7 @@
   "cart.item.delete.action": "Delete",
 
   "cart.item.quantity": "Quantity",
-  "cart.item.price": "Item Price",
+  "cart.item.price": "Items Price",
   "cart.item.totalPrice": "Total Price",
 
   "cart.summary.estimatedTotal": "Estimated Total",
@@ -230,6 +231,12 @@
 
   "noMatchPage.description": "We are sorry but the page you were looking for was not found.",
   "noMatchPage.title": "Page not found",
+  "walletPage.description": "Bellow you will find your loyalty cards and referral codes",
+  "walletPage.title": "Customer wallet",
+
+  "orderHistory.title": "Order history",
+  "orderHistory.loggedOut": "You are not logged in. Please login to see your order history.",
+  "orderHistory.noData": "Your order history is empty. Place an order to view your order history.",
 
   "category.breadcrumb.home": "Home",
   "category.search.shop": "Shop {query}",

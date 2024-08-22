@@ -7,8 +7,11 @@ export const deleteVoucher = protectedProcedure
     z.object({
       cartId: z.string(),
       code: z.string(),
+      channel: z.string(),
+      dontApplyCodes: z.string().array().optional(),
     })
   )
-  .mutation(async ({ input }) => {
-    return await commerce.deleteVoucher({ ...input })
+  .mutation(async ({ input, ctx }) => {
+    const user = ctx.session?.user
+    return await commerce.deleteVoucher({ ...input, user })
   })

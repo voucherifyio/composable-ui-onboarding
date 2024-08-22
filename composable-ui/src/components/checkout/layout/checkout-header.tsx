@@ -3,6 +3,7 @@ import NextLink from 'next/link'
 import { useIntl } from 'react-intl'
 import { CheckoutSteps } from './checkout-steps'
 import { Logo } from '../../logo'
+import LogoEmbol from 'components/embol-logo'
 
 export const CheckoutHeader = () => {
   const intl = useIntl()
@@ -13,6 +14,7 @@ export const CheckoutHeader = () => {
       bg={'background'}
       p={{ base: '10px 0 0', md: 0 }}
       borderBottomWidth={{ base: '0', md: '1px' }}
+      backgroundColor='#f40008'
     >
       <Container maxW="container.2xl" px={{ base: 0, md: 'sm' }}>
         <Grid
@@ -27,7 +29,7 @@ export const CheckoutHeader = () => {
           <GridItem area="logo">
             <Box px={{ base: 'sm', md: 0 }} py={{ base: 'xs', md: 0 }}>
               <Link as={NextLink} href="/#" display="inline-block">
-                <Logo h="21px" />
+                <LogoEmbol />
               </Link>
             </Box>
           </GridItem>

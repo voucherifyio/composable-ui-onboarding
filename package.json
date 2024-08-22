@@ -13,9 +13,16 @@
     "dev": "turbo run dev --parallel",
     "format": "prettier --write \"**/*.{ts,tsx,js,json}\"",
     "lint": "turbo run lint",
-    "prepare": "husky install",
     "test:ci": "turbo run test:ci",
     "ts": "turbo run ts"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pnpm lint-staged"
+    }
+  },
+  "dependencies": {
+    "lodash": "4.17.21"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
