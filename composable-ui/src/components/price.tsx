@@ -5,12 +5,13 @@ import { APP_CONFIG } from 'utils/constants'
 export interface PriceProps {
   rootProps?: BoxProps
   price?: number | string
+  displayAlways?: boolean
 }
 
-export const Price = ({ rootProps, price }: PriceProps) => {
+export const Price = ({ rootProps, price, displayAlways }: PriceProps) => {
   const intl = useIntl()
 
-  if (!price) {
+  if (!price && !displayAlways) {
     return null
   }
 
@@ -27,7 +28,7 @@ export const Price = ({ rootProps, price }: PriceProps) => {
     )
   }
 
-  const value = parseFloat(price)
+  const value = parseFloat(price || '')
   return (
     <Box {...rootProps}>
       {Number.isNaN(value)

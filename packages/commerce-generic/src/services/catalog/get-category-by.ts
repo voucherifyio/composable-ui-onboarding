@@ -1,5 +1,5 @@
 import { Category, CommerceService } from '@composable/types'
-import products from '../../data/products.json'
+import products from '@composable/data/src/products.json'
 import categories from '../../data/categories.json'
 
 export const getCategoryBy: CommerceService['getCategoryBy'] = async ({

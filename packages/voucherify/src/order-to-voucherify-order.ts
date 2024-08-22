@@ -8,7 +8,11 @@ export const orderToVoucherifyOrder = (
   user?: UserSession
 ): OrdersCreate => {
   return {
-    amount: order.summary.priceBeforeDiscount,
+    amount: order.summary.priceBeforeDiscount
+      ? order.summary.priceBeforeDiscount * 100
+      : order.summary.totalPrice
+      ? order.summary.totalPrice * 100
+      : undefined,
     items: order.items.map((item) => ({
       quantity: item.quantity,
       product_id: item.id,

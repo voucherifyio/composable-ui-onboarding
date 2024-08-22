@@ -25,10 +25,10 @@ export const addCartItem: CommerceService['addCartItem'] = async ({
     cart.items.find((item) => item.id === productId)!.quantity++
   } else {
     const newItem = generateCartItem(productId, quantity)
-    cart.items.push(newItem)
+    if (newItem) {
+      cart.items.push(newItem)
+    }
   }
-
-  cart.summary = calculateCartSummary(cart.items)
 
   const cartWithDiscount = await updateCartDiscount(
     cart,
@@ -36,5 +36,7 @@ export const addCartItem: CommerceService['addCartItem'] = async ({
     channel,
     dontApplyCodes
   )
+  cart.summary = calculateCartSummary(cart.items)
+
   return saveCart(cartWithDiscount)
 }

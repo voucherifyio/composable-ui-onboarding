@@ -20,7 +20,6 @@ export const deleteCartItem: CommerceService['deleteCartItem'] = async ({
   }
 
   cart.items = cart.items.filter((item) => item.id !== productId)
-  cart.summary = calculateCartSummary(cart.items)
 
   const cartWithDiscount = await updateCartDiscount(
     cart,
@@ -28,6 +27,8 @@ export const deleteCartItem: CommerceService['deleteCartItem'] = async ({
     channel,
     dontApplyCodes
   )
+
+  cart.summary = calculateCartSummary(cart.items)
 
   return saveCart(cartWithDiscount)
 }
