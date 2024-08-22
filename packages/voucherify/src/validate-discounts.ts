@@ -13,6 +13,7 @@ import { userSessionToVoucherifyCustomer } from './user-session-to-voucherify-cu
 import { addChannelToOrder } from './add-channel-to-voucherify-order'
 import * as _ from 'lodash'
 import { StackableRedeemableResultDiscountUnit } from '@voucherify/sdk/dist/types/Stackable'
+import { injectContentfulContentToQualificationsRedeemables } from './contentful'
 
 type ValidateDiscountsParam = {
   cart: Cart
@@ -69,6 +70,7 @@ export const validateCouponsAndPromotions = async (
       },
     }
   )
+
   const vouchers = qualificationsResult.redeemables.data.filter(
     (redeemable) => redeemable.object === 'voucher'
   )
@@ -90,7 +92,7 @@ export const validateCouponsAndPromotions = async (
     return { promotionsResult: promotions, validationResult: false }
   }
   const potentiallyNewPromotions = getRedeemablesForValidationFromPromotions(
-    promotions.slice(0, 1)
+    (await injectContentfulContentToQualificationsRedeemables(promotions)).slice(0, 1)
   ).map((promotion) => promotion.id)
   const newPromotionsIds = potentiallyNewPromotions.filter(
     (promotionId) => !appliedPromotionsIds.includes(promotionId)

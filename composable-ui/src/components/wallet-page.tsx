@@ -19,7 +19,6 @@ import { ExtendedRedeemable } from '@composable/voucherify'
 import { Accordion } from '@composable/ui'
 import { undefined } from 'zod'
 import { api } from '../utils/api'
-import { LoyaltiesRedeemRewardResponse } from '@voucherify/sdk'
 
 export const WalletPage = () => {
   const intl = useIntl()
@@ -33,7 +32,6 @@ export const WalletPage = () => {
   } = useCustomer()
   const toast = useToast()
   const { client } = api.useContext()
-
   const redeemRewardCallback = async (
     campaignId: string,
     voucherId: string,
@@ -270,7 +268,15 @@ const getExtendedRedeemableAccordionItem = ({
             key={redeemable.id}
             title={
               <>
-                {redeemable.redeemable?.voucher?.campaign}
+                {redeemable.redeemable?.voucher?.metadata?.banner ||
+                  redeemable.redeemable?.voucher?.campaign}
+                {typeof redeemable.redeemable?.voucher?.metadata
+                  ?.description === 'string' ? (
+                  <>
+                    <br />
+                    {redeemable.redeemable?.voucher?.metadata?.description}
+                  </>
+                ) : undefined}
                 {(redeemable.redeemable?.voucher?.code &&
                   redeemable.redeemable.voucher.type !== 'LOYALTY_CARD' && (
                     <>
@@ -420,16 +426,25 @@ const getExtendedRedeemableRewardsAccordionItem = ({
       >
         {extendedRedeemable.rewards
           ?.filter(
-            (extendedRedeemable) => extendedRedeemable?.reward?.type !== 'COIN'
+            (extendedRedeemable) =>
+              extendedRedeemable?.reward?.type === 'CAMPAIGN'
           )
           .map(({ reward, assignment }) => (
             <SimpleAlertBox
               colorLight={'secondary.100'}
               colorDark={'secondary.700'}
               key={reward.id}
-              title={reward.name}
+              title={
+                <>{(reward as any)?.voucher?.metadata?.banner || reward.name}</>
+              }
               description={
                 <Box sx={{ display: 'flex' }}>
+                  {(reward as any)?.voucher?.metadata?.description && (
+                    <>
+                      {(reward as any)?.voucher?.metadata?.description}
+                      <br />
+                    </>
+                  )}
                   Cost:{' '}
                   {('parameters' in assignment &&
                     assignment.parameters?.loyalty?.points) ||

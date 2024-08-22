@@ -1,5 +1,6 @@
 import { CustomerRedeemablesListItemResponse } from '@voucherify/sdk/dist/types/Customers'
 import { Reward, RewardAssignment } from '@voucherify/sdk'
+import { Entry, EntrySkeletonType } from 'contentful'
 
 export type ExtendedRedeemable = CustomerRedeemablesListItemResponse & {
   rewards?: {
@@ -7,4 +8,5 @@ export type ExtendedRedeemable = CustomerRedeemablesListItemResponse & {
     assignment: RewardAssignment
     object: 'loyalty_reward'
   }[]
+  entry?: Entry<EntrySkeletonType, undefined, string>
 }
