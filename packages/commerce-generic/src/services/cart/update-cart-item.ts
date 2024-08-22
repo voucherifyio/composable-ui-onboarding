@@ -12,7 +12,7 @@ export const updateCartItem: CommerceService['updateCartItem'] = async ({
   channel,
   dontApplyCodes,
 }) => {
-  const cart = await getCart(cartId)
+  let cart = await getCart(cartId)
 
   if (!cart) {
     throw new Error(
@@ -22,13 +22,9 @@ export const updateCartItem: CommerceService['updateCartItem'] = async ({
 
   const cartItem = cart.items.find((item) => item.id === productId)
 
-  if (!cartItem) {
-    throw new Error(
-      `[updateCartItem] Could not found cart item with requested product id: ${productId}`
-    )
-  }
-
-  cartItem.quantity = quantity
+  cart.items = cart.items
+    .map((item) => (item.id === productId ? { ...item, quantity } : item))
+    .filter((item) => item.quantity)
 
   const cartWithDiscount = await updateCartDiscount(
     cart,

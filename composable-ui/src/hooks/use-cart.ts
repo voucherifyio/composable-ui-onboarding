@@ -57,7 +57,7 @@ interface UseCartOptions {
   onCartVoucherDeleteSuccess?: (cart: Cart) => void
 }
 
-export const useCart = (options?: UseCartOptions) => {
+export const useCart = (options?: UseCartOptions, toast?: any) => {
   const session = useSession()
   const queryClient = useQueryClient()
   const { client } = api.useContext()
@@ -186,6 +186,12 @@ export const useCart = (options?: UseCartOptions) => {
       }
 
       const response = await client.commerce.updateCartItem.mutate(params)
+      if (response.error && toast) {
+        toast({
+          status: 'warning',
+          description: response.error,
+        })
+      }
       const updatedAt = Date.now()
 
       queryClient.setQueryData(
@@ -240,6 +246,12 @@ export const useCart = (options?: UseCartOptions) => {
       }
 
       const response = await client.commerce.deleteCartItem.mutate(params)
+      if (response.error && toast) {
+        toast({
+          status: 'warning',
+          description: response.error,
+        })
+      }
       const updatedAt = Date.now()
 
       queryClient.setQueryData(
