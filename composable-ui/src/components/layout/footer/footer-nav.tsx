@@ -52,18 +52,18 @@ export const Footer = ({
   message = null,
 }: FooterProps) => {
   return (
-    <Box borderTopWidth="1px">
+    <Box sx={{ borderTop: '3px solid #f40008' }}>
       <Container
         as="footer"
         role="contentinfo"
         maxW="container.xl"
-        backgroundColor="#f40008"
+        backgroundColor=""
       >
         <Stack
           justify="center"
           // align="start"
           direction={{ base: 'column', md: 'row' }}
-          py={{ base: '4', md: '16' }}
+          py={{ base: '4', md: '4' }}
         >
           <Flex justifyContent={'center'}>
             {brandLogo && (
