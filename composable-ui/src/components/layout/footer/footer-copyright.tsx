@@ -20,7 +20,7 @@ export const CopyrightFooter = ({ copyrightText }: CopyrightFooterProps) => {
       direction={{ base: 'column-reverse', md: 'row' }}
       align="center"
     >
-      <Text fontSize="sm" color="#FFF" fontWeight="600">
+      <Text fontSize="sm" color="#f40008" fontWeight="600" sx={{ mb: 2 }}>
         {copyrightText}
       </Text>
 
