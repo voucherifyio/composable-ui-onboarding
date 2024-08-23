@@ -17,6 +17,7 @@ import { useRouter } from 'next/router'
 import { MenuItem } from 'components/menu/menu-item'
 import NextLink from 'next/link'
 import Channel from 'components/channel'
+import { AlgoliaSearchbar } from '../algolia-search-bar'
 
 export const Header = () => {
   const { cart } = useCart()
@@ -59,6 +60,7 @@ export const Header = () => {
             alignItems={'center'}
             justifyContent={{ base: 'center', md: 'left' }}
           >
+            <AlgoliaSearchbar />
             {/* {HERE LOGO CAN BE INCLUDED} */}
           </Flex>
           <Box
