@@ -1,15 +1,25 @@
 import { Box, Button, Text } from '@chakra-ui/react'
-import { BrazeInstance } from 'hooks'
-import { FC, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
+import { MainAppContext } from '../app-context/app-context'
+import { useSession } from 'next-auth/react'
 
-type BrazePermissionModalProps = {
-  braze: BrazeInstance | undefined
-}
+const BrazePermissionModal = () => {
+  const { braze } = useContext(MainAppContext)
+  const { data: session } = useSession()
 
-const BrazePermissionModal: FC<BrazePermissionModalProps> = ({ braze }) => {
-  const [isOpen, setIsOpen] = useState(true)
+  useEffect(() => {
+    const notificationSet = localStorage.getItem('notifications')
+    if (braze && session?.loggedIn && !notificationSet) {
+      setAskForBrazeNotificationsPermissions(!braze.isPushPermissionGranted())
+    }
+  }, [braze, session])
 
-  if (isOpen)
+  const [
+    askForBrazeNotificationsPermissions,
+    setAskForBrazeNotificationsPermissions,
+  ] = useState<boolean | undefined>(false)
+
+  if (askForBrazeNotificationsPermissions)
     return (
       <Box
         style={{
@@ -43,7 +53,8 @@ const BrazePermissionModal: FC<BrazePermissionModalProps> = ({ braze }) => {
             onClick={() => {
               braze?.requestPushPermission()
               braze?.openSession()
-              setIsOpen(false)
+              localStorage.setItem('notifications', 'allowed')
+              setAskForBrazeNotificationsPermissions(false)
             }}
           >
             Allow
@@ -53,7 +64,7 @@ const BrazePermissionModal: FC<BrazePermissionModalProps> = ({ braze }) => {
             _hover={{ bg: '#000' }}
             onClick={() => {
               localStorage.setItem('notifications', 'denied')
-              setIsOpen(false)
+              setAskForBrazeNotificationsPermissions(false)
             }}
           >
             Don&apos;t allow

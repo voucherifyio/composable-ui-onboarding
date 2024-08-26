@@ -1,4 +1,4 @@
-import { ReactElement } from 'react'
+import React, { ReactElement, useContext, useEffect, useState } from 'react'
 import dynamic from 'next/dynamic'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -13,6 +13,9 @@ import { Logo } from '../logo'
 import { useComposable } from 'hooks'
 import { useOnScreen } from '../../hooks'
 import LogoEmbol from 'components/embol-logo'
+import { MainAppContext } from '../../app-context/app-context'
+import BrazePermissionModal from '../braze-permission-modal'
+import { useSession } from 'next-auth/react'
 
 const DynamicCartDrawer = dynamic(() =>
   import('components/cart').then((_module) => _module.CartDrawer)
@@ -79,6 +82,7 @@ export const Layout = ({ children }: Props) => {
         <Header />
         <Box flexGrow="1" role="main">
           {children}
+          <BrazePermissionModal />
         </Box>
 
         <Box ref={footerRef}>
