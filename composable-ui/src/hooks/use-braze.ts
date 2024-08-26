@@ -14,36 +14,21 @@ export const useBraze = () => {
   const [braze, setBraze] = useState<BrazeInstance | undefined>(undefined)
 
   useEffect(() => {
-    import('../utils/braze-export').then(
-      ({
-        initialize,
-        openSession,
-        isPushPermissionGranted,
-        changeUser,
-        getUser,
-        requestPushPermission,
-      }) => {
-        if (
-          process.env.NEXT_PUBLIC_BRAZE_API_KEY &&
-          process.env.NEXT_PUBLIC_BRAZE_SDK_ENDPOINT &&
-          data?.loggedIn
-        ) {
-          initialize(process.env.NEXT_PUBLIC_BRAZE_API_KEY, {
-            baseUrl: process.env.NEXT_PUBLIC_BRAZE_SDK_ENDPOINT,
-            enableLogging: process.env.NODE_ENV !== 'production',
-            allowUserSuppliedJavascript: true,
-            minimumIntervalBetweenTriggerActionsInSeconds: 5,
-          })
-          setBraze({
-            openSession,
-            isPushPermissionGranted,
-            changeUser,
-            getUser,
-            requestPushPermission,
-          })
-        }
+    import('@braze/web-sdk').then((instanceBraze) => {
+      if (
+        process.env.NEXT_PUBLIC_BRAZE_API_KEY &&
+        process.env.NEXT_PUBLIC_BRAZE_SDK_ENDPOINT &&
+        data?.loggedIn
+      ) {
+        instanceBraze.initialize(process.env.NEXT_PUBLIC_BRAZE_API_KEY, {
+          baseUrl: process.env.NEXT_PUBLIC_BRAZE_SDK_ENDPOINT,
+          enableLogging: process.env.NODE_ENV !== 'production',
+          allowUserSuppliedJavascript: true,
+          minimumIntervalBetweenTriggerActionsInSeconds: 5,
+        })
+        setBraze(instanceBraze)
       }
-    )
+    })
   }, [data])
 
   const updateBrazeUser = async (email: string) => {
