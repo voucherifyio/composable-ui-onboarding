@@ -14,8 +14,9 @@ import { useComposable } from 'hooks'
 import { useOnScreen } from '../../hooks'
 import LogoEmbol from 'components/embol-logo'
 import { MainAppContext } from '../../app-context/app-context'
-import BrazePermissionModal from '../braze-permission-modal'
 import { useSession } from 'next-auth/react'
+
+const BrazePermissionModal = dynamic(() => import('../braze-permission-modal'))
 
 const DynamicCartDrawer = dynamic(() =>
   import('components/cart').then((_module) => _module.CartDrawer)
