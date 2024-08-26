@@ -45,7 +45,6 @@ export const OrderSummary = ({
             {intl.formatMessage({ id: 'cart.summary.title' })}
           </Text>
         )}
-
         <Accordion
           allowToggle
           defaultIndex={[0]}
@@ -67,11 +66,11 @@ export const OrderSummary = ({
                         : 'checkout.orderSummary.item',
                   },
                   { quantity: _cart.quantity }
-                )}{' '}
+                )}
                 <AccordionIcon />
               </Text>
               <Text fontWeight={700}>
-                {intl.formatNumber(_cart.summary?.subtotalPrice || 0, {
+                {intl.formatNumber(_cart.summary?.priceBeforeDiscount || 0, {
                   currency: APP_CONFIG.CURRENCY_CODE,
                   style: 'currency',
                 })}
@@ -84,10 +83,9 @@ export const OrderSummary = ({
             </AccordionPanel>
           </AccordionItem>
         </Accordion>
-
         <OrderTotals
           subtotal={intl.formatNumber(
-            _cart?.summary?.subtotalPrice || 0,
+            _cart?.summary?.priceBeforeDiscount || 0,
             currencyFormatConfig
           )}
           deliveryTitle={intl.formatMessage({

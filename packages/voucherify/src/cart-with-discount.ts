@@ -193,6 +193,7 @@ export const cartWithDiscount = (
     }),
     summary: {
       ...cart.summary,
+      priceBeforeDiscount: (totalPrice + totalDiscountAmount) / 100,
       totalDiscountAmount: totalDiscountAmount / 100,
       totalPrice: totalPrice / 100,
     },

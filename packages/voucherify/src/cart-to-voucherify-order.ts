@@ -6,12 +6,14 @@ export const cartToVoucherifyOrder = (
   cart: Cart,
   customer?: CustomerRequest
 ): OrdersCreate => {
+  const amount =
+    cart.items.reduce((acc, cur) => {
+      acc += cur.quantity * cur.price
+      return acc
+    }, 0) * 100
+
   return {
-    amount: cart.summary.priceBeforeDiscount
-      ? cart.summary.priceBeforeDiscount * 100
-      : cart.summary.totalPrice
-      ? cart.summary.totalPrice * 100
-      : undefined,
+    amount,
     items: cart.items.map(itemToVoucherifyItem),
     customer: customer,
   }
