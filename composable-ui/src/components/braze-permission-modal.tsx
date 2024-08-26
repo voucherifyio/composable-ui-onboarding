@@ -9,7 +9,6 @@ const BrazePermissionModal = () => {
 
   useEffect(() => {
     const notificationSet = localStorage.getItem('notifications')
-    console.log({ braze, x: session?.loggedIn, notificationSet })
     if (braze && session?.loggedIn && !notificationSet) {
       setAskForBrazeNotificationsPermissions(!braze.isPushPermissionGranted())
     }
